@@ -18,20 +18,20 @@
 			<TabItem Header="播放设置" Style="{StaticResource NewTabItem}" Foreground="White">
 				<Canvas Background="Transparent">
 					<TextBlock Canvas.Left="30" Canvas.Top="30" Text="快进速度：" />
-					<CheckBox x:Name="Range1"  Content="1" Foreground="White" Canvas.Left="109" Canvas.Top="30" Checked="Range1_Checked"/>
-					<CheckBox x:Name="Range3"  Content="3" Foreground="White" Canvas.Left="143" Canvas.Top="30" Checked="Range3_Checked"/>
-					<CheckBox x:Name="Range5"  Content="5" Foreground="White" Canvas.Left="177" Canvas.Top="30" Checked="Range5_Checked"/>
-					<CheckBox x:Name="Range10"  Content="10" Foreground="White" Canvas.Left="211" Canvas.Top="30" Checked="Range10_Checked"/>
-					<CheckBox x:Name="Range15"  Content="15" Foreground="White" Canvas.Left="255" Canvas.Top="30" Checked="Range15_Checked"/>
-					<CheckBox x:Name="Range20"  Content="20" Foreground="White" Canvas.Left="299" Canvas.Top="30" Checked="Range20_Checked"/>
+					<CheckBox x:Name="Range1"  Content="1" Foreground="White" Canvas.Left="109" Canvas.Top="30" Click="Range1_Click"/>
+					<CheckBox x:Name="Range3"  Content="3" Foreground="White" Canvas.Left="143" Canvas.Top="30" Click="Range3_Click"/>
+					<CheckBox x:Name="Range5"  Content="5" Foreground="White" Canvas.Left="177" Canvas.Top="30" Click="Range5_Click"/>
+					<CheckBox x:Name="Range10"  Content="10" Foreground="White" Canvas.Left="211" Canvas.Top="30" Click="Range10_Click"/>
+					<CheckBox x:Name="Range15"  Content="15" Foreground="White" Canvas.Left="255" Canvas.Top="30" Click="Range15_Click"/>
+					<CheckBox x:Name="Range20"  Content="20" Foreground="White" Canvas.Left="299" Canvas.Top="30" Click="Range20_Click"/>
 
 					<TextBlock Canvas.Left="30" Canvas.Top="101" Text="倍速：" />
-					<CheckBox x:Name="Ratio05"  Content="0.50" Foreground="White" Canvas.Left="77" Canvas.Top="101" Checked="Ratio05_Checked"/>
-					<CheckBox x:Name="Ratio075"  Content="0.75" Foreground="White" Canvas.Left="134" Canvas.Top="101" Checked="Ratio075_Checked"/>
-					<CheckBox x:Name="Ratio1"  Content="1.00" Foreground="White" Canvas.Left="191" Canvas.Top="101" Checked="Ratio1_Checked"/>
-					<CheckBox x:Name="Ratio125"  Content="1.25" Foreground="White" Canvas.Left="248" Canvas.Top="101" Checked="Ratio125_Checked"/>
-					<CheckBox x:Name="Ratio15"  Content="1.50" Foreground="White" Canvas.Left="305" Canvas.Top="101" Checked="Ratio15_Checked"/>
-					<CheckBox x:Name="Ratio2"  Content="2.00" Foreground="White" Canvas.Left="362" Canvas.Top="101" Checked="Ratio2_Checked"/>
+					<CheckBox x:Name="Ratio05"  Content="0.50" Foreground="White" Canvas.Left="77" Canvas.Top="101" Click="Ratio05_Click"/>
+					<CheckBox x:Name="Ratio075"  Content="0.75" Foreground="White" Canvas.Left="134" Canvas.Top="101" Click="Ratio075_Click"/>
+					<CheckBox x:Name="Ratio1"  Content="1.00" Foreground="White" Canvas.Left="191" Canvas.Top="101" Click="Ratio1_Click"/>
+					<CheckBox x:Name="Ratio125"  Content="1.25" Foreground="White" Canvas.Left="248" Canvas.Top="101" Click="Ratio125_Click"/>
+					<CheckBox x:Name="Ratio15"  Content="1.50" Foreground="White" Canvas.Left="305" Canvas.Top="101" Click="Ratio15_Click"/>
+					<CheckBox x:Name="Ratio2"  Content="2.00" Foreground="White" Canvas.Left="362" Canvas.Top="101" Click="Ratio2_Click"/>
 				</Canvas>
 			</TabItem>
 			<TabItem Header="弹幕设置" Style="{StaticResource NewTabItem}" Foreground="White">
@@ -47,7 +47,7 @@
 			<TabItem Header="关于" Style="{StaticResource NewTabItem}" Foreground="White">
                 <Grid Background="Transparent">
                     <TextBlock Margin="30,30,0,0" VerticalAlignment="Top" HorizontalAlignment="Left">
-						<Run Text="版本：v1.0"/><LineBreak/>
+						<Run Text="版本：v1.1"/><LineBreak/>
 						<Run Text="不足的地方↓↓↓"/><LineBreak/>
 						<Run Text="有崩溃可能"/><LineBreak/>
 						<Run Text="图标、界面丑"/><LineBreak/>
@@ -55,8 +55,8 @@
                     </TextBlock>
                     <TextBlock Margin="0,30,30,0" VerticalAlignment="Top" HorizontalAlignment="Right">
 						<Run Text="邮箱：poker_sang@163.com  "/><LineBreak/>
-						<Hyperlink Click="Hyperlink_Click">点击复制源码 Github 链接</Hyperlink><LineBreak/>
-						<Run Text="不支持彩色、高级弹幕"/><LineBreak/>
+						<Hyperlink Click="Hyperlink_Click">点击打开 Github</Hyperlink><LineBreak/>
+						<Run Text="不支持高级弹幕"/><LineBreak/>
 						<Run Text="弹幕出现位置算法差"/><LineBreak/>
 						<Run Text="有常用功能无法实现     ……"/>
                     </TextBlock>
