@@ -117,122 +117,96 @@ namespace DanmuXml
 			TBOpacity.Text = (SOpacity.Value / 10).ToString();
 		}
 
-		private void Ratio05_Checked(object sender, RoutedEventArgs e)
+		private void Ratio05_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio075.IsChecked = false;
-			Ratio1.IsChecked = false;
-			Ratio125.IsChecked = false;
-			Ratio15.IsChecked = false;
-			Ratio2.IsChecked = false;
+			RatioSetFalse();
+			Ratio05.IsChecked = true;
 		}
-		private void Ratio075_Checked(object sender, RoutedEventArgs e)
+		private void Ratio075_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio05.IsChecked = false;
-			Ratio1.IsChecked = false;
-			Ratio125.IsChecked = false;
-			Ratio15.IsChecked = false;
-			Ratio2.IsChecked = false;
+			RatioSetFalse();
+			Ratio075.IsChecked = true;
 		}
-		private void Ratio1_Checked(object sender, RoutedEventArgs e)
+		private void Ratio1_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio05.IsChecked = false;
-			Ratio075.IsChecked = false;
-			Ratio125.IsChecked = false;
-			Ratio15.IsChecked = false;
-			Ratio2.IsChecked = false;
+			RatioSetFalse();
+			Ratio1.IsChecked = true;
 		}
-		private void Ratio125_Checked(object sender, RoutedEventArgs e)
+		private void Ratio125_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio05.IsChecked = false;
-			Ratio075.IsChecked = false;
-			Ratio1.IsChecked = false;
-			Ratio15.IsChecked = false;
-			Ratio2.IsChecked = false;
+			RatioSetFalse();
+			Ratio125.IsChecked = true;
 		}
-		private void Ratio15_Checked(object sender, RoutedEventArgs e)
+		private void Ratio15_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio05.IsChecked = false;
-			Ratio075.IsChecked = false;
-			Ratio1.IsChecked = false;
-			Ratio125.IsChecked = false;
-			Ratio2.IsChecked = false;
+			RatioSetFalse();
+			Ratio15.IsChecked = true;
 		}
-		private void Ratio2_Checked(object sender, RoutedEventArgs e)
+		private void Ratio2_Click(object sender, RoutedEventArgs e)
 		{
-			Ratio05.IsChecked = false;
-			Ratio075.IsChecked = false;
-			Ratio1.IsChecked = false;
-			Ratio125.IsChecked = false;
-			Ratio15.IsChecked = false;
+			RatioSetFalse();
+			Ratio2.IsChecked = true;
 		}
 
-		private void Range1_Checked(object sender, RoutedEventArgs e)
+		private void Range1_Click(object sender, RoutedEventArgs e)
 		{
-			Range3.IsChecked = false;
-			Range5.IsChecked = false;
-			Range10.IsChecked = false;
-			Range15.IsChecked = false;
-			Range20.IsChecked = false;
+			RangeSetFalse();
+			Range1.IsChecked = true;
 		}
-		private void Range3_Checked(object sender, RoutedEventArgs e)
+		private void Range3_Click(object sender, RoutedEventArgs e)
 		{
-			Range1.IsChecked = false;
-			Range5.IsChecked = false;
-			Range10.IsChecked = false;
-			Range15.IsChecked = false;
-			Range20.IsChecked = false;
+			RangeSetFalse();
+			Range3.IsChecked = true;
 		}
-		private void Range5_Checked(object sender, RoutedEventArgs e)
+		private void Range5_Click(object sender, RoutedEventArgs e)
 		{
-			Range1.IsChecked = false;
-			Range3.IsChecked = false;
-			Range10.IsChecked = false;
-			Range15.IsChecked = false;
-			Range20.IsChecked = false;
+			RangeSetFalse();
+			Range5.IsChecked = true;
 		}
-		private void Range10_Checked(object sender, RoutedEventArgs e)
+		private void Range10_Click(object sender, RoutedEventArgs e)
 		{
-			Range1.IsChecked = false;
-			Range3.IsChecked = false;
-			Range5.IsChecked = false;
-			Range15.IsChecked = false;
-			Range20.IsChecked = false;
+			RangeSetFalse();
+			Range10.IsChecked = true;
 		}
-		private void Range15_Checked(object sender, RoutedEventArgs e)
+		private void Range15_Click(object sender, RoutedEventArgs e)
 		{
-			Range1.IsChecked = false;
-			Range3.IsChecked = false;
-			Range5.IsChecked = false;
-			Range10.IsChecked = false;
-			Range20.IsChecked = false;
+			RangeSetFalse();
+			Range15.IsChecked = true;
 		}
-		private void Range20_Checked(object sender, RoutedEventArgs e)
+		private void Range20_Click(object sender, RoutedEventArgs e)
 		{
-			Range1.IsChecked = false;
-			Range3.IsChecked = false;
-			Range5.IsChecked = false;
-			Range10.IsChecked = false;
-			Range15.IsChecked = false;
+			RangeSetFalse();
+			Range20.IsChecked = true;
 		}
 
-
-		private void Hyperlink_Click(object sender, RoutedEventArgs e)
+		private void RatioSetFalse()
 		{
-			Clipboard.SetText(@"https://github.com/Poker-sang/BiliBulletScreenPlayer");
+			Ratio05.IsChecked = false;
+			Ratio075.IsChecked = false;
+			Ratio1.IsChecked = false;
+			Ratio125.IsChecked = false;
+			Ratio15.IsChecked = false;
+			Ratio2.IsChecked = false;
 		}
+		private void RangeSetFalse()
+		{
+			Range1.IsChecked = false;
+			Range3.IsChecked = false;
+			Range5.IsChecked = false;
+			Range10.IsChecked = false;
+			Range15.IsChecked = false;
+			Range20.IsChecked = false;
+		}
+
+		private void Hyperlink_Click(object sender, RoutedEventArgs e) 
+			=> Process.Start(new ProcessStartInfo("cmd", $"/c start https://github.com/Poker-sang/BiliBulletScreenPlayer") { CreateNoWindow = true });
 	}
 	public class SaveSettings
 	{
-		public int Speed { get => speed; set => speed = value; }     //弹幕显示速度
-		public int Range { get => range; set => range = value; }     //快进速度
-		public double Opacity { get => opacity; set => opacity = value; }       //弹幕透明度
-		public double Ratio { get => ratio; set => ratio = value; }       //倍速
-		public double WindowOpacity { get => windowOpacity; set => windowOpacity = value; }       //窗体透明度
-
-		private int speed;
-		private int range;
-		private double opacity;
-		private double ratio;
-		private double windowOpacity;
+		public int Speed { get; set; } //弹幕显示速度
+		public int Range { get; set; } //快进速度
+		public double Opacity { get; set; } //弹幕透明度
+		public double Ratio { get; set; } //倍速
+		public double WindowOpacity { get; set; } //窗体透明度
 	}
 }
