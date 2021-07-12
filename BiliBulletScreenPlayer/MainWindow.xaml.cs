@@ -214,8 +214,7 @@ namespace BiliBulletScreenPlayer
 					throw new Exception();
 				var xDoc = new XmlDocument();
 				xDoc.Load(path);
-				var iXml = xDoc.SelectSingleNode("i");
-				var tempPool = iXml.SelectNodes("d");
+				var tempPool = xDoc.SelectSingleNode("i")!.SelectNodes("d");
 				var tempList = (from XmlNode each in tempPool select new BulletScreen(each)).ToList();
 				for (var i = 0; i < tempList.Count;)
 					if (tempList[i].Mode > 5)
@@ -227,7 +226,7 @@ namespace BiliBulletScreenPlayer
 				for (var i = 0; i < App.Pool.Length; ++i)
 					App.PoolIndex.Add(i, App.Pool[i].Time);
 				TimeSlider.Maximum = App.Pool.Last().Time + 10;
-				TotalTimeBlock.Text = '/' + App.SecToTime(TimeSlider.Maximum).ToString();
+				TotalTimeBlock.Text = '/' + App.SecToTime(TimeSlider.Maximum);
 				TimeSlider.Value = 0;
 				TbPath.Text = "打开文件\n" + path;
 			}
@@ -236,7 +235,7 @@ namespace BiliBulletScreenPlayer
 				TbPath.Text = "*不是标准B站弹幕xml文件*\n您可以在 biliplus.com 获取";
 			}
 			FadeOut(TbPath, 3000);
-			if (Tb != null)
+			if (Tb is not null)
 				grid.Children.Remove(Tb);
 			ControlGrid.Visibility = Visibility.Visible;
 		}
