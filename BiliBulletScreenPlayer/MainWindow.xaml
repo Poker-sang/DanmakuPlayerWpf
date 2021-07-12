@@ -1,0 +1,182 @@
+﻿<Window
+    x:Class="BiliBulletScreenPlayer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Mainwindow"
+    Width="640"
+    Height="360"
+    MinWidth="640"
+    MinHeight="360"
+    AllowDrop="True"
+    AllowsTransparency="True"
+    Background="Transparent"
+    DragEnter="WDrag_Enter"
+    Drop="WDrop"
+    KeyDown="MainWindow_KeyDown"
+    ResizeMode="CanResizeWithGrip"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Grid
+        x:Name="grid"
+        Background="Transparent"
+        MouseDown="DoubleClick">
+        <Border
+            x:Name="BBackGround"
+            Background="Black"
+            CornerRadius="5,5,5,5"
+            Opacity="0.2" />
+        <Canvas x:Name="Canvas" />
+        <TextBlock
+            x:Name="Tb"
+            Width="550"
+            Height="92"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="72"
+            Style="{StaticResource BulletScreenBlock}"
+            Text="xml弹幕播放器" />
+        <TextBlock
+            x:Name="TbPath"
+            Height="80"
+            Margin="0,20,0,0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            FontSize="24"
+            Opacity="0"
+            Style="{StaticResource BulletScreenBlock}" />
+        <Border
+            Width="180"
+            Height="100"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            Mouse.MouseLeave="Border_MouseLeave"
+            MouseEnter="Border_MouseEnter">
+            <StackPanel
+                Height="30"
+                Margin="55,0,0,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Orientation="Horizontal">
+                <Button
+                    x:Name="BFront"
+                    Width="30"
+                    Height="30"
+                    Click="FrontClick"
+                    Content="☒"
+                    FontSize="24"
+                    Foreground="LightGray"
+                    Style="{StaticResource MyButton}"
+                    Visibility="Hidden" />
+                <Button
+                    x:Name="BSetting"
+                    Width="30"
+                    Height="30"
+                    Click="SettingClick"
+                    Content="❃"
+                    FontSize="23"
+                    Foreground="LightGray"
+                    Style="{StaticResource MyButton}"
+                    Visibility="Hidden" />
+                <Button
+                    x:Name="BClose"
+                    Width="30"
+                    Height="30"
+                    Click="CloseClick"
+                    Content="✖"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Foreground="LightGray"
+                    Style="{StaticResource MyButton}"
+                    Visibility="Hidden" />
+            </StackPanel>
+        </Border>
+        <Border
+            Width="100"
+            Height="100"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Background="Transparent"
+            Mouse.MouseLeave="BFile_MouseLeave"
+            MouseEnter="BFile_MouseEnter">
+            <Button
+                x:Name="BFile"
+                Width="30"
+                Height="30"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Click="FileClick"
+                FontWeight="Bold"
+                Foreground="LightGray"
+                Style="{StaticResource MyButton}"
+                Visibility="Hidden">
+                <Button.Content>
+                    <TextBlock
+                        Margin="0,-19"
+                        VerticalAlignment="Top"
+                        FontSize="20"
+                        Text="…" />
+                </Button.Content>
+            </Button>
+        </Border>
+        <Grid
+            x:Name="ControlGrid"
+            Height="120"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Bottom"
+            Background="Transparent"
+            MouseEnter="Grid_MouseEnter"
+            MouseLeave="Grid_MouseLeave"
+            Visibility="Hidden">
+            <Button
+                x:Name="PlayButton"
+                Width="40"
+                Height="40"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                BorderThickness="0,0,0,0"
+                Click="PlayPause"
+                Content="▶"
+                FontSize="25"
+                Foreground="LightGray"
+                Style="{StaticResource MyButton}"
+                Visibility="Hidden" />
+            <TextBlock
+                x:Name="TimeBlock"
+                Width="44"
+                Height="18"
+                Margin="45,0,0,12"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Background="#33000000"
+                Foreground="White"
+                Opacity="0.7"
+                TextAlignment="Right"
+                Visibility="Hidden" />
+            <TextBlock
+                x:Name="TotalTimeBlock"
+                Width="45"
+                Height="18"
+                Margin="89,0,0,12"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Background="#33000000"
+                Foreground="White"
+                Opacity="0.7"
+                TextAlignment="Left"
+                Visibility="Hidden" />
+            <Slider
+                x:Name="TimeSlider"
+                Height="20"
+                Margin="140,0,50,10"
+                VerticalAlignment="Bottom"
+                Minimum="0"
+                MouseLeftButtonDown="Slider_MouseButtonDown"
+                MouseLeftButtonUp="Slider_MouseButtonUp"
+                Opacity="0.8"
+                Visibility="Hidden" />
+        </Grid>
+    </Grid>
+</Window>
