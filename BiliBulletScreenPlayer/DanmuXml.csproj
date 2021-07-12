@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<ApplicationIcon>DanmuXml.ico</ApplicationIcon>
+		<NoWin32Manifest>true</NoWin32Manifest>
+		<Platforms>AnyCPU;x64</Platforms>
+		<Version>1.1.1</Version>
+		<Nullable>enable</Nullable>
+		<StartupObject></StartupObject>
+	</PropertyGroup>
+</Project>
