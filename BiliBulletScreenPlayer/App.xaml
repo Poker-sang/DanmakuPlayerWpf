@@ -41,6 +41,7 @@
                 <Setter Property="OverridesDefaultStyle" Value="True" />
                 <Setter Property="TextAlignment" Value="Center" />
                 <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="25" />
                 <Setter Property="Effect">
                     <Setter.Value>
                         <DropShadowEffect
