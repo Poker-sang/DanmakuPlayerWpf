@@ -27,9 +27,6 @@ namespace BiliBulletScreenPlayer
 				_playSpeed = value;
 			}
 		}
-		public static int BottomBulletScreen2 { get; set; } //底部弹幕数
-		public static int TopBulletScreen2 { get; set; } //顶部弹幕数
-		public static int RollBulletScreen2 { get; set; } //滚动弹幕数（指未碰到窗口右边缘的弹幕）
 		public static bool PlayPause { get; set; } //暂停
 		public static DispatcherTimer TimeCounter { get; } = new() { Interval = new TimeSpan(0, 0, 0, 0, (int)(1000 / PlaySpeed)) };
 		public static Queue<Storyboard> SbQueue { get; } = new(Speed);

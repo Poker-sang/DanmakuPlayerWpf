@@ -140,9 +140,6 @@ namespace BiliBulletScreenPlayer
 				TimeSlider.Value = 0;
 				App.Pool = null;
 				App.PoolIndex = new SortedList<int, int>();
-				//Settings.BottomBulletScreen = new List<BulletScreen>();
-				//Settings.TopBulletScreen = new List<BulletScreen>();
-				//Settings.RollBulletScreen = new List<BulletScreen>();
 				
 				var xDoc = new XmlDocument();
 				xDoc.Load(path);
