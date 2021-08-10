@@ -20,6 +20,8 @@ namespace BiliBulletScreenPlayer
 		public MainWindow()
 		{
 			InitializeComponent();
+			BulletScreen.Window = this;
+			BBackGround.Opacity = App.WindowOpacity;
 			MouseLeftButtonDown += (_, _) => DragMove();
 			TimeSlider.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(Slider_MouseButtonDown), true);
 			TimeSlider.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(Slider_MouseButtonUp), true);
@@ -32,14 +34,16 @@ namespace BiliBulletScreenPlayer
 				if (TimeSlider.Value < TimeSlider.Maximum)
 				{
 					++TimeSlider.Value;
-					App.SbQueue.Dequeue();
-					App.SbQueue.Enqueue(new Storyboard());
 					var indexBegin = App.PoolIndex.IndexOfValue((int)TimeSlider.Value);
-					if (indexBegin != -1)
-						while (indexBegin < App.Pool.Length && App.Pool[indexBegin].Time == (int)TimeSlider.Value)
-							App.Pool[indexBegin++].Start(App.SbQueue.Last());
-					Storyboard.SetTargetProperty(App.SbQueue.Last(), propertyPath);
-					App.SbQueue.Last().Begin();
+					if (indexBegin == -1) return;
+					var storyBoard = new Storyboard();
+					do App.Pool[indexBegin++].Start(storyBoard, (int)TimeSlider.Value);
+					while (indexBegin < App.Pool.Length && App.Pool[indexBegin].Time == (int)TimeSlider.Value);
+					if (storyBoard.Children.Count is 0) return;
+					storyBoard.Completed += (_, _) => App.SbQueue.Dequeue();
+					Storyboard.SetTargetProperty(storyBoard, propertyPath);
+					App.SbQueue.Enqueue(storyBoard);
+					storyBoard.Begin();
 				}
 				else
 				{
@@ -48,7 +52,6 @@ namespace BiliBulletScreenPlayer
 					ScreenAllClear();
 				}
 			};
-			BBackGround.Opacity = App.WindowOpacity;
 		}
 		private void FileClick(object sender, RoutedEventArgs e)
 		{
@@ -62,7 +65,7 @@ namespace BiliBulletScreenPlayer
 				CheckFileExists = true
 			};
 			fileDialog.ShowDialog();
-			if (fileDialog.FileName != string.Empty)
+			if (fileDialog.FileName is not "")
 				FileOpen(fileDialog.FileName);
 		}
 		private void FrontClick(object sender, RoutedEventArgs e)
@@ -144,7 +147,7 @@ namespace BiliBulletScreenPlayer
 				var xDoc = new XmlDocument();
 				xDoc.Load(path);
 				var tempPool = xDoc.SelectSingleNode("i")!.SelectNodes("d");
-				var tempList = tempPool!.Cast<XmlNode>().Select(each => new BulletScreen(each, this)).ToList();
+				var tempList = tempPool!.Cast<XmlNode>().Select(each => new BulletScreen(each)).ToList();
 				for (var i = 0; i < tempList.Count;)
 					if (tempList[i].Mode > 5)
 						tempList.RemoveAt(i);
@@ -174,14 +177,9 @@ namespace BiliBulletScreenPlayer
 		private void ScreenAllClear()
 		{
 			Canvas.Children.Clear();
-			for (var i = 0; i < App.Speed; ++i)
-			{
-				App.SbQueue.Dequeue();
-				App.SbQueue.Enqueue(null);
-			}
-			App.RollBulletScreen2 = 0;
-			App.TopBulletScreen2 = 0;
-			App.BottomBulletScreen2 = 0;
+			App.SbQueue.Clear();
+			App.RollRoom.Clear();
+			App.StaticRoom.Clear();
 		}
 
 
