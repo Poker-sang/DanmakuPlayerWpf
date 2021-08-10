@@ -16,7 +16,7 @@
     Background="Transparent"
     DragEnter="WDrag_Enter"
     Drop="WDrop"
-    KeyDown="MainWindow_KeyDown"
+    KeyDown="WKeyDown"
     ResizeMode="CanResizeWithGrip"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -26,7 +26,7 @@
     <Grid
         x:Name="Grid"
         Background="Transparent"
-        MouseDown="DoubleClick">
+        MouseDown="WDoubleClick">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -74,19 +74,19 @@
                 Visibility="Hidden">
                 <Button
                     x:Name="BFront"
-                    Click="FrontClick"
+                    Click="BFrontClick"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xE718;" />
                 </Button>
                 <Button
-                    Click="SettingClick"
+                    Click="BSettingClick"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xE713;" />
                 </Button>
                 <Button
-                    Click="CloseClick"
+                    Click="BCloseClick"
                     FontWeight="Bold"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">
@@ -105,7 +105,7 @@
                 x:Name="BFile"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Click="FileClick"
+                Click="BFileClick"
                 FontWeight="Bold"
                 Foreground="LightGray"
                 Style="{StaticResource MyButton}"
@@ -126,8 +126,8 @@
                 VerticalAlignment="Bottom"
                 Visibility="Hidden">
                 <Button
-                    x:Name="PlayButton"
-                    Click="PlayPause"
+                    x:Name="BPauseResume"
+                    Click="PauseResumeClick"
                     DockPanel.Dock="Left"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">

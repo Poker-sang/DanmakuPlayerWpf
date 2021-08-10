@@ -21,10 +21,6 @@
         <TabControl x:Name="Control" Grid.Row="0">
             <TabItem Header="窗口设置">
                 <Grid Margin="20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="4*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
                     <Slider
                         x:Name="SWindowOpacity"
                         Grid.Column="0"
@@ -32,9 +28,9 @@
                         AutoToolTipPlacement="TopLeft"
                         AutoToolTipPrecision="1"
                         IsSnapToTickEnabled="True"
+                        LargeChange="0.1"
                         Maximum="1"
                         Minimum="0"
-                        SmallChange="0.1"
                         TickFrequency="0.1"
                         TickPlacement="Both" />
                 </Grid>
@@ -52,9 +48,9 @@
                         AutoToolTipPlacement="TopLeft"
                         AutoToolTipPrecision="0"
                         IsSnapToTickEnabled="True"
+                        LargeChange="1"
                         Maximum="20"
                         Minimum="1"
-                        SmallChange="1"
                         TickFrequency="1"
                         TickPlacement="Both" />
                     <Slider
@@ -64,6 +60,7 @@
                         AutoToolTipPlacement="TopLeft"
                         AutoToolTipPrecision="2"
                         IsSnapToTickEnabled="True"
+                        LargeChange="0.25"
                         Maximum="2"
                         Minimum="0.5"
                         SmallChange="0.25"
@@ -85,9 +82,9 @@
                         AutoToolTipPlacement="TopLeft"
                         AutoToolTipPrecision="0"
                         IsSnapToTickEnabled="True"
+                        LargeChange="1"
                         Maximum="20"
                         Minimum="1"
-                        SmallChange="1"
                         TickFrequency="1"
                         TickPlacement="Both" />
                     <Slider
@@ -97,9 +94,9 @@
                         AutoToolTipPlacement="TopLeft"
                         AutoToolTipPrecision="2"
                         IsSnapToTickEnabled="True"
+                        LargeChange="0.1"
                         Maximum="1"
                         Minimum="0"
-                        SmallChange="0.1"
                         TickFrequency="0.1"
                         TickPlacement="Both" />
 
@@ -112,7 +109,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0">
-                        <Run Text="版本：v2.00" /><LineBreak /><LineBreak />
+                        <Run Text="版本：v2.10" /><LineBreak /><LineBreak />
                         <Run Text="不足的地方↓↓↓" /><LineBreak />
                         <Run Text="界面丑" /><LineBreak />
                         <Run Text="有些卡顿" /><LineBreak />

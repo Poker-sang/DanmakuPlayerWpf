@@ -32,11 +32,11 @@ namespace BiliBulletScreenPlayer
 				case 0:
 					SWindowOpacity.Value = 0.2;
 					break;
-				case 2:
+				case 1:
 					SFastForward.Value = 5;
 					SPlaySpeed.Value = 1;
 					break;
-				case 1:
+				case 2:
 					SSpeed.Value = 15;
 					SOpacity.Value = 0.7;
 					break;
@@ -50,6 +50,7 @@ namespace BiliBulletScreenPlayer
 			Default.PlaySpeed = App.PlaySpeed = SPlaySpeed.Value;
 			Default.Speed = App.Speed = (int)SSpeed.Value;
 			Default.Opacity = App.Opacity = SOpacity.Value;
+			DialogResult = true;
 			Close();
 		}
 		private void BCancel_Click(object sender, RoutedEventArgs e) => Close();
