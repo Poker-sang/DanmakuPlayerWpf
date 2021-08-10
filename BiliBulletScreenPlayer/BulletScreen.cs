@@ -17,7 +17,7 @@ namespace BiliBulletScreenPlayer
 		private readonly string _text;
 		private readonly int _color;
 		private readonly TextBlock _textBlock = new();
-		private const int Height = 33;
+		private const int Height = 32; //实际数据约31.75
 
 		public static MainWindow Window;
 
