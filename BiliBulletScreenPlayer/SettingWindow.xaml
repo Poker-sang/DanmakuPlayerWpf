@@ -3,239 +3,152 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:BiliBulletScreenPlayer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="SettingWindow"
-    Width="444"
-    Height="230"
+    Width="500"
+    Height="300"
     AllowsTransparency="True"
-    Background="Black"
     ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
     WindowStyle="None"
     mc:Ignorable="d">
-    <Canvas x:Name="BaseCanvas">
-        <TabControl
-            Width="444"
-            Height="200"
-            Background="Transparent"
-            BorderThickness="0">
-            <TabItem
-                Foreground="White"
-                Header="窗口设置"
-                Style="{StaticResource NewTabItem}">
-                <Canvas Background="Transparent">
-                    <TextBlock
-                        Canvas.Left="30"
-                        Canvas.Top="30"
-                        Text="透明度：" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TabControl x:Name="Control" Grid.Row="0">
+            <TabItem Header="窗口设置">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
                     <Slider
                         x:Name="SWindowOpacity"
-                        Canvas.Left="30"
-                        Canvas.Top="101"
-                        Width="384"
-                        Maximum="10"
+                        Grid.Column="0"
+                        ui:ControlHelper.Header="透明度"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="1"
+                        IsSnapToTickEnabled="True"
+                        Maximum="1"
                         Minimum="0"
-                        ValueChanged="SWindowOpacity_ValueChanged" />
-                    <TextBlock
-                        x:Name="TBWindowOpacity"
-                        Canvas.Left="30"
-                        Canvas.Top="67"
-                        TextWrapping="Wrap" />
-                </Canvas>
+                        SmallChange="0.1"
+                        TickFrequency="0.1"
+                        TickPlacement="Both" />
+                </Grid>
             </TabItem>
-            <TabItem
-                Foreground="White"
-                Header="播放设置"
-                Style="{StaticResource NewTabItem}">
-                <Canvas Background="Transparent">
-                    <TextBlock
-                        Canvas.Left="30"
-                        Canvas.Top="30"
-                        Text="快进速度：" />
-                    <CheckBox
-                        x:Name="Range1"
-                        Canvas.Left="109"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="1"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Range3"
-                        Canvas.Left="143"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="3"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Range5"
-                        Canvas.Left="177"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="5"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Range10"
-                        Canvas.Left="211"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="10"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Range15"
-                        Canvas.Left="255"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="15"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Range20"
-                        Canvas.Left="299"
-                        Canvas.Top="30"
-                        Click="Range_Click"
-                        Content="20"
-                        Foreground="White" />
-
-                    <TextBlock
-                        Canvas.Left="30"
-                        Canvas.Top="101"
-                        Text="倍速：" />
-                    <CheckBox
-                        x:Name="Ratio05"
-                        Canvas.Left="77"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="0.50"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Ratio075"
-                        Canvas.Left="134"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="0.75"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Ratio1"
-                        Canvas.Left="191"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="1.00"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Ratio125"
-                        Canvas.Left="248"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="1.25"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Ratio15"
-                        Canvas.Left="305"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="1.50"
-                        Foreground="White" />
-                    <CheckBox
-                        x:Name="Ratio2"
-                        Canvas.Left="362"
-                        Canvas.Top="101"
-                        Click="Ratio_Click"
-                        Content="2.00"
-                        Foreground="White" />
-                </Canvas>
-            </TabItem>
-            <TabItem
-                Foreground="White"
-                Header="弹幕设置"
-                Style="{StaticResource NewTabItem}">
-                <Canvas Background="Transparent">
-                    <TextBlock
-                        Canvas.Left="30"
-                        Canvas.Top="30"
-                        Text="滚动速度：" />
-                    <TextBlock
-                        x:Name="TBSpeed"
-                        Canvas.Left="115"
-                        Canvas.Top="30"
-                        TextWrapping="Wrap" />
+            <TabItem Header="播放设置">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
                     <Slider
-                        x:Name="SSpeed"
-                        Canvas.Left="139"
-                        Canvas.Top="30"
-                        Width="275"
+                        x:Name="SFastForward"
+                        Grid.Row="0"
+                        ui:ControlHelper.Header="快进秒数"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsSnapToTickEnabled="True"
                         Maximum="20"
                         Minimum="1"
-                        ValueChanged="SSpeed_ValueChanged" />
-                    <TextBlock
-                        Canvas.Left="30"
-                        Canvas.Top="101"
-                        Text="透明度：" />
-                    <TextBlock
-                        x:Name="TbOpacity"
-                        Canvas.Left="111"
-                        Canvas.Top="101"
-                        TextWrapping="Wrap" />
+                        SmallChange="1"
+                        TickFrequency="1"
+                        TickPlacement="Both" />
+                    <Slider
+                        x:Name="SPlaySpeed"
+                        Grid.Row="1"
+                        ui:ControlHelper.Header="播放倍数"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="2"
+                        IsSnapToTickEnabled="True"
+                        Maximum="2"
+                        Minimum="0.5"
+                        SmallChange="0.25"
+                        TickFrequency="0.25"
+                        TickPlacement="Both" />
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="弹幕设置">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Slider
+                        x:Name="SSpeed"
+                        Grid.Row="0"
+                        ui:ControlHelper.Header="过屏时间"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsSnapToTickEnabled="True"
+                        Maximum="20"
+                        Minimum="1"
+                        SmallChange="1"
+                        TickFrequency="1"
+                        TickPlacement="Both" />
                     <Slider
                         x:Name="SOpacity"
-                        Canvas.Left="139"
-                        Canvas.Top="101"
-                        Width="275"
-                        Maximum="10"
+                        Grid.Row="1"
+                        ui:ControlHelper.Header="透明度"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="2"
+                        IsSnapToTickEnabled="True"
+                        Maximum="1"
                         Minimum="0"
-                        ValueChanged="SOpacity_ValueChanged" />
-                </Canvas>
+                        SmallChange="0.1"
+                        TickFrequency="0.1"
+                        TickPlacement="Both" />
+
+                </Grid>
             </TabItem>
-            <TabItem
-                Foreground="White"
-                Header="关于"
-                Style="{StaticResource NewTabItem}">
-                <Grid Background="Transparent">
-                    <TextBlock
-                        Margin="30,30,0,0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top">
-                        <Run Text="版本：v1.1.1" /><LineBreak />
+            <TabItem Header="关于">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0">
+                        <Run Text="版本：v2.00" /><LineBreak /><LineBreak />
                         <Run Text="不足的地方↓↓↓" /><LineBreak />
-                        <Run Text="有崩溃可能" /><LineBreak />
-                        <Run Text="图标、界面丑" /><LineBreak />
-                        <Run Text="内存占用大、卡顿" />
-                    </TextBlock>
-                    <TextBlock
-                        Margin="0,30,30,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
-                        <Run Text="邮箱：poker_sang@163.com  " /><LineBreak />
-                        <Hyperlink Click="Hyperlink_Click">点击打开 Github</Hyperlink><LineBreak />
+                        <Run Text="界面丑" /><LineBreak />
+                        <Run Text="有些卡顿" /><LineBreak />
                         <Run Text="不支持高级弹幕" /><LineBreak />
                         <Run Text="弹幕出现位置算法差" /><LineBreak />
-                        <Run Text="有常用功能无法实现     ……" />
+                        <Run Text="有常用功能无法实现" /><LineBreak />
+                        <Run Text="……" />
+                    </TextBlock>
+                    <TextBlock Grid.Column="1">
+                        <Run Text="邮箱：poker_sang@163.com" /><LineBreak />
+                        <ui:HyperlinkButton Content="GitHub: BiliBulletScreenPlayer" NavigateUri="https://github.com/Poker-sang/BiliBulletScreenPlayer" />
                     </TextBlock>
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button
-            x:Name="BCancel"
-            Canvas.Left="334"
-            Canvas.Top="205"
-            Width="100"
-            Height="20"
-            Click="BCancel_Click"
-            Content="取消" />
-        <Button
-            x:Name="BSave"
-            Canvas.Left="222"
-            Canvas.Top="205"
-            Width="100"
-            Height="20"
-            Click="BSave_Click"
-            Content="保存" />
-        <Button
-            x:Name="BDefault"
-            Canvas.Left="10"
-            Canvas.Top="205"
-            Width="100"
-            Height="20"
-            Click="BDefault_Click"
-            Content="全部恢复默认" />
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Click="BDefault_Click"
+                Content="恢复默认" />
+            <Button
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Click="BCancel_Click"
+                Content="取消" />
+            <Button
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                Click="BSave_Click"
+                Content="保存" />
+        </Grid>
 
-    </Canvas>
+    </Grid>
 </Window>
