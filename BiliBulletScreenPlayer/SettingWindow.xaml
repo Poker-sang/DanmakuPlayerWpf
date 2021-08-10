@@ -105,7 +105,7 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Header="关于">
+            <TabItem Header="关于软件">
                 <Grid Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -117,7 +117,6 @@
                         <Run Text="界面丑" /><LineBreak />
                         <Run Text="有些卡顿" /><LineBreak />
                         <Run Text="不支持高级弹幕" /><LineBreak />
-                        <Run Text="弹幕出现位置算法差" /><LineBreak />
                         <Run Text="有常用功能无法实现" /><LineBreak />
                         <Run Text="……" />
                     </TextBlock>

@@ -11,65 +11,97 @@ namespace BiliBulletScreenPlayer
 
 	public class BulletScreen
 	{
-		public int Time { get; }
-		public int Mode { get; }
-		//public int Size { get; }
-		private string Text { get; }
-		private Storyboard RollSb { get; set; }
-		private TextBlock TextBlock { get; } = new();
+		public readonly int Time;
+		public readonly int Mode;
+		//public readonly int Size;
+		private readonly string _text;
+		private readonly int _color;
+		private readonly TextBlock _textBlock = new();
+		private const int Height = 33;
 
-		private static MainWindow _window;
+		public static MainWindow Window;
 
-		public BulletScreen(XmlNode xmlNode,MainWindow window)
+		public BulletScreen(XmlNode xmlNode)
 		{
-			_window = window;
 			var tempInfo = ((XmlElement)xmlNode).GetAttribute("p").Split(",");
 			Time = (int)ToDouble(tempInfo[0]);
 			Mode = ToInt32(tempInfo[1]);
 			//size = Convert.ToInt32(tempInfo[2]);
 			_color = ToInt32(tempInfo[3]);
-			Text = ((XmlElement)xmlNode).InnerText;
+			_text = ((XmlElement)xmlNode).InnerText;
 		}
-		public void Start(Storyboard storyboard)
+		public void Start(Storyboard storyboard,int timeNow)
 		{
-			switch (Mode)
-			{
-				case 3 when App.BottomBulletScreen2 > _window.Height / 33:
-					App.BottomBulletScreen2 = 0;
-					break;
-				case 4 when App.TopBulletScreen2 > _window.Height / 33:
-					App.TopBulletScreen2 = 0;
-					break;
-				case < 4 when App.RollBulletScreen2 > _window.Height / 33:
-					App.RollBulletScreen2 = 0;
-					break;
-			}
+			_textBlock.Style = (Style)_textBlock.FindResource("BulletScreenBlock");
+			_textBlock.Opacity = App.Opacity;
+			_textBlock.Text = _text;
+			_textBlock.Foreground = new SolidColorBrush(Color.FromRgb((byte)((_color & 0xFF0000) >> 0x10), (byte)((_color & 0xFF00) >> 8), (byte)(_color & 0xFF)));
+			_ = Window.Canvas.Children.Add(_textBlock);
+			_textBlock.UpdateLayout();
 
-			TextBlock.Style = (Style)TextBlock.FindResource("BulletScreenBlock");
-			TextBlock.Opacity = App.Opacity;
-			TextBlock.FontSize = 25;
-			TextBlock.Text = Text;
-			_ = _window.Canvas.Children.Add(TextBlock);
-			TextBlock.UpdateLayout();
-			TextBlock.Foreground = new SolidColorBrush(Color.FromRgb((byte)((_color & 0xFF0000) >> 16), (byte)((_color & 0xFF00) >> 8), (byte)(_color & 0xFF)));
-			TextBlock.Visibility = Visibility.Visible;
-
+			var smallestIndex = 0;
 			switch (Mode)
 			{
 				case 4: //底部
-					Canvas.SetTop(TextBlock, _window.Height - App.BottomBulletScreen2++ * 33 % _window.Height);        //先赋值再自增
+					for (var i = (int)(Window.ActualHeight / Height - 1); i >= 0; i--)
+						if (i >= App.StaticRoom.Count)
+						{
+							smallestIndex = i;
+							while (i >= App.StaticRoom.Count)
+								App.StaticRoom.Add(App.Speed + timeNow);
+							break;
+						}
+						else if (timeNow >= App.StaticRoom[i])
+						{
+							smallestIndex = i;
+							break;
+						}
+						else if (App.StaticRoom[smallestIndex] > App.StaticRoom[i])
+							smallestIndex = i;
 					break;
 				case 5: //顶部
-					Canvas.SetTop(TextBlock, App.TopBulletScreen2++ * 33 % _window.Height);
+					for (var i = 0; i < Window.ActualHeight / Height; i++)
+						if (i >= App.StaticRoom.Count)
+						{
+							App.StaticRoom.Add(App.Speed + timeNow);
+							smallestIndex = i;
+							break;
+						}
+						else if (timeNow >= App.StaticRoom[i])
+						{
+							smallestIndex = i;
+							break;
+						}
+						else if(App.StaticRoom[smallestIndex] > App.StaticRoom[i])
+							smallestIndex = i;
 					break;
 				default: //滚动
-					Canvas.SetTop(TextBlock, App.RollBulletScreen2++ * 33 % _window.Height);
+					var rollTimeSpan = (int)(_textBlock.ActualWidth * App.Speed / (Window.ActualWidth + _textBlock.ActualWidth) + 1);
+					for (var i = 0; i < Window.ActualHeight / Height; i++)
+						if (i >= App.RollRoom.Count)
+						{
+							App.RollRoom.Add(rollTimeSpan + timeNow);
+							smallestIndex = i;
+							break;
+						}
+						else if (timeNow >= App.RollRoom[i])
+						{
+							smallestIndex = i;
+							break;
+						}
+						else if (App.RollRoom[smallestIndex] > App.RollRoom[i])
+							smallestIndex = i;
+					App.RollRoom[smallestIndex] = rollTimeSpan + timeNow;
+					Canvas.SetTop(_textBlock, smallestIndex * Height);
 					RollBulletScreen(storyboard);
-					return;     //不执行下面的语句
+					return;
 			}
-			Canvas.SetLeft(TextBlock, (_window.Width - TextBlock.ActualWidth) / 2);
+			App.StaticRoom[smallestIndex] = App.Speed + timeNow;
+			Canvas.SetTop(_textBlock, smallestIndex * Height);
+			Canvas.SetLeft(_textBlock, (Window.ActualWidth - _textBlock.ActualWidth) / 2);
 			App.TimeCounter.Tick += StaticBulletScreen;
 		}
+		private int _delayTime;
 		private void StaticBulletScreen(object sender, EventArgs e)
 		{
 			if (_delayTime < App.Speed)
@@ -77,27 +109,21 @@ namespace BiliBulletScreenPlayer
 			else
 			{
 				App.TimeCounter.Tick -= StaticBulletScreen;
-				if (Mode == 4)
-					--App.BottomBulletScreen2;
-				else --App.TopBulletScreen2;
-				_window.Canvas.Children.Remove(TextBlock);
+				Window.Canvas.Children.Remove(_textBlock);
 			}
 		}
 		private void RollBulletScreen(Storyboard storyboard)
 		{
-			RollSb = storyboard;
 			var rollDa = new DoubleAnimation
 			{
-				From = _window.Width,
-				To = -TextBlock.ActualWidth,
+				From = Window.ActualWidth,
+				To = -_textBlock.ActualWidth,
 				Duration = TimeSpan.FromSeconds(App.Speed)
 			};
-			Storyboard.SetTarget(rollDa, TextBlock);
-			RollSb.Completed += (_, _) => { _window.Canvas.Children.Remove(TextBlock); };
-			RollSb.Children.Add(rollDa);
+			Storyboard.SetTarget(rollDa, _textBlock);
+			storyboard.Children.Add(rollDa);
+			storyboard.Completed += (_, _) => Window.Canvas.Children.Remove(_textBlock);
 		}
 
-		private int _delayTime;
-		private readonly int _color;
 	}
 }

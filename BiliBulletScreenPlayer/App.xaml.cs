@@ -36,8 +36,7 @@ namespace BiliBulletScreenPlayer
 		public static BulletScreen[] Pool { get; set; } //弹幕池
 		public static SortedList<int, int> PoolIndex { get; set; } //总弹幕池键值表
 
-		//public static List<BulletScreen> BottomBulletScreen { get; set; } = null; //底部弹幕数
-		//public static List<BulletScreen> TopBulletScreen { get; set; } = null; //顶部弹幕数
-		//public static List<BulletScreen> RollBulletScreen { get; set; } = null; //滚动弹幕数（指未碰到窗口右边缘的弹幕）
+		public static List<int> StaticRoom { get; } = new(); //静止弹幕空间（等到该空间空余时的播放进度）
+		public static List<int> RollRoom { get; } = new(); //滚动弹幕空间（等到该空间空余时的播放进度）
 	}
 }
