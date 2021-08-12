@@ -1,13 +1,12 @@
-﻿using System;
+﻿using ModernWpf.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Xml;
-using ModernWpf.Controls;
 
 namespace BiliBulletScreenPlayer
 {
@@ -144,31 +143,31 @@ namespace BiliBulletScreenPlayer
 			switch (e.Key)
 			{
 				case Key.Left:
-				{
-					if (TimeSlider.Value - App.FastForward < 0)
-						TimeSlider.Value = 0;
-					else TimeSlider.Value -= App.FastForward;
-					ScreenAllClear();
-					break;
-				}
+					{
+						if (TimeSlider.Value - App.FastForward < 0)
+							TimeSlider.Value = 0;
+						else TimeSlider.Value -= App.FastForward;
+						ScreenAllClear();
+						break;
+					}
 				case Key.Right:
-				{
-					if (TimeSlider.Value + App.FastForward > TimeSlider.Maximum)
-						TimeSlider.Value = 0;
-					else TimeSlider.Value += App.FastForward;
-					ScreenAllClear();
-					break;
-				}
+					{
+						if (TimeSlider.Value + App.FastForward > TimeSlider.Maximum)
+							TimeSlider.Value = 0;
+						else TimeSlider.Value += App.FastForward;
+						ScreenAllClear();
+						break;
+					}
 				case Key.Space:
-				{
-					PauseResumeClick(null, null);
-					break;
-				}
+					{
+						PauseResumeClick(null, null);
+						break;
+					}
 				case Key.Tab:
-				{
-					SettingOpen();
-					break;
-				}
+					{
+						SettingOpen();
+						break;
+					}
 			}
 		}
 		private void WDrag_Enter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
@@ -194,13 +193,13 @@ namespace BiliBulletScreenPlayer
 			if (Topmost)
 			{
 				Topmost = false;
-				BFront.Content = new FontIcon { Glyph = "\uE718" };
+				((Button)sender).Content = new FontIcon { Glyph = "\uE718" };
 				FadeOut("总在最前端：关闭", 3000);
 			}
 			else
 			{
 				Topmost = true;
-				BFront.Content = new FontIcon { Glyph = "\uE840" };
+				((Button)sender).Content = new FontIcon { Glyph = "\uE840" };
 				FadeOut("总在最前端：关闭", 3000);
 			}
 		}

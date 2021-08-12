@@ -30,7 +30,7 @@ namespace BiliBulletScreenPlayer
 			_color = ToInt32(tempInfo[3]);
 			_text = ((XmlElement)xmlNode).InnerText;
 		}
-		public void Start(Storyboard storyboard,int timeNow)
+		public void Start(Storyboard storyboard, int timeNow)
 		{
 			_textBlock.Style = (Style)_textBlock.FindResource("BulletScreenBlock");
 			_textBlock.Opacity = App.Opacity;
@@ -72,7 +72,7 @@ namespace BiliBulletScreenPlayer
 							smallestIndex = i;
 							break;
 						}
-						else if(App.StaticRoom[smallestIndex] > App.StaticRoom[i])
+						else if (App.StaticRoom[smallestIndex] > App.StaticRoom[i])
 							smallestIndex = i;
 					break;
 				default: //滚动

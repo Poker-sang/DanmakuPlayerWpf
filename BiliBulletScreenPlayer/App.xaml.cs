@@ -22,7 +22,7 @@ namespace BiliBulletScreenPlayer
 			get => _playSpeed;
 			set
 			{
-				if(Equals(_playSpeed,value))return;
+				if (Equals(_playSpeed, value)) return;
 				TimeCounter.Interval = new TimeSpan(0, 0, 0, 0, (int)(1000 / PlaySpeed));
 				_playSpeed = value;
 			}

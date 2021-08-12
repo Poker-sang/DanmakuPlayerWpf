@@ -1,9 +1,6 @@
-﻿using System;
-using System.Configuration;
-using System.Diagnostics;
-using System.Globalization;
+﻿using ModernWpf;
+using ModernWpf.Controls;
 using System.Windows;
-using System.Windows.Controls;
 using static BiliBulletScreenPlayer.Properties.Settings;
 
 namespace BiliBulletScreenPlayer
@@ -16,9 +13,11 @@ namespace BiliBulletScreenPlayer
 		public SettingWindow(MainWindow owner)
 		{
 			Owner = owner;
+			ThemeManager.Current.ApplicationTheme = Default.Theme ? ApplicationTheme.Dark : ApplicationTheme.Light;
 			InitializeComponent();
 			MouseLeftButtonDown += (_, _) => DragMove();
 			SWindowOpacity.Value = App.WindowOpacity;
+			TgTheme.IsOn = Default.Theme;
 			SFastForward.Value = App.FastForward;
 			SPlaySpeed.Value = App.PlaySpeed;
 			SSpeed.Value = App.Speed;
@@ -46,14 +45,17 @@ namespace BiliBulletScreenPlayer
 		private void BSave_Click(object sender, RoutedEventArgs e)
 		{
 			Default.WindowOpacity = App.WindowOpacity = SWindowOpacity.Value;
+			Default.Theme = TgTheme.IsOn;
 			Default.FastForward = App.FastForward = (int)SFastForward.Value;
 			Default.PlaySpeed = App.PlaySpeed = SPlaySpeed.Value;
 			Default.Speed = App.Speed = (int)SSpeed.Value;
 			Default.Opacity = App.Opacity = SOpacity.Value;
+			Default.Save();
 			DialogResult = true;
 			Close();
 		}
 		private void BCancel_Click(object sender, RoutedEventArgs e) => Close();
 
+		private void TgTheme_OnToggled(object sender, RoutedEventArgs e) => ThemeManager.Current.ApplicationTheme = ((ToggleSwitch)sender).IsOn ? ApplicationTheme.Dark : ApplicationTheme.Light;
 	}
 }

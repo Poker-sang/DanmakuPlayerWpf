@@ -73,7 +73,6 @@
                 Orientation="Horizontal"
                 Visibility="Hidden">
                 <Button
-                    x:Name="BFront"
                     Click="BFrontClick"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">
@@ -87,7 +86,6 @@
                 </Button>
                 <Button
                     Click="BCloseClick"
-                    FontWeight="Bold"
                     Foreground="LightGray"
                     Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xEDAE;" />
@@ -106,7 +104,6 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Click="BFileClick"
-                FontWeight="Bold"
                 Foreground="LightGray"
                 Style="{StaticResource MyButton}"
                 Visibility="Hidden">
@@ -134,7 +131,6 @@
                     <ui:FontIcon Glyph="&#xE768;" />
                 </Button>
                 <TextBlock
-                    x:Name="TimeBlock"
                     Width="44"
                     Height="18"
                     Background="#33000000"
