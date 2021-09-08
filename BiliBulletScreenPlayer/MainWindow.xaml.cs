@@ -54,10 +54,11 @@ namespace BiliBulletScreenPlayer
 				}
 			};
 		}
-		private void SettingOpen()
+		private async void SettingOpen()
 		{
-			var settingWindow = new SettingWindow(this);
-			if (settingWindow.ShowDialog() != true) return;
+			var settingWindow = new SettingDialog();
+			await settingWindow.ShowAsync();
+			if (settingWindow.DialogResult is not true) return;
 			BBackGround.Opacity = App.WindowOpacity;
 			FadeOut("设置已更新", 3000);
 		}

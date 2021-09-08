@@ -6,16 +6,14 @@ using static BiliBulletScreenPlayer.Properties.Settings;
 namespace BiliBulletScreenPlayer
 {
 	/// <summary>
-	/// SettingWindow.xaml 的交互逻辑
+	/// SettingDialog.xaml 的交互逻辑
 	/// </summary>
-	public partial class SettingWindow : Window
+	public partial class SettingDialog : ContentDialog
 	{
-		public SettingWindow(MainWindow owner)
+		public SettingDialog()
 		{
-			Owner = owner;
 			ThemeManager.Current.ApplicationTheme = Default.Theme ? ApplicationTheme.Dark : ApplicationTheme.Light;
 			InitializeComponent();
-			MouseLeftButtonDown += (_, _) => DragMove();
 			SWindowOpacity.Value = App.WindowOpacity;
 			TgTheme.IsOn = Default.Theme;
 			SFastForward.Value = App.FastForward;
@@ -23,8 +21,9 @@ namespace BiliBulletScreenPlayer
 			SSpeed.Value = App.Speed;
 			SOpacity.Value = App.Opacity;
 		}
+		public bool DialogResult { get; set; }
 
-		private void BDefault_Click(object sender, RoutedEventArgs e)
+		private void BDefault_Click(ContentDialog contentDialog, ContentDialogButtonClickEventArgs args)
 		{
 			switch (Control.SelectedIndex)
 			{
@@ -42,7 +41,7 @@ namespace BiliBulletScreenPlayer
 			}
 		}
 
-		private void BSave_Click(object sender, RoutedEventArgs e)
+		private void BSave_Click(ContentDialog contentDialog, ContentDialogButtonClickEventArgs args)
 		{
 			Default.WindowOpacity = App.WindowOpacity = SWindowOpacity.Value;
 			Default.Theme = TgTheme.IsOn;
@@ -52,9 +51,9 @@ namespace BiliBulletScreenPlayer
 			Default.Opacity = App.Opacity = SOpacity.Value;
 			Default.Save();
 			DialogResult = true;
-			Close();
+			Hide();
 		}
-		private void BCancel_Click(object sender, RoutedEventArgs e) => Close();
+		private void BCancel_Click(ContentDialog contentDialog, ContentDialogButtonClickEventArgs args) => Hide();
 
 		private void TgTheme_OnToggled(object sender, RoutedEventArgs e) => ThemeManager.Current.ApplicationTheme = ((ToggleSwitch)sender).IsOn ? ApplicationTheme.Dark : ApplicationTheme.Light;
 	}
