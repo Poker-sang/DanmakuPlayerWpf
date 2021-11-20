@@ -2,6 +2,7 @@
     x:Class="BiliBulletScreenPlayer.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:BiliBulletScreenPlayer.Converter"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:BiliBulletScreenPlayer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,7 +22,7 @@
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <local:SliderToTextBlock x:Key="SliderToTextBlock" />
+        <converter:SliderToTextBlock x:Key="SliderToTextBlock" />
     </Window.Resources>
     <Grid
         x:Name="Grid"
@@ -67,27 +68,17 @@
             <StackPanel
                 x:Name="SpButtons"
                 Height="40"
-                Margin="55,0,0,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Visibility="Hidden">
-                <Button
-                    Click="BFrontClick"
-                    Foreground="LightGray"
-                    Style="{StaticResource MyButton}">
+                <Button Click="BFrontClick" Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xE718;" />
                 </Button>
-                <Button
-                    Click="BSettingClick"
-                    Foreground="LightGray"
-                    Style="{StaticResource MyButton}">
+                <Button Click="BSettingClick" Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xE713;" />
                 </Button>
-                <Button
-                    Click="BCloseClick"
-                    Foreground="LightGray"
-                    Style="{StaticResource MyButton}">
+                <Button Click="BCloseClick" Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xEDAE;" />
                 </Button>
             </StackPanel>
@@ -99,16 +90,22 @@
             Background="Transparent"
             Mouse.MouseLeave="BFile_MouseLeave"
             MouseEnter="BFile_MouseEnter">
-            <Button
-                x:Name="BFile"
+
+            <StackPanel
+                x:Name="ImportButtons"
+                Height="40"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                Click="BFileClick"
-                Foreground="LightGray"
-                Style="{StaticResource MyButton}"
+                Orientation="Horizontal"
                 Visibility="Hidden">
-                <ui:FontIcon Glyph="&#xE8E5;" />
-            </Button>
+                <Button Click="BImportClick" Style="{StaticResource MyButton}">
+                    <ui:FontIcon Glyph="&#xE774;" />
+                </Button>
+                <Button Click="BFileClick" Style="{StaticResource MyButton}">
+                    <ui:FontIcon Glyph="&#xE8E5;" />
+                </Button>
+            </StackPanel>
+
         </Border>
         <Border
             x:Name="BControl"
