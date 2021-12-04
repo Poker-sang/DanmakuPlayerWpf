@@ -242,7 +242,7 @@ namespace BiliBulletScreenPlayer
             {
                 Topmost = true;
                 ((Button)sender).Content = new FontIcon { Glyph = "\uE840" };
-                FadeOut("总在最前端：关闭", 3000);
+                FadeOut("总在最前端：开启", 3000);
             }
         }
         private void BSettingClick(object sender, RoutedEventArgs e) => SettingOpen();
