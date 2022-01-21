@@ -1,4 +1,7 @@
-﻿using ModernWpf.Controls;
+﻿using BiliBulletScreenPlayer.Control;
+using BiliBulletScreenPlayer.Model;
+using BiliBulletScreenPlayer.Service;
+using ModernWpf.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +13,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Xml;
-using BiliBulletScreenPlayer.Control;
-using BiliBulletScreenPlayer.Model;
-using BiliBulletScreenPlayer.Service;
 
 namespace BiliBulletScreenPlayer
 {
@@ -42,7 +42,7 @@ namespace BiliBulletScreenPlayer
                 {
                     ++TimeSlider.Value;
                     var indexBegin = App.PoolIndex.IndexOfValue((int)TimeSlider.Value);
-                    if (indexBegin == -1) return;
+                    if (indexBegin is -1) return;
                     var storyBoard = new Storyboard();
                     do App.Pool[indexBegin++].Start(storyBoard, (int)TimeSlider.Value);
                     while (indexBegin < App.Pool.Length && App.Pool[indexBegin].Time == (int)TimeSlider.Value);
@@ -149,8 +149,8 @@ namespace BiliBulletScreenPlayer
 
         private void WDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
-                WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            if (e.ClickCount is 2)
+                WindowState = WindowState is WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
         }
         private void WKeyDown(object sender, KeyEventArgs e)
         {
@@ -187,7 +187,7 @@ namespace BiliBulletScreenPlayer
         }
         private void WDrag_Enter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
         private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop))!.GetValue(0)!.ToString(), true);
-     
+
         private async void BImportClick(object sender, RoutedEventArgs e)
         {
             var inputNameDialog = new InputNumberDialog();
@@ -206,7 +206,7 @@ namespace BiliBulletScreenPlayer
                     FadeOut("视频不存在！", 3000);
                     return;
                 }
-                
+
                 xmlString = await new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate }).GetStringAsync(result);
             }
             catch (Exception exception)

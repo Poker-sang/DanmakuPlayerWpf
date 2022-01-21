@@ -1,7 +1,7 @@
-﻿using System;
+﻿using BiliBulletScreenPlayer.Service;
+using System;
 using System.Globalization;
 using System.Windows.Data;
-using BiliBulletScreenPlayer.Service;
 using static System.Convert;
 
 namespace BiliBulletScreenPlayer.Converter

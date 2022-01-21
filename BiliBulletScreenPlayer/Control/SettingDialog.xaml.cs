@@ -1,6 +1,6 @@
-﻿using System.Windows;
-using ModernWpf;
+﻿using ModernWpf;
 using ModernWpf.Controls;
+using System.Windows;
 using static BiliBulletScreenPlayer.Properties.Settings;
 
 namespace BiliBulletScreenPlayer.Control

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using BiliBulletScreenPlayer.Model;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using BiliBulletScreenPlayer.Model;
 using static BiliBulletScreenPlayer.Properties.Settings;
 
 namespace BiliBulletScreenPlayer
