@@ -99,7 +99,7 @@ namespace BiliBulletScreenPlayer
                 tempList.CopyTo(App.Pool);
                 for (var i = 0; i < App.Pool.Length; ++i)
                     App.PoolIndex.Add(i, App.Pool[i].Time);
-                TimeSlider.Maximum = App.Pool.Last().Time + 10;
+                TimeSlider.Maximum = App.Pool[^1].Time + 10;
                 TotalTimeBlock.Text = '/' + TimeSlider.Maximum.ToTime();
                 TimeSlider.Value = 0;
                 FadeOut("打开文件", 3000);
