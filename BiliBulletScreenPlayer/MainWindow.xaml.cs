@@ -120,6 +120,9 @@ public partial class MainWindow : Window
         App.SbQueue.Clear();
         App.RollRoom.Clear();
         App.StaticRoom.Clear();
+        App.StaticDownCount = 0;
+        App.StaticUpCount = 0;
+        App.RollCount = 0;
         GC.Collect();
     }
     private void Resume()
