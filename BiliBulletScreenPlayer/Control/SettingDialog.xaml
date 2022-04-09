@@ -122,17 +122,14 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0">
                         <Run Text="BiliBulletScreenPlayer" /><LineBreak />
-                        <Run Text="版本：v2.10" /><LineBreak /><LineBreak />
-                        <Run Text="不足的地方↓↓↓" /><LineBreak />
-                        <Run Text="界面丑" /><LineBreak />
-                        <Run Text="有些卡顿" /><LineBreak />
-                        <Run Text="不支持高级弹幕" /><LineBreak />
-                        <Run Text="有常用功能无法实现" /><LineBreak />
-                        <Run Text="……" />
+                        <Run Text="版本：v2.15" /><LineBreak />
+                        <Run Text="2022.4.9" /><LineBreak />
                     </TextBlock>
                     <TextBlock Grid.Column="1">
+                        <ui:HyperlinkButton Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" /><LineBreak />
                         <Run Text="邮箱：poker_sang@outlook.com" /><LineBreak />
-                        <ui:HyperlinkButton Content="GitHub: BiliBulletScreenPlayer" NavigateUri="https://github.com/Poker-sang/BiliBulletScreenPlayer" />
+                        <Run Text=" QQ：2639914082" /><LineBreak />
+                        <ui:HyperlinkButton Content="GitHub: BiliBulletScreenPlayer" NavigateUri="https://github.com/Poker-sang/BiliBulletScreenPlayer" /><LineBreak />
                     </TextBlock>
                 </Grid>
             </TabItem>

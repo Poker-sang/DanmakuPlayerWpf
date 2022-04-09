@@ -123,7 +123,6 @@
                     x:Name="BPauseResume"
                     Click="PauseResumeClick"
                     DockPanel.Dock="Left"
-                    Foreground="LightGray"
                     Style="{StaticResource MyButton}">
                     <ui:FontIcon Glyph="&#xE768;" />
                 </Button>
