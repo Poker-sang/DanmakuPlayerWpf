@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -182,7 +181,7 @@ internal record BulletScreen
                 Canvas.SetTop(_textBlock, roomIndex * Height);
                 RollBulletScreen(storyboard);
                 return;
-        } 
+        }
     }
 
     private int _delayTime;

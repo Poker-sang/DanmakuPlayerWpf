@@ -160,31 +160,31 @@ public partial class MainWindow : Window
         switch (e.Key)
         {
             case Key.Left:
-            {
-                if (TimeSlider.Value - GlobalSettings.FastForward < 0)
-                    TimeSlider.Value = 0;
-                else TimeSlider.Value -= GlobalSettings.FastForward;
-                ScreenAllClear();
-                break;
-            }
+                {
+                    if (TimeSlider.Value - GlobalSettings.FastForward < 0)
+                        TimeSlider.Value = 0;
+                    else TimeSlider.Value -= GlobalSettings.FastForward;
+                    ScreenAllClear();
+                    break;
+                }
             case Key.Right:
-            {
-                if (TimeSlider.Value + GlobalSettings.FastForward > TimeSlider.Maximum)
-                    TimeSlider.Value = 0;
-                else TimeSlider.Value += GlobalSettings.FastForward;
-                ScreenAllClear();
-                break;
-            }
+                {
+                    if (TimeSlider.Value + GlobalSettings.FastForward > TimeSlider.Maximum)
+                        TimeSlider.Value = 0;
+                    else TimeSlider.Value += GlobalSettings.FastForward;
+                    ScreenAllClear();
+                    break;
+                }
             case Key.Space:
-            {
-                PauseResumeClick(null, null);
-                break;
-            }
+                {
+                    PauseResumeClick(null, null);
+                    break;
+                }
             case Key.Tab:
-            {
-                SettingOpen();
-                break;
-            }
+                {
+                    SettingOpen();
+                    break;
+                }
             default: break;
         }
     }
@@ -201,16 +201,17 @@ public partial class MainWindow : Window
         var xmlString = "";
         try
         {
-            var result = await new HttpClient().GetStringAsync("https://www.biliplus.com/video/" + inputNameDialog.Number);
-            if (new Regex(@"http://comment\.bilibili\.com/[0-9]+\.xml").Match(result) is { Success: true } match)
-                result = match.Value;
+            var http = await new HttpClient().GetStringAsync("https://www.biliplus.com/video/" + inputNameDialog.Number);
+            var xmlUri = @"http://comment.bilibili.com/";
+            if (new Regex(@"""cid"":([0-9]+),").Match(http) is { Success: true } match)
+                xmlUri += match.Groups[1].Value + ".xml";
             else
             {
                 FadeOut("视频不存在！", 3000);
                 return;
             }
 
-            xmlString = await new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate }).GetStringAsync(result);
+            xmlString = await new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate }).GetStringAsync(xmlUri);
         }
         catch (Exception exception)
         {
