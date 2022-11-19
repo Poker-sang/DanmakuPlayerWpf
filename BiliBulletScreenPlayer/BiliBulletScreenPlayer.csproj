@@ -1,30 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0-windows10.0.19041.0</TargetFramework>
-		<UseWPF>true</UseWPF>
-		<LangVersion>Preview</LangVersion>
-		<ApplicationIcon>BiliBulletScreenPlayer.ico</ApplicationIcon>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+        <UseWPF>true</UseWPF>
+        <LangVersion>Preview</LangVersion>
+        <ApplicationIcon>BiliBulletScreenPlayer.ico</ApplicationIcon>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="ModernWpfUI" Version="0.9.4" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+        <PackageReference Include="SharpDX" Version="4.2.0" />
+        <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
+        <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
+        <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+        <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
+        <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<Compile Update="Properties\Settings.Designer.cs">
-			<DesignTimeSharedInput>True</DesignTimeSharedInput>
-			<AutoGen>True</AutoGen>
-			<DependentUpon>Settings.settings</DependentUpon>
-		</Compile>
-	</ItemGroup>
+    <ItemGroup>
+        <Compile Update="Properties\Settings.Designer.cs">
+            <DesignTimeSharedInput>True</DesignTimeSharedInput>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Settings.settings</DependentUpon>
+        </Compile>
+    </ItemGroup>
 
-	<ItemGroup>
-		<None Update="Properties\Settings.settings">
-			<Generator>SettingsSingleFileGenerator</Generator>
-			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
-		</None>
-	</ItemGroup>
+    <ItemGroup>
+        <None Update="Properties\Settings.settings">
+            <Generator>SettingsSingleFileGenerator</Generator>
+            <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+        </None>
+    </ItemGroup>
 
 </Project>

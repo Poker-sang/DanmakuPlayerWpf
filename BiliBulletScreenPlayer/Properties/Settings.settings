@@ -14,16 +14,16 @@
     <Setting Name="Speed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="Opacity" Type="System.Double" Scope="User">
+    <Setting Name="Opacity" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0.7</Value>
     </Setting>
     <Setting Name="Theme" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="StaticUpLimit" Type="System.Int32" Scope="User">
+    <Setting Name="StaticTopLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
-    <Setting Name="StaticDownLimit" Type="System.Int32" Scope="User">
+    <Setting Name="StaticBottomLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">10</Value>
     </Setting>
     <Setting Name="RollLimit" Type="System.Int32" Scope="User">

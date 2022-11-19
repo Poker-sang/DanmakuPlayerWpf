@@ -1,9 +1,8 @@
 ﻿<ui:ContentDialog
-    x:Class="BiliBulletScreenPlayer.Control.InputNumberDialog"
+    x:Class="BiliBulletScreenPlayer.Controls.InputNumberDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:BiliBulletScreenPlayer.Control"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="在线获取弹幕（biliplus.com）"
@@ -15,9 +14,9 @@
     mc:Ignorable="d">
     <DockPanel>
         <ui:AutoSuggestBox
-            Header="输入视频的AV或BV号"
             x:Name="TbInput"
             DockPanel.Dock="Top"
+            Header="输入视频的AV或BV号"
             PlaceholderText="形如av123456或者BVXXXXX" />
         <TextBlock x:Name="TbMessage" />
     </DockPanel>

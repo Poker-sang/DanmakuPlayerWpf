@@ -12,7 +12,7 @@ namespace BiliBulletScreenPlayer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.4.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -74,9 +74,9 @@ namespace BiliBulletScreenPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.7")]
-        public double Opacity {
+        public float Opacity {
             get {
-                return ((double)(this["Opacity"]));
+                return ((float)(this["Opacity"]));
             }
             set {
                 this["Opacity"] = value;
@@ -98,24 +98,24 @@ namespace BiliBulletScreenPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int StaticUpLimit {
+        public int StaticTopLimit {
             get {
-                return ((int)(this["StaticUpLimit"]));
+                return ((int)(this["StaticTopLimit"]));
             }
             set {
-                this["StaticUpLimit"] = value;
+                this["StaticTopLimit"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int StaticDownLimit {
+        public int StaticBottomLimit {
             get {
-                return ((int)(this["StaticDownLimit"]));
+                return ((int)(this["StaticBottomLimit"]));
             }
             set {
-                this["StaticDownLimit"] = value;
+                this["StaticBottomLimit"] = value;
             }
         }
         

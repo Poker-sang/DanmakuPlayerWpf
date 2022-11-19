@@ -3,7 +3,7 @@ using ModernWpf.Controls;
 using System.Windows;
 using static BiliBulletScreenPlayer.Properties.Settings;
 
-namespace BiliBulletScreenPlayer.Control;
+namespace BiliBulletScreenPlayer.Controls;
 
 public partial class SettingDialog : ContentDialog
 {
@@ -46,7 +46,7 @@ public partial class SettingDialog : ContentDialog
         Default.FastForward = GlobalSettings.FastForward = (int)SFastForward.Value;
         Default.PlaySpeed = GlobalSettings.PlaySpeed = SPlaySpeed.Value;
         Default.Speed = GlobalSettings.Speed = (int)SSpeed.Value;
-        Default.Opacity = GlobalSettings.Opacity = SOpacity.Value;
+        Default.Opacity = GlobalSettings.Opacity = (float)SOpacity.Value;
         Default.Save();
         DialogResult = true;
         Hide();
