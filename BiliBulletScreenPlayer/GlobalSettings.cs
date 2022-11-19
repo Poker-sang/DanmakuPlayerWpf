@@ -14,7 +14,7 @@ internal static class GlobalSettings
     /// <summary>
     /// 弹幕显示速度（过屏时间(second)）
     /// </summary>
-    internal static int Speed { get; set; } = Settings.Default.Speed;
+    internal static double Speed { get; set; } = Settings.Default.Speed;
 
     /// <summary>
     /// 快进速度(second)
@@ -47,5 +47,5 @@ internal static class GlobalSettings
     /// <summary>
     /// 是否允许重叠
     /// </summary>
-    internal static bool AllowOverlap { get; set; } = Settings.Default.AllowOverlap;
+    internal static bool AllowOverlap { get; set; } = true; //= Settings.Default.AllowOverlap;
 }

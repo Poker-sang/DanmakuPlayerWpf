@@ -4,18 +4,26 @@ namespace BiliBulletScreenPlayer.Models;
 
 public class BulletScreenContext
 {
+    public BulletScreenContext()
+    {
+        for (var i = 0; i < BulletScreen.Count; ++i)
+        {
+            StaticRoom.Add(-1);
+            RollRoom.Add(-1);
+        }
+    }
 
     /// <summary>
     /// 静止弹幕空间
     /// </summary>
     /// <remarks>StaticRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    internal List<double> StaticRoom { get; } = new();
+    internal List<double> StaticRoom { get; } = new(BulletScreen.Count);
 
     /// <summary>
     /// 滚动弹幕空间
     /// </summary>
     /// <remarks>RollRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    internal List<double> RollRoom { get; } = new();
+    internal List<double> RollRoom { get; } = new(BulletScreen.Count);
 
     /// <summary>
     /// 上层弹幕数

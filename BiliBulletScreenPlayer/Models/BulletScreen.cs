@@ -1,4 +1,4 @@
-﻿using BiliBulletScreenPlayer.Services;
+﻿using BiliBulletScreenPlayer.Controls;
 using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
 using SharpDX.Mathematics.Interop;
@@ -30,6 +30,12 @@ internal record BulletScreen(
     public static double ViewWidth => ViewPort.ActualWidth;
     public static double ViewHeight => ViewPort.ActualHeight;
 
+    static BulletScreen()
+    {
+        var layout = new TextLayout(BulletScreenImage.Factory, "模板Template", BulletScreenImage.Format, 1000, 50);
+        LayoutHeight = layout.Metrics.Height;
+    }
+
     /// <summary>
     /// 同行两条滚动弹幕间距时间(second)
     /// </summary>
@@ -43,7 +49,12 @@ internal record BulletScreen(
     /// <summary>
     /// 文本框高度
     /// </summary>
-    private float LayoutHeight => Layout.Metrics.Height;
+    private static float LayoutHeight { get; }
+
+    /// <summary>
+    /// 视觉区域最多能出现多少弹幕
+    /// </summary>
+    public static int Count => (int)(ViewHeight / LayoutHeight);
 
     private SolidColorBrush _brush;
 
@@ -58,62 +69,29 @@ internal record BulletScreen(
          ToInt32(tempInfo[2]),
          ToInt32(tempInfo[3]),
          xElement.Value,
-         new(SharpDx.Factory, xElement.Value, SharpDx.Format, 1000, 32));
+         new(BulletScreenImage.Factory, xElement.Value, BulletScreenImage.Format, 1000, 32));
     }
 
-    public void RenderInit(RenderTarget renderTarget, BulletScreenContext context)
+    public bool RenderInit(RenderTarget renderTarget, BulletScreenContext context)
     {
-        _brush = new(renderTarget, new RawColor4((float)(Color & 0xFF0000) / 0xFF0000, (float)(Color & 0xFF00) / 0xFF00, (float)(Color & 0xFF) / 0xFF, GlobalSettings.Opacity));
+        _brush = BulletScreenImage.GetBrush(Color, renderTarget);
 
         // 将要占用空间的索引
         var roomIndex = 0;
         // 是否会覆盖到其他弹幕
         var overlap = true;
-        // 视觉区域最多能出现多少弹幕
-        var count = (int)(ViewHeight / LayoutHeight);
         switch (Mode)
         {
-            //底部
+            // 底部
             case 4:
-                for (var i = count - 1; i >= 0; --i)
-                    // 如果下一空间还从未有过弹幕
-                    if (i >= context.StaticRoom.Count)
-                    {
-                        roomIndex = i;
-                        while (i >= context.StaticRoom.Count)
-                            context.StaticRoom.Add(GlobalSettings.Speed + Time);
-                        overlap = false;
-                        break;
-                    }
-                    // 如果下一空间已经过了被占用时间
-                    else if (Time >= context.StaticRoom[i])
-                    {
-                        roomIndex = i;
-                        overlap = false;
-                        break;
-                    }
-                    // 找出距离结束占用最快的空间
-                    else if (context.StaticRoom[roomIndex] > context.StaticRoom[i])
-                        roomIndex = i;
-
-                if (overlap && !GlobalSettings.AllowOverlap)
-                    return;
-                context.StaticRoom[roomIndex] = GlobalSettings.Speed + Time;
-                break;
-            //顶部
+            // 顶部
             case 5:
+                var start = Mode is 5 ? 0 : (Count - 1);
+                var step = Mode is 5 ? 1 : -1;
                 // 在窗口大小内从上往下遍历
-                for (var i = 0; i < count; ++i)
-                    // 如果下一空间还从未有过弹幕
-                    if (i >= context.StaticRoom.Count)
-                    {
-                        context.StaticRoom.Add(GlobalSettings.Speed + Time);
-                        roomIndex = i;
-                        overlap = false;
-                        break;
-                    }
+                for (var i = start; 0 <= i && i < context.StaticRoom.Count; i += step)
                     // 如果下一空间已经过了被占用时间
-                    else if (Time >= context.StaticRoom[i])
+                    if (Time >= context.StaticRoom[i])
                     {
                         roomIndex = i;
                         overlap = false;
@@ -124,23 +102,17 @@ internal record BulletScreen(
                         roomIndex = i;
 
                 if (overlap && !GlobalSettings.AllowOverlap)
-                    return;
+                    return false;
                 context.StaticRoom[roomIndex] = GlobalSettings.Speed + Time;
+                _showPositionY = roomIndex * LayoutHeight;
+                _showPosition = new RawVector2((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
                 break;
-            //滚动
+            // 滚动
             default:
                 // 在窗口大小内从上往下遍历
-                for (var i = 0; i < count; ++i)
-                    // 如果下一空间还从未有过弹幕
-                    if (i >= context.RollRoom.Count)
-                    {
-                        context.RollRoom.Add(0);
-                        roomIndex = i;
-                        overlap = false;
-                        break;
-                    }
+                for (var i = 0; i < context.RollRoom.Count; ++i)
                     // 如果下一空间已经过了被占用时间
-                    else if (Time >= context.RollRoom[i])
+                    if (Time >= context.RollRoom[i])
                     {
                         roomIndex = i;
                         overlap = false;
@@ -151,41 +123,34 @@ internal record BulletScreen(
                         roomIndex = i;
 
                 if (overlap && !GlobalSettings.AllowOverlap)
-                    return;
+                    return false;
                 context.RollRoom[roomIndex] = LayoutWidth * GlobalSettings.Speed / (ViewWidth + LayoutWidth) + Space + Time;
+                _showPositionY = roomIndex * LayoutHeight;
                 break;
         }
 
-        _showPositionY = roomIndex * LayoutHeight;
+        return true;
     }
 
-    public bool OnRender(RenderTarget renderTarget, float timeNow)
+    private RawVector2 _showPosition;
+
+    public void OnRender(RenderTarget renderTarget, float timeNow)
     {
-        if (0 <= timeNow - Time && timeNow - Time < GlobalSettings.Speed)
+        if (Time <= timeNow && timeNow - GlobalSettings.Speed < Time)
         {
             switch (Mode)
             {
-                //底部
+                // 底部
                 case 4:
-                //顶部
+                // 顶部
                 case 5:
-                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - LayoutWidth) / 2, _showPositionY),
-                        Layout, _brush);
+                    renderTarget.DrawTextLayout(_showPosition, Layout, _brush);
                     break;
-                //滚动
+                // 滚动
                 default:
-                    Debug.WriteLine(ViewWidth - (ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed);
-                    Debug.WriteLine(_showPositionY);
-                    renderTarget.DrawTextLayout(
-                        new RawVector2(
-                            (float)(ViewWidth - (ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed),
-                            _showPositionY), Layout, _brush);
+                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - (ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed), _showPositionY), Layout, _brush);
                     break;
             }
-
-            return true;
         }
-
-        return false;
     }
 }

@@ -6,6 +6,7 @@
         <UseWPF>true</UseWPF>
         <LangVersion>Preview</LangVersion>
         <ApplicationIcon>BiliBulletScreenPlayer.ico</ApplicationIcon>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <ItemGroup>

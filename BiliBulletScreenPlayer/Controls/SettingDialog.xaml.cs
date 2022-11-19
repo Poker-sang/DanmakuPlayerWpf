@@ -45,7 +45,7 @@ public partial class SettingDialog : ContentDialog
         Default.Theme = TgTheme.IsOn;
         Default.FastForward = GlobalSettings.FastForward = (int)SFastForward.Value;
         Default.PlaySpeed = GlobalSettings.PlaySpeed = SPlaySpeed.Value;
-        Default.Speed = GlobalSettings.Speed = (int)SSpeed.Value;
+        GlobalSettings.Speed = Default.Speed = (int)SSpeed.Value;
         Default.Opacity = GlobalSettings.Opacity = (float)SOpacity.Value;
         Default.Save();
         DialogResult = true;
