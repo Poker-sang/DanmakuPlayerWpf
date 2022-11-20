@@ -39,7 +39,7 @@ internal static class GlobalSettings
         {
             if (Equals(_playSpeed, value))
                 return;
-            App.TimeCounter.Interval = new TimeSpan(0, 0, 0, 0, (int)(10000 / PlaySpeed));
+            App.TimeCounter.Interval = TimeSpan.FromSeconds(App.Interval / PlaySpeed);
             _playSpeed = value;
         }
     }

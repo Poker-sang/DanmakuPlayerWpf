@@ -2,9 +2,9 @@
 
 namespace DanmakuPlayer.Models;
 
-public class DanmakuContext
+internal class DanmakuContext
 {
-    public DanmakuContext()
+    internal DanmakuContext()
     {
         for (var i = 0; i < Danmaku.Count; ++i)
         {

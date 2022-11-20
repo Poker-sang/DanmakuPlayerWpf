@@ -90,7 +90,7 @@ public partial class MainWindow : Window
             TimeSlider.Value = 0;
             FadeOut("打开文件", 3000);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
             FadeOut("*不是标准B站弹幕xml文件*\n您可以在 biliplus.com 获取", 3000);
         }
