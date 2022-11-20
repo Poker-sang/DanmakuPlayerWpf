@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace BiliBulletScreenPlayer.Models;
+namespace DanmakuPlayer.Models;
 
-public class BulletScreenContext
+public class DanmakuContext
 {
-    public BulletScreenContext()
+    public DanmakuContext()
     {
-        for (var i = 0; i < BulletScreen.Count; ++i)
+        for (var i = 0; i < Danmaku.Count; ++i)
         {
             StaticRoom.Add(-1);
             RollRoom.Add(-1);
@@ -17,13 +17,13 @@ public class BulletScreenContext
     /// 静止弹幕空间
     /// </summary>
     /// <remarks>StaticRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    internal List<double> StaticRoom { get; } = new(BulletScreen.Count);
+    internal List<double> StaticRoom { get; } = new(Danmaku.Count);
 
     /// <summary>
     /// 滚动弹幕空间
     /// </summary>
     /// <remarks>RollRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    internal List<double> RollRoom { get; } = new(BulletScreen.Count);
+    internal List<double> RollRoom { get; } = new(Danmaku.Count);
 
     /// <summary>
     /// 上层弹幕数

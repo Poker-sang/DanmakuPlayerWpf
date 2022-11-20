@@ -5,7 +5,7 @@
         <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>Preview</LangVersion>
-        <ApplicationIcon>BiliBulletScreenPlayer.ico</ApplicationIcon>
+        <ApplicationIcon>DanmakuPlayer.ico</ApplicationIcon>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 

@@ -1,9 +1,9 @@
-﻿using BiliBulletScreenPlayer.Models;
+﻿using DanmakuPlayer.Models;
 using System;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace BiliBulletScreenPlayer;
+namespace DanmakuPlayer;
 
 public partial class App : Application
 {
@@ -22,5 +22,5 @@ public partial class App : Application
     /// <summary>
     /// 弹幕池
     /// </summary>
-    internal static BulletScreen[] Pool { get; set; } = Array.Empty<BulletScreen>();
+    internal static Danmaku[] Pool { get; set; } = Array.Empty<Danmaku>();
 }

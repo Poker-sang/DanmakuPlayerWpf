@@ -1,10 +1,10 @@
-﻿using BiliBulletScreenPlayer.Services;
+﻿using DanmakuPlayer.Services;
 using System;
 using System.Globalization;
 using System.Windows.Data;
 using static System.Convert;
 
-namespace BiliBulletScreenPlayer.Converters;
+namespace DanmakuPlayer.Converters;
 
 public class SliderToTextBlock : IValueConverter
 {

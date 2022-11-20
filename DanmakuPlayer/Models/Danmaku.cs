@@ -1,13 +1,12 @@
-﻿using BiliBulletScreenPlayer.Controls;
+﻿using DanmakuPlayer.Controls;
 using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
 using SharpDX.Mathematics.Interop;
-using System.Diagnostics;
 using System.Windows;
 using System.Xml.Linq;
 using static System.Convert;
 
-namespace BiliBulletScreenPlayer.Models;
+namespace DanmakuPlayer.Models;
 
 /// <summary>
 /// 弹幕
@@ -18,7 +17,7 @@ namespace BiliBulletScreenPlayer.Models;
 /// <param name="Color">颜色</param>
 /// <param name="Text">内容</param>
 /// <param name="Layout">拥有的文本框</param>
-internal record BulletScreen(
+internal record Danmaku(
     float Time,
     int Mode,
     int Size,
@@ -30,9 +29,9 @@ internal record BulletScreen(
     public static double ViewWidth => ViewPort.ActualWidth;
     public static double ViewHeight => ViewPort.ActualHeight;
 
-    static BulletScreen()
+    static Danmaku()
     {
-        var layout = new TextLayout(BulletScreenImage.Factory, "模板Template", BulletScreenImage.Format, 1000, 50);
+        var layout = new TextLayout(DanmakuImage.Factory, "模板Template", DanmakuImage.Format, 1000, 50);
         LayoutHeight = layout.Metrics.Height;
     }
 
@@ -60,7 +59,7 @@ internal record BulletScreen(
 
     private float _showPositionY;
 
-    public static BulletScreen CreateBulletScreen(XElement xElement)
+    public static Danmaku CreateDanmaku(XElement xElement)
     {
         var tempInfo = xElement.Attribute("p")!.Value.Split(',');
         return new(
@@ -69,12 +68,12 @@ internal record BulletScreen(
          ToInt32(tempInfo[2]),
          ToInt32(tempInfo[3]),
          xElement.Value,
-         new(BulletScreenImage.Factory, xElement.Value, BulletScreenImage.Format, 1000, 32));
+         new(DanmakuImage.Factory, xElement.Value, DanmakuImage.Format, 1000, 32));
     }
 
-    public bool RenderInit(RenderTarget renderTarget, BulletScreenContext context)
+    public bool RenderInit(RenderTarget renderTarget, DanmakuContext context)
     {
-        _brush = BulletScreenImage.GetBrush(Color, renderTarget);
+        _brush = DanmakuImage.GetBrush(Color, renderTarget);
 
         // 将要占用空间的索引
         var roomIndex = 0;
@@ -124,7 +123,7 @@ internal record BulletScreen(
 
                 if (overlap && !GlobalSettings.AllowOverlap)
                     return false;
-                context.RollRoom[roomIndex] = LayoutWidth * GlobalSettings.Speed / (ViewWidth + LayoutWidth) + Space + Time;
+                context.RollRoom[roomIndex] = (LayoutWidth * GlobalSettings.Speed / (ViewWidth + LayoutWidth)) + Space + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 break;
         }
@@ -148,7 +147,7 @@ internal record BulletScreen(
                     break;
                 // 滚动
                 default:
-                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - (ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed), _showPositionY), Layout, _brush);
+                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed)), _showPositionY), Layout, _brush);
                     break;
             }
         }

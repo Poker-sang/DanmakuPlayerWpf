@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BiliBulletScreenPlayer.Controls;
+namespace DanmakuPlayer.Controls;
 
-public class BulletScreenImage : SharpDx
+public class DanmakuImage : SharpDx
 {
     public static SharpDX.DirectWrite.Factory Factory { get; } = new();
     public static TextFormat Format { get; } = new(Factory, "微软雅黑", 20);

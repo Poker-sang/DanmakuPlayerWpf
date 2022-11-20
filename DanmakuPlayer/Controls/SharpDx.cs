@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-namespace BiliBulletScreenPlayer.Controls;
+namespace DanmakuPlayer.Controls;
 
 /// <summary>
 /// <seealso href="https://blog.lindexi.com/post/WPF-使用-SharpDX-在-D3DImage-显示.html"/>

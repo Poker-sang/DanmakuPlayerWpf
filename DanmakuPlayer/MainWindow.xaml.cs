@@ -1,6 +1,6 @@
-﻿using BiliBulletScreenPlayer.Controls;
-using BiliBulletScreenPlayer.Models;
-using BiliBulletScreenPlayer.Services;
+﻿using DanmakuPlayer.Controls;
+using DanmakuPlayer.Models;
+using DanmakuPlayer.Services;
 using ModernWpf.Controls;
 using System;
 using System.Linq;
@@ -15,7 +15,7 @@ using System.Xml.Linq;
 // TODO: 减少内存占用
 // TODO: 改变窗口大小
 // TODO: 设置同屏弹幕上限
-namespace BiliBulletScreenPlayer;
+namespace DanmakuPlayer;
 
 public partial class MainWindow : Window
 {
@@ -24,7 +24,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        BulletScreen.ViewPort = BBackGround;
+        Danmaku.ViewPort = BBackGround;
         BBackGround.Opacity = GlobalSettings.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
@@ -37,7 +37,7 @@ public partial class MainWindow : Window
             {
                 if (App.Playing)
                     TimeSlider.Value += App.Interval;
-                BulletScreenImage.InvalidateVisual((float)TimeSlider.Value);
+                DanmakuImage.InvalidateVisual((float)TimeSlider.Value);
             }
             else
             {
@@ -77,12 +77,12 @@ public partial class MainWindow : Window
 
             var xDoc = mode ? XDocument.Load(xml) : XDocument.Parse(xml);
             var tempPool = xDoc.Element("i")!.Elements("d");
-            var context = new BulletScreenContext();
+            var context = new DanmakuContext();
             App.Pool = tempPool
-                .Select(BulletScreen.CreateBulletScreen)
+                .Select(Danmaku.CreateDanmaku)
                 .Where(t => t.Mode < 6)
                 .OrderBy(t => t.Time)
-                .Where(t => t.RenderInit(BulletScreenImage.D2dContext, context))
+                .Where(t => t.RenderInit(DanmakuImage.D2dContext, context))
                 .ToArray();
 
             TimeSlider.Maximum = App.Pool[^1].Time + 10;

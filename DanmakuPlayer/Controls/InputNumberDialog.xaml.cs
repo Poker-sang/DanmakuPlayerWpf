@@ -1,7 +1,7 @@
 ﻿using ModernWpf.Controls;
 using System.Text.RegularExpressions;
 
-namespace BiliBulletScreenPlayer.Controls;
+namespace DanmakuPlayer.Controls;
 
 /// <summary>
 /// InputNumberDialog.xaml 的交互逻辑

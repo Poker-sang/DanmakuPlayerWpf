@@ -1,7 +1,7 @@
 using System;
-using BiliBulletScreenPlayer.Properties;
+using DanmakuPlayer.Properties;
 
-namespace BiliBulletScreenPlayer;
+namespace DanmakuPlayer;
 
 internal static class GlobalSettings
 {
@@ -47,5 +47,5 @@ internal static class GlobalSettings
     /// <summary>
     ///  «∑Ò‘ –Ì÷ÿµ˛
     /// </summary>
-    internal static bool AllowOverlap { get; set; } = true; //= Settings.Default.AllowOverlap;
+    internal static bool AllowOverlap { get; set; } = Settings.Default.AllowOverlap;
 }

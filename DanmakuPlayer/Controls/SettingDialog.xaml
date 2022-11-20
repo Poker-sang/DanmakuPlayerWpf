@@ -1,5 +1,5 @@
 ﻿<ui:ContentDialog
-    x:Class="BiliBulletScreenPlayer.Controls.SettingDialog"
+    x:Class="DanmakuPlayer.Controls.SettingDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -121,7 +121,7 @@
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0">
-                        <Run Text="BiliBulletScreenPlayer" /><LineBreak />
+                        <Run Text="DanmakuPlayer" /><LineBreak />
                         <Run Text="版本：v2.15" /><LineBreak />
                         <Run Text="2022.4.9" /><LineBreak />
                     </TextBlock>
@@ -129,7 +129,7 @@
                         <ui:HyperlinkButton Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" /><LineBreak />
                         <Run Text="邮箱：poker_sang@outlook.com" /><LineBreak />
                         <Run Text=" QQ：2639914082" /><LineBreak />
-                        <ui:HyperlinkButton Content="GitHub: BiliBulletScreenPlayer" NavigateUri="https://github.com/Poker-sang/BiliBulletScreenPlayer" /><LineBreak />
+                        <ui:HyperlinkButton Content="GitHub: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" /><LineBreak />
                     </TextBlock>
                 </Grid>
             </TabItem>

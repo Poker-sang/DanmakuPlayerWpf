@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace BiliBulletScreenPlayer.Services;
+namespace DanmakuPlayer.Services;
 
 public static class ExtensionMethods
 {

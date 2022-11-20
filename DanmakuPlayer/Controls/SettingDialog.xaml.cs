@@ -1,9 +1,9 @@
 ﻿using ModernWpf;
 using ModernWpf.Controls;
 using System.Windows;
-using static BiliBulletScreenPlayer.Properties.Settings;
+using static DanmakuPlayer.Properties.Settings;
 
-namespace BiliBulletScreenPlayer.Controls;
+namespace DanmakuPlayer.Controls;
 
 public partial class SettingDialog : ContentDialog
 {
