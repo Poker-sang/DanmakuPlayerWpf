@@ -1,5 +1,5 @@
-using System;
 using DanmakuPlayer.Properties;
+using System;
 
 namespace DanmakuPlayer;
 
@@ -47,5 +47,5 @@ internal static class GlobalSettings
     /// <summary>
     ///  «∑Ò‘ –Ì÷ÿµ˛
     /// </summary>
-    internal static bool AllowOverlap { get; set; } = Settings.Default.AllowOverlap;
+    internal static bool AllowOverlap { get; set; } = true; //= Settings.Default.AllowOverlap;
 }

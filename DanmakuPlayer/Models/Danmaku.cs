@@ -25,7 +25,7 @@ internal record Danmaku(
     string Text,
     TextLayout Layout)
 {
-    public static FrameworkElement ViewPort;
+    public static FrameworkElement ViewPort = null!;
     public static double ViewWidth => ViewPort.ActualWidth;
     public static double ViewHeight => ViewPort.ActualHeight;
 
@@ -55,7 +55,7 @@ internal record Danmaku(
     /// </summary>
     public static int Count => (int)(ViewHeight / LayoutHeight);
 
-    private SolidColorBrush _brush;
+    private SolidColorBrush _brush = null!;
 
     private float _showPositionY;
 

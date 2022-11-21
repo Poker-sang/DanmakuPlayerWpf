@@ -7,6 +7,7 @@
         <LangVersion>Preview</LangVersion>
         <ApplicationIcon>DanmakuPlayer.ico</ApplicationIcon>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>

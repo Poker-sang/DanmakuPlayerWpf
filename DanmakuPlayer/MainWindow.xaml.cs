@@ -73,7 +73,7 @@ public partial class MainWindow : Window
             ScreenAllClear();
             TimeSlider.Maximum = 0;
             TimeSlider.Value = 0;
-            App.Pool = null;
+            App.Pool = null!;
 
             var xDoc = mode ? XDocument.Load(xml) : XDocument.Parse(xml);
             var tempPool = xDoc.Element("i")!.Elements("d");
@@ -155,7 +155,7 @@ public partial class MainWindow : Window
             }
             case Key.Space:
             {
-                PauseResumeClick(null, null);
+                PauseResumeClick(null!, null!);
                 break;
             }
             case Key.Tab:
@@ -168,7 +168,7 @@ public partial class MainWindow : Window
     }
     private void WDrag_Enter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
 
-    private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop))!.GetValue(0)!.ToString(), true);
+    private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop)!).GetValue(0)!.ToString()!, true);
 
     [GeneratedRegex("\"cid\":([0-9]+),")]
     private static partial Regex MyRegex();
