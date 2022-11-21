@@ -6,7 +6,7 @@
 
 * 第三个版本，利用DirectX解决了弹幕多时卡顿的问题
 
-* UI使用WPF框架和 [ModernWpf](https://github.com/Kinnara/ModernWpf) 控件库
+* UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
 
 * 弹幕渲染使用 [SharpDX](https://github.com/sharpdx/SharpDX) 的DirectX库
 
@@ -25,6 +25,8 @@
 * [x] 调整透明度
 
 * [x] 固定最上层
+
+* [ ] ⚠️ 改变主题色
 
 ### 弹幕文件
 
@@ -92,7 +94,7 @@
 
 项目地址：[GitHub](https://github.com/Poker-sang/DanmakuPlayer)
 
-版本：2.35
+版本：2.36
 
 ## 联系方式
 
@@ -102,4 +104,4 @@
 
 QQ：[2639914082](http://wpa.qq.com/msgrd?v=3&uin=2639914082&site=qq&menu=yes)
 
-2022.11.20
+2022.11.21

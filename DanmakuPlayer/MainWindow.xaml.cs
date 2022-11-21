@@ -1,17 +1,17 @@
-﻿using DanmakuPlayer.Controls;
-using DanmakuPlayer.Models;
+﻿using DanmakuPlayer.Models;
 using DanmakuPlayer.Services;
-using ModernWpf.Controls;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using System.Xml.Linq;
+using Wpf.Ui.Common;
+using Wpf.Ui.Controls;
+using Button = System.Windows.Controls.Button;
+
 // TODO: 减少内存占用
 // TODO: 改变窗口大小
 // TODO: 设置同屏弹幕上限
@@ -24,13 +24,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        SettingInit();
         Danmaku.ViewPort.SetTarget(BBackGround);
         BBackGround.Opacity = AppContext.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
-        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(Slider_MouseButtonDown), true);
-        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(Slider_MouseButtonUp), true);
-
+        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
+        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
         App.Timer.Tick += (_, _) =>
         {
             if (STime.Value < STime.Maximum)
@@ -43,7 +43,6 @@ public partial class MainWindow : Window
             {
                 Pause();
                 STime.Value = 0;
-                ScreenAllClear();
             }
         };
         App.Timer.Start();
@@ -51,25 +50,23 @@ public partial class MainWindow : Window
 
     private async void SettingOpen()
     {
-        var settingWindow = new SettingDialog();
-        _ = await settingWindow.ShowAsync();
-        if (!settingWindow.DialogResult)
+        _ = await DSetting.ShowAndWaitAsync();
+        if (!SettingResult)
             return;
         BBackGround.Opacity = AppContext.WindowOpacity;
-        FadeOut("设置已更新", 3000);
+        FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     }
 
     /// <summary>
     /// 加载xml文件
     /// </summary>
     /// <param name="xml">xml文件路径或字符串</param>
-    /// <param name="mode">true为路径，false为字符串</param>
+    /// <param name="mode"><see langword="true"/>为路径，<see langword="false"/>为字符串</param>
     private void XmlOpen(string xml, bool mode)
     {
         try
         {
             Pause();
-            ScreenAllClear();
             STime.Maximum = 0;
             STime.Value = 0;
             App.ClearPool();
@@ -87,39 +84,48 @@ public partial class MainWindow : Window
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = '/' + STime.Maximum.ToTime();
             STime.Value = 0;
-            FadeOut("打开文件", 3000);
+            FadeOut("打开文件", false);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            FadeOut("*不是标准B站弹幕xml文件*\n您可以在 biliplus.com 获取", 3000);
+            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･･)ﾉ(._.`) 你可以在 biliplus.com 获取");
         }
+
         if (TbBanner is not null)
             Grid.Children.Remove(TbBanner);
         BControl.IsHitTestVisible = true;
     }
 
-    private void ScreenAllClear()
-    {
-        // _d2DRenderTarget.Clear(null);
-        // GC.Collect();
-    }
-
     private void Resume()
     {
         App.Playing = true;
-        BPauseResume.Content = new SymbolIcon(Symbol.Pause);
+        BPauseResume.Content = new SymbolIcon { Symbol = SymbolRegular.Pause24 };
     }
 
     private void Pause()
     {
         App.Playing = false;
-        BPauseResume.Content = new SymbolIcon(Symbol.Play);
+        BPauseResume.Content = new SymbolIcon { Symbol = SymbolRegular.Play24 };
     }
 
-    private void FadeOut(string message, int mSec)
+    private void FadeOut(string message, bool isError, string? hint = null, int mSec = 3000)
     {
-        TbMessage.Text = message;
-        TbMessage.BeginAnimation(OpacityProperty, new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(mSec) });
+        RootSnackBar.Title = message;
+        RootSnackBar.Timeout = mSec;
+        if (isError)
+        {
+            RootSnackBar.Message = hint ?? "错误";
+            RootSnackBar.Icon = SymbolRegular.Important24;
+            RootSnackBar.Appearance = ControlAppearance.Danger;
+        }
+        else
+        {
+            RootSnackBar.Message = hint ?? "提示";
+            RootSnackBar.Icon = SymbolRegular.Info24;
+            RootSnackBar.Appearance = ControlAppearance.Transparent;
+        }
+
+        _ = RootSnackBar.Show();
     }
 
     #endregion
@@ -165,7 +171,8 @@ public partial class MainWindow : Window
             default: break;
         }
     }
-    private void WDrag_Enter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
+
+    private void WDragEnter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
 
     private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop)!).GetValue(0)!.ToString()!, true);
 
@@ -174,22 +181,21 @@ public partial class MainWindow : Window
 
     private async void BImportClick(object sender, RoutedEventArgs e)
     {
-        var inputNameDialog = new InputNumberDialog();
-        _ = await inputNameDialog.ShowAsync();
-        if (inputNameDialog.DialogResult is not true)
+        _ = await DInput.ShowAndWaitAsync();
+        if (InputResult is null)
             return;
-        FadeOut("加载xml中...", 3000);
+        FadeOut("弹幕装填中...", false, "(｀・ω・´)");
 
         var xmlString = "";
         try
         {
-            var http = await new HttpClient().GetStringAsync("https://www.biliplus.com/video/" + inputNameDialog.Number);
+            var http = await new HttpClient().GetStringAsync("https://www.biliplus.com/video/" + InputResult);
             var xmlUri = @"http://comment.bilibili.com/";
             if (MyRegex().Match(http) is { Success: true } match)
                 xmlUri += match.Groups[1].Value + ".xml";
             else
             {
-                FadeOut("视频不存在！", 3000);
+                FadeOut("视频不存在！", true, "〒_〒");
                 return;
             }
 
@@ -197,15 +203,17 @@ public partial class MainWindow : Window
         }
         catch (Exception exception)
         {
-            FadeOut(exception.Message, 3000);
+            FadeOut(exception.Message, true);
         }
+
         XmlOpen(xmlString, false);
     }
+
     private void BFileClick(object sender, RoutedEventArgs e)
     {
         var fileDialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title = "选择xml弹幕文件",
+            Title = "选择弹幕文件",
             Filter = "弹幕文件|*.xml",
             InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
             ValidateNames = true,
@@ -216,21 +224,23 @@ public partial class MainWindow : Window
         if (fileDialog.FileName is not "")
             XmlOpen(fileDialog.FileName, true);
     }
+
     private void BFrontClick(object sender, RoutedEventArgs e)
     {
         if (Topmost)
         {
             Topmost = false;
-            ((Button)sender).Content = new SymbolIcon(Symbol.Pin);
-            FadeOut("总在最前端：关闭", 3000);
+            ((Button)sender).Content = new SymbolIcon { Symbol = SymbolRegular.Pin24 };
+            FadeOut("固定上层：关闭", false, "(°∀°)ﾉ");
         }
         else
         {
             Topmost = true;
-            ((Button)sender).Content = new SymbolIcon(Symbol.UnPin);
-            FadeOut("总在最前端：开启", 3000);
+            ((Button)sender).Content = new SymbolIcon { Symbol = SymbolRegular.PinOff24 };
+            FadeOut("固定上层：开启", false, "(・ω< )★");
         }
     }
+
     private void BSettingClick(object sender, RoutedEventArgs e) => SettingOpen();
 
     private void BCloseClick(object sender, RoutedEventArgs e) => Close();
@@ -245,29 +255,36 @@ public partial class MainWindow : Window
 
     private bool _needResume;
 
-    private void Slider_MouseButtonDown(object sender, MouseButtonEventArgs e)
+    private void STimeMouseButtonDown(object sender, MouseButtonEventArgs e)
     {
         _needResume = App.Playing;
         Pause();
     }
 
-    private void Slider_MouseButtonUp(object sender, MouseButtonEventArgs e)
+    private void STimeMouseButtonUp(object sender, MouseButtonEventArgs e)
     {
         if (_needResume)
             Resume();
     }
 
-    private void BFile_MouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
+    private void BFileMouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
 
-    private void BFile_MouseLeave(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Hidden;
+    private void BFileMouseLeave(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Hidden;
 
-    private void BButtons_MouseEnter(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Visible;
+    private void BButtonsMouseEnter(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Visible;
 
-    private void BButtons_MouseLeave(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Hidden;
+    private void BButtonsMouseLeave(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Hidden;
 
-    private void BControl_MouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
+    private void BControlMouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
 
-    private void BControl_MouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
+    private void BControlMouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
+
+    private void BCancelDialogClick(object sender, RoutedEventArgs e)
+    {
+        SettingResult = false;
+        InputResult = null;
+        _ = ((Dialog)sender).Hide();
+    }
 
     #endregion
 }

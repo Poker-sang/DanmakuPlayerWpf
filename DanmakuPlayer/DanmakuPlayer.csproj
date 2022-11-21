@@ -11,13 +11,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="ModernWpfUI" Version="0.9.6" />
         <PackageReference Include="SharpDX" Version="4.2.0" />
         <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
         <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
         <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
         <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
         <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
+        <PackageReference Include="WPF-UI" Version="2.0.3" />
     </ItemGroup>
 
     <ItemGroup>

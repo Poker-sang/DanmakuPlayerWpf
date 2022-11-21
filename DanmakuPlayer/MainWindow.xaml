@@ -7,16 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DanmakuPlayer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    x:Name="Mainwindow"
-    Width="640"
-    Height="360"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Width="800"
+    Height="450"
     MinWidth="640"
     MinHeight="360"
     AllowDrop="True"
     AllowsTransparency="True"
     Background="Transparent"
-    DragEnter="WDrag_Enter"
+    DragEnter="WDragEnter"
     Drop="WDrop"
     KeyDown="WKeyDown"
     ResizeMode="CanResizeWithGrip"
@@ -51,21 +50,13 @@
             IsHitTestVisible="False"
             Style="{StaticResource DanmakuBlock}"
             Text="弹幕播放器" />
-        <TextBlock
-            x:Name="TbMessage"
-            Grid.Row="0"
-            Margin="0,20"
-            FontSize="24"
-            IsHitTestVisible="False"
-            Opacity="0"
-            Style="{StaticResource DanmakuBlock}" />
         <Border
             Grid.Row="0"
             Width="180"
             HorizontalAlignment="Right"
             Background="Transparent"
-            Mouse.MouseLeave="BButtons_MouseLeave"
-            MouseEnter="BButtons_MouseEnter">
+            Mouse.MouseLeave="BButtonsMouseLeave"
+            MouseEnter="BButtonsMouseEnter">
             <StackPanel
                 x:Name="SpButtons"
                 Height="40"
@@ -74,13 +65,13 @@
                 Orientation="Horizontal"
                 Visibility="Hidden">
                 <Button Click="BFrontClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Pin" />
+                    <ui:SymbolIcon Symbol="Pin24" />
                 </Button>
                 <Button Click="BSettingClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Setting" />
+                    <ui:SymbolIcon Symbol="Settings24" />
                 </Button>
                 <Button Click="BCloseClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Cancel" />
+                    <ui:SymbolIcon Symbol="Dismiss24" />
                 </Button>
             </StackPanel>
         </Border>
@@ -89,8 +80,8 @@
             Width="180"
             HorizontalAlignment="Left"
             Background="Transparent"
-            Mouse.MouseLeave="BFile_MouseLeave"
-            MouseEnter="BFile_MouseEnter">
+            Mouse.MouseLeave="BFileMouseLeave"
+            MouseEnter="BFileMouseEnter">
             <StackPanel
                 x:Name="SpImportButtons"
                 Height="40"
@@ -99,10 +90,10 @@
                 Orientation="Horizontal"
                 Visibility="Hidden">
                 <Button Click="BImportClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Globe" />
+                    <ui:SymbolIcon Symbol="ArrowDownload24" />
                 </Button>
                 <Button Click="BFileClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="OpenFile" />
+                    <ui:SymbolIcon Symbol="OpenFolder24" />
                 </Button>
             </StackPanel>
         </Border>
@@ -111,8 +102,8 @@
             Grid.Row="2"
             Background="Transparent"
             IsHitTestVisible="False"
-            MouseEnter="BControl_MouseEnter"
-            MouseLeave="BControl_MouseLeave">
+            MouseEnter="BControlMouseEnter"
+            MouseLeave="BControlMouseLeave">
             <DockPanel
                 x:Name="DpControl"
                 Margin="0,0,20,0"
@@ -123,7 +114,7 @@
                     Click="PauseResumeClick"
                     DockPanel.Dock="Left"
                     Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Play" />
+                    <ui:SymbolIcon Symbol="Play12" />
                 </Button>
                 <TextBlock
                     Width="44"
@@ -150,5 +141,134 @@
                     Opacity="0.8" />
             </DockPanel>
         </Border>
+        <ui:Dialog
+            x:Name="DSetting"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            ButtonLeftAppearance="Secondary"
+            ButtonLeftClick="BSaveClick"
+            ButtonLeftName="保存"
+            ButtonRightAppearance="Primary"
+            ButtonRightClick="BCancelDialogClick"
+            ButtonRightName="取消"
+            DialogHeight="450"
+            DialogWidth="800"
+            Message="设置">
+            <StackPanel Orientation="Vertical">
+                <ui:CardControl Header="窗口透明度" Icon="WindowEdit20">
+                    <Slider
+                        x:Name="SWindowOpacity"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="1"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="0.1"
+                        Maximum="1"
+                        Minimum="0"
+                        TickFrequency="0.1"
+                        TickPlacement="Both" />
+                </ui:CardControl>
+                <ui:CardControl
+                    Header="主题"
+                    Icon="DarkTheme24"
+                    IsEnabled="False">
+                    <ComboBox
+                        x:Name="CbTheme"
+                        SelectedIndex="0"
+                        SelectionChanged="CbThemeSelectionChanged">
+                        <ComboBoxItem Content="跟随系统" />
+                        <ComboBoxItem Content="浅色" />
+                        <ComboBoxItem Content="深色" />
+                        <ComboBoxItem Content="高对比度" />
+                    </ComboBox>
+                </ui:CardControl>
+                <ui:CardControl Header="快进" Icon="FastForward24">
+                    <Slider
+                        x:Name="SFastForward"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="1"
+                        Maximum="20"
+                        Minimum="1"
+                        TickFrequency="1"
+                        TickPlacement="Both" />
+                </ui:CardControl>
+                <ui:CardControl Header="播放倍速" Icon="Play24">
+                    <Slider
+                        x:Name="SPlaySpeed"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="2"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="0.25"
+                        Maximum="2"
+                        Minimum="0.5"
+                        SmallChange="0.25"
+                        TickFrequency="0.25"
+                        TickPlacement="Both" />
+                </ui:CardControl>
+                <ui:CardControl Header="弹幕速度" Icon="List24">
+                    <Slider
+                        x:Name="SSpeed"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="0"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="1"
+                        Maximum="20"
+                        Minimum="1"
+                        TickFrequency="1"
+                        TickPlacement="Both" />
+                </ui:CardControl>
+                <ui:CardControl Header="弹幕透明度" Icon="TextEffects24">
+                    <Slider
+                        x:Name="SOpacity"
+                        AutoToolTipPlacement="TopLeft"
+                        AutoToolTipPrecision="2"
+                        IsSnapToTickEnabled="True"
+                        LargeChange="0.1"
+                        Maximum="1"
+                        Minimum="0"
+                        TickFrequency="0.1"
+                        TickPlacement="Both" />
+                </ui:CardControl>
+                <TextBlock>
+                    <Run Text="DanmakuPlayer" /><LineBreak />
+                    <Run Text="版本：v2.15" /><LineBreak />
+                    <Run Text="2022.4.9" /><LineBreak />
+                    <ui:Hyperlink Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" /><LineBreak />
+                    <Run Text="邮箱：poker_sang@outlook.com" /><LineBreak />
+                    <Run Text=" QQ：2639914082" /><LineBreak />
+                    <ui:Hyperlink Content="GitHub: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" /><LineBreak />
+                </TextBlock>
+            </StackPanel>
+        </ui:Dialog>
+        <ui:Dialog
+            x:Name="DInput"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            ButtonLeftAppearance="Secondary"
+            ButtonLeftClick="BConfirmClick"
+            ButtonLeftName="确认"
+            ButtonRightAppearance="Primary"
+            ButtonRightClick="BCancelDialogClick"
+            ButtonRightName="取消"
+            DialogHeight="250"
+            DialogWidth="400"
+            Message="在线获取弹幕（biliplus.com）">
+            <StackPanel>
+                <ui:TextBox
+                    x:Name="TbInput"
+                    DockPanel.Dock="Top"
+                    PlaceholderText="输入视频的网址、av或BV号" />
+                <ui:InfoBar
+                    x:Name="IbMessage"
+                    Message="未匹配到相应的av或BV号！"
+                    Severity="Error" />
+            </StackPanel>
+        </ui:Dialog>
+        <ui:Snackbar
+            x:Name="RootSnackBar"
+            Grid.Row="2"
+            MaxWidth="600"
+            CloseButtonEnabled="False" />
     </Grid>
 </Window>

@@ -29,8 +29,11 @@ public record Danmaku(
     TextLayout Layout) : IDisposable
 {
     public static readonly WeakReference<FrameworkElement> ViewPort = new(null!);
+
     private readonly WeakReference<SolidColorBrush> _brush = new(null!);
+
     public static double ViewWidth => ViewPort.Get().ActualWidth;
+
     public static double ViewHeight => ViewPort.Get().ActualHeight;
 
     static Danmaku()
@@ -59,9 +62,8 @@ public record Danmaku(
     /// </summary>
     public static int Count => (int)(ViewHeight / LayoutHeight);
 
-
     private float _showPositionY;
-    
+
     public static Danmaku CreateDanmaku(XElement xElement)
     {
         var tempInfo = xElement.Attribute("p")!.Value.Split(',');
@@ -136,23 +138,21 @@ public record Danmaku(
 
     private RawVector2 _showPosition;
 
-    public void OnRender(RenderTarget renderTarget, float timeNow)
+    public void OnRender(RenderTarget renderTarget, float time)
     {
-        if (Time <= timeNow && timeNow - AppContext.Speed < Time)
+        // if (Time <= timeNow && timeNow - AppContext.Speed < Time)
+        switch (Mode)
         {
-            switch (Mode)
-            {
-                // 底部
-                case 4:
-                // 顶部
-                case 5:
-                    renderTarget.DrawTextLayout(_showPosition, Layout, _brush.Get());
-                    break;
-                // 滚动
-                default:
-                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (timeNow - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
-                    break;
-            }
+            // 底部
+            case 4:
+            // 顶部
+            case 5:
+                renderTarget.DrawTextLayout(_showPosition, Layout, _brush.Get());
+                break;
+            // 滚动
+            default:
+                renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
+                break;
         }
     }
 

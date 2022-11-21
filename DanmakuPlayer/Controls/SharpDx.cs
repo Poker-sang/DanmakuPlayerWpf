@@ -3,27 +3,33 @@ using SharpDX.Direct2D1;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D9;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace DanmakuPlayer.Controls;
 
 /// <summary>
 /// <seealso href="https://blog.lindexi.com/post/WPF-使用-SharpDX-在-D3DImage-显示.html"/>
 /// </summary>
-public abstract partial class SharpDx : FrameworkElement,IDisposable
+public abstract partial class SharpDx : FrameworkElement, IDisposable
 {
     private readonly D3DImage _d3D = new();
+
     private SharpDX.Direct3D11.Device _device = null!;
+
     public DeviceContext D2dContext { get; set; } = null!;
+
+    private bool _cancelRender;
 
     /// <inheritdoc />
     protected SharpDx()
     {
         Loaded += (_, _) => CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
-        SizeChanged += (_, _) => CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
+        SizeChanged += (_, _) => _cancelRender = true;
     }
 
     private void CreateAndBindTargets(int actualWidth, int actualHeight)
@@ -69,19 +75,26 @@ public abstract partial class SharpDx : FrameworkElement,IDisposable
         };
 
         D2dContext = new DeviceContext(surface, creationProperties);
-
+        
         // CompositionTarget.Rendering += (_, _) => Rendering();
-
-        InvalidateVisual();
+        
+        // InvalidateVisual();
     }
-
 
     /// <inheritdoc />
     protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawImage(_d3D, new Rect(new Size(_d3D.PixelWidth, _d3D.PixelHeight)));
 
     protected abstract void OnRender(RenderTarget renderTarget, float time);
+
     public async void Rendering(float time)
     {
+        if (_cancelRender)
+        {
+             .CreateWindowSizeDependentResources;
+            _cancelRender = false;
+            return;
+        }
+
         await Task.Run(() =>
         {
             D2dContext.BeginDraw();

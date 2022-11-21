@@ -26,14 +26,14 @@ public class DanmakuContext
     public List<double> RollRoom { get; } = new(Danmaku.Count);
 
     /// <summary>
-    /// 上层弹幕数
+    /// 正在顶部弹幕数
     /// </summary>
-    public int StaticUpCount { get; set; }
+    public int StaticTopCount { get; set; }
 
     /// <summary>
     /// 正在底部弹幕数
     /// </summary>
-    public int StaticDownCount { get; set; }
+    public int StaticBottomCount { get; set; }
 
     /// <summary>
     /// 正在滚动弹幕数

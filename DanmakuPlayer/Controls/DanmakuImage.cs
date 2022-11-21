@@ -9,6 +9,7 @@ namespace DanmakuPlayer.Controls;
 public class DanmakuImage : SharpDx
 {
     public static SharpDX.DirectWrite.Factory Factory { get; } = new();
+
     public static TextFormat Format { get; } = new(Factory, "微软雅黑", 20);
 
     public static Dictionary<int, SolidColorBrush> Brush { get; } = new();
@@ -33,7 +34,7 @@ public class DanmakuImage : SharpDx
         if (firstIndex is -1)
             return;
         var lastIndex = Array.FindLastIndex(App.Pool, t => t.Time <= time);
-        if (lastIndex is -1 || lastIndex < firstIndex)
+        if (lastIndex < firstIndex)
             return;
         foreach (var t in App.Pool[firstIndex..(lastIndex + 1)])
             t.OnRender(renderTarget, time);
