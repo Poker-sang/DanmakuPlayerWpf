@@ -11,12 +11,12 @@ public partial class SettingDialog : ContentDialog
     {
         ThemeManager.Current.ApplicationTheme = Default.Theme ? ApplicationTheme.Dark : ApplicationTheme.Light;
         InitializeComponent();
-        SWindowOpacity.Value = GlobalSettings.WindowOpacity;
+        SWindowOpacity.Value = AppContext.WindowOpacity;
         TgTheme.IsOn = Default.Theme;
-        SFastForward.Value = GlobalSettings.FastForward;
-        SPlaySpeed.Value = GlobalSettings.PlaySpeed;
-        SSpeed.Value = GlobalSettings.Speed;
-        SOpacity.Value = GlobalSettings.Opacity;
+        SFastForward.Value = AppContext.FastForward;
+        SPlaySpeed.Value = AppContext.PlaySpeed;
+        SSpeed.Value = AppContext.Speed;
+        SOpacity.Value = AppContext.Opacity;
     }
     public bool DialogResult { get; private set; }
 
@@ -41,12 +41,12 @@ public partial class SettingDialog : ContentDialog
 
     private void BSave_Click(ContentDialog contentDialog, ContentDialogButtonClickEventArgs e)
     {
-        Default.WindowOpacity = GlobalSettings.WindowOpacity = SWindowOpacity.Value;
+        Default.WindowOpacity = AppContext.WindowOpacity = SWindowOpacity.Value;
         Default.Theme = TgTheme.IsOn;
-        Default.FastForward = GlobalSettings.FastForward = (int)SFastForward.Value;
-        Default.PlaySpeed = GlobalSettings.PlaySpeed = SPlaySpeed.Value;
-        GlobalSettings.Speed = Default.Speed = (int)SSpeed.Value;
-        Default.Opacity = GlobalSettings.Opacity = (float)SOpacity.Value;
+        Default.FastForward = AppContext.FastForward = (int)SFastForward.Value;
+        Default.PlaySpeed = AppContext.PlaySpeed = SPlaySpeed.Value;
+        AppContext.Speed = Default.Speed = (int)SSpeed.Value;
+        Default.Opacity = AppContext.Opacity = (float)SOpacity.Value;
         Default.Save();
         DialogResult = true;
         Hide();

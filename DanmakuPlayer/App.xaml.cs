@@ -10,17 +10,24 @@ public partial class App : Application
     /// <summary>
     /// 是否正在播放（没有暂停）
     /// </summary>
-    internal static bool Playing { get; set; }
+    public static bool Playing { get; set; }
 
-    internal static double Interval => 0.04;
+    public static double Interval => 0.04;
 
     /// <summary>
     /// 计时器
     /// </summary>
-    internal static DispatcherTimer TimeCounter { get; } = new() { Interval = TimeSpan.FromSeconds(Interval / GlobalSettings.PlaySpeed) };
+    public static DispatcherTimer Timer { get; } = new() { Interval = TimeSpan.FromSeconds(Interval / AppContext.PlaySpeed) };
 
     /// <summary>
     /// 弹幕池
     /// </summary>
-    internal static Danmaku[] Pool { get; set; } = Array.Empty<Danmaku>();
+    public static Danmaku[] Pool { get; set; } = Array.Empty<Danmaku>();
+
+    public static void ClearPool()
+    {
+        foreach (var danmaku in Pool)
+            danmaku.Dispose();
+        Pool = Array.Empty<Danmaku>();
+    }
 }

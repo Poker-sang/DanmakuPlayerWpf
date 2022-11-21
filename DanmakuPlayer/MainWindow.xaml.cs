@@ -24,31 +24,30 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        Danmaku.ViewPort = BBackGround;
-        BBackGround.Opacity = GlobalSettings.WindowOpacity;
+        Danmaku.ViewPort.SetTarget(BBackGround);
+        BBackGround.Opacity = AppContext.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
-        TimeSlider.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(Slider_MouseButtonDown), true);
-        TimeSlider.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(Slider_MouseButtonUp), true);
+        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(Slider_MouseButtonDown), true);
+        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(Slider_MouseButtonUp), true);
 
-        App.TimeCounter.Tick += (_, _) =>
+        App.Timer.Tick += (_, _) =>
         {
-            if (TimeSlider.Value < TimeSlider.Maximum)
+            if (STime.Value < STime.Maximum)
             {
                 if (App.Playing)
-                    TimeSlider.Value += App.Interval;
-                DanmakuImage.InvalidateVisual((float)TimeSlider.Value);
+                    STime.Value += App.Interval;
+                DanmakuImage.Rendering((float)STime.Value);
             }
             else
             {
                 Pause();
-                TimeSlider.Value = 0;
+                STime.Value = 0;
                 ScreenAllClear();
             }
         };
-        App.TimeCounter.Start();
+        App.Timer.Start();
     }
-
 
     private async void SettingOpen()
     {
@@ -56,7 +55,7 @@ public partial class MainWindow : Window
         _ = await settingWindow.ShowAsync();
         if (!settingWindow.DialogResult)
             return;
-        BBackGround.Opacity = GlobalSettings.WindowOpacity;
+        BBackGround.Opacity = AppContext.WindowOpacity;
         FadeOut("设置已更新", 3000);
     }
 
@@ -71,9 +70,9 @@ public partial class MainWindow : Window
         {
             Pause();
             ScreenAllClear();
-            TimeSlider.Maximum = 0;
-            TimeSlider.Value = 0;
-            App.Pool = null!;
+            STime.Maximum = 0;
+            STime.Value = 0;
+            App.ClearPool();
 
             var xDoc = mode ? XDocument.Load(xml) : XDocument.Parse(xml);
             var tempPool = xDoc.Element("i")!.Elements("d");
@@ -85,17 +84,17 @@ public partial class MainWindow : Window
                 .Where(t => t.RenderInit(DanmakuImage.D2dContext, context))
                 .ToArray();
 
-            TimeSlider.Maximum = App.Pool[^1].Time + 10;
-            TotalTimeBlock.Text = '/' + TimeSlider.Maximum.ToTime();
-            TimeSlider.Value = 0;
+            STime.Maximum = App.Pool[^1].Time + 10;
+            TbTotalTime.Text = '/' + STime.Maximum.ToTime();
+            STime.Value = 0;
             FadeOut("打开文件", 3000);
         }
         catch (Exception ex)
         {
             FadeOut("*不是标准B站弹幕xml文件*\n您可以在 biliplus.com 获取", 3000);
         }
-        if (Tb is not null)
-            Grid.Children.Remove(Tb);
+        if (TbBanner is not null)
+            Grid.Children.Remove(TbBanner);
         BControl.IsHitTestVisible = true;
     }
 
@@ -119,8 +118,8 @@ public partial class MainWindow : Window
 
     private void FadeOut(string message, int mSec)
     {
-        TbPath.Text = message;
-        TbPath.BeginAnimation(OpacityProperty, new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(mSec) });
+        TbMessage.Text = message;
+        TbMessage.BeginAnimation(OpacityProperty, new DoubleAnimation { From = 1, To = 0, Duration = TimeSpan.FromMilliseconds(mSec) });
     }
 
     #endregion
@@ -139,18 +138,18 @@ public partial class MainWindow : Window
         {
             case Key.Left:
             {
-                if (TimeSlider.Value - GlobalSettings.FastForward < 0)
-                    TimeSlider.Value = 0;
+                if (STime.Value - AppContext.FastForward < 0)
+                    STime.Value = 0;
                 else
-                    TimeSlider.Value -= GlobalSettings.FastForward;
+                    STime.Value -= AppContext.FastForward;
                 break;
             }
             case Key.Right:
             {
-                if (TimeSlider.Value + GlobalSettings.FastForward > TimeSlider.Maximum)
-                    TimeSlider.Value = 0;
+                if (STime.Value + AppContext.FastForward > STime.Maximum)
+                    STime.Value = 0;
                 else
-                    TimeSlider.Value += GlobalSettings.FastForward;
+                    STime.Value += AppContext.FastForward;
                 break;
             }
             case Key.Space:
@@ -258,17 +257,17 @@ public partial class MainWindow : Window
             Resume();
     }
 
-    private void BFile_MouseEnter(object sender, MouseEventArgs e) => ImportButtons.Visibility = Visibility.Visible;
+    private void BFile_MouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
 
-    private void BFile_MouseLeave(object sender, MouseEventArgs e) => ImportButtons.Visibility = Visibility.Hidden;
+    private void BFile_MouseLeave(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Hidden;
 
     private void BButtons_MouseEnter(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Visible;
 
     private void BButtons_MouseLeave(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Hidden;
 
-    private void BControl_MouseEnter(object sender, MouseEventArgs e) => SpControl.Visibility = Visibility.Visible;
+    private void BControl_MouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
 
-    private void BControl_MouseLeave(object sender, MouseEventArgs e) => SpControl.Visibility = Visibility.Hidden;
+    private void BControl_MouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
 
     #endregion
 }

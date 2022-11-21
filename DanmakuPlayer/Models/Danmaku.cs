@@ -1,7 +1,10 @@
 ﻿using DanmakuPlayer.Controls;
+using DanmakuPlayer.Services;
 using SharpDX.Direct2D1;
 using SharpDX.DirectWrite;
 using SharpDX.Mathematics.Interop;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Xml.Linq;
 using static System.Convert;
@@ -17,21 +20,22 @@ namespace DanmakuPlayer.Models;
 /// <param name="Color">颜色</param>
 /// <param name="Text">内容</param>
 /// <param name="Layout">拥有的文本框</param>
-internal record Danmaku(
+public record Danmaku(
     float Time,
     int Mode,
     int Size,
     int Color,
     string Text,
-    TextLayout Layout)
+    TextLayout Layout) : IDisposable
 {
-    public static FrameworkElement ViewPort = null!;
-    public static double ViewWidth => ViewPort.ActualWidth;
-    public static double ViewHeight => ViewPort.ActualHeight;
+    public static readonly WeakReference<FrameworkElement> ViewPort = new(null!);
+    private readonly WeakReference<SolidColorBrush> _brush = new(null!);
+    public static double ViewWidth => ViewPort.Get().ActualWidth;
+    public static double ViewHeight => ViewPort.Get().ActualHeight;
 
     static Danmaku()
     {
-        var layout = new TextLayout(DanmakuImage.Factory, "模板Template", DanmakuImage.Format, 1000, 50);
+        using var layout = new TextLayout(DanmakuImage.Factory, "模板Template", DanmakuImage.Format, 1000, 50);
         LayoutHeight = layout.Metrics.Height;
     }
 
@@ -55,10 +59,9 @@ internal record Danmaku(
     /// </summary>
     public static int Count => (int)(ViewHeight / LayoutHeight);
 
-    private SolidColorBrush _brush = null!;
 
     private float _showPositionY;
-
+    
     public static Danmaku CreateDanmaku(XElement xElement)
     {
         var tempInfo = xElement.Attribute("p")!.Value.Split(',');
@@ -73,7 +76,7 @@ internal record Danmaku(
 
     public bool RenderInit(RenderTarget renderTarget, DanmakuContext context)
     {
-        _brush = DanmakuImage.GetBrush(Color, renderTarget);
+        _brush.SetTarget(DanmakuImage.GetBrush(Color, renderTarget));
 
         // 将要占用空间的索引
         var roomIndex = 0;
@@ -100,9 +103,9 @@ internal record Danmaku(
                     else if (context.StaticRoom[roomIndex] > context.StaticRoom[i])
                         roomIndex = i;
 
-                if (overlap && !GlobalSettings.AllowOverlap)
+                if (overlap && !AppContext.AllowOverlap)
                     return false;
-                context.StaticRoom[roomIndex] = GlobalSettings.Speed + Time;
+                context.StaticRoom[roomIndex] = AppContext.Speed + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 _showPosition = new RawVector2((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
                 break;
@@ -121,9 +124,9 @@ internal record Danmaku(
                     else if (context.RollRoom[roomIndex] > context.RollRoom[i])
                         roomIndex = i;
 
-                if (overlap && !GlobalSettings.AllowOverlap)
+                if (overlap && !AppContext.AllowOverlap)
                     return false;
-                context.RollRoom[roomIndex] = (LayoutWidth * GlobalSettings.Speed / (ViewWidth + LayoutWidth)) + Space + Time;
+                context.RollRoom[roomIndex] = (LayoutWidth * AppContext.Speed / (ViewWidth + LayoutWidth)) + Space + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 break;
         }
@@ -135,7 +138,7 @@ internal record Danmaku(
 
     public void OnRender(RenderTarget renderTarget, float timeNow)
     {
-        if (Time <= timeNow && timeNow - GlobalSettings.Speed < Time)
+        if (Time <= timeNow && timeNow - AppContext.Speed < Time)
         {
             switch (Mode)
             {
@@ -143,13 +146,19 @@ internal record Danmaku(
                 case 4:
                 // 顶部
                 case 5:
-                    renderTarget.DrawTextLayout(_showPosition, Layout, _brush);
+                    renderTarget.DrawTextLayout(_showPosition, Layout, _brush.Get());
                     break;
                 // 滚动
                 default:
-                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (timeNow - Time) / GlobalSettings.Speed)), _showPositionY), Layout, _brush);
+                    renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (timeNow - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
                     break;
             }
         }
+    }
+
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        Layout.Dispose();
     }
 }

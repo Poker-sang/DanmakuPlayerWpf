@@ -5,7 +5,6 @@
     xmlns:controls="clr-namespace:DanmakuPlayer.Controls"
     xmlns:converters="clr-namespace:DanmakuPlayer.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interop="clr-namespace:System.Windows.Interop;assembly=PresentationCore"
     xmlns:local="clr-namespace:DanmakuPlayer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
@@ -46,14 +45,14 @@
             Grid.Row="0"
             Grid.RowSpan="3" />
         <TextBlock
-            x:Name="Tb"
+            x:Name="TbBanner"
             Grid.Row="1"
             FontSize="72"
             IsHitTestVisible="False"
             Style="{StaticResource DanmakuBlock}"
-            Text="xml弹幕播放器" />
+            Text="弹幕播放器" />
         <TextBlock
-            x:Name="TbPath"
+            x:Name="TbMessage"
             Grid.Row="0"
             Margin="0,20"
             FontSize="24"
@@ -93,7 +92,7 @@
             Mouse.MouseLeave="BFile_MouseLeave"
             MouseEnter="BFile_MouseEnter">
             <StackPanel
-                x:Name="ImportButtons"
+                x:Name="SpImportButtons"
                 Height="40"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
@@ -115,7 +114,7 @@
             MouseEnter="BControl_MouseEnter"
             MouseLeave="BControl_MouseLeave">
             <DockPanel
-                x:Name="SpControl"
+                x:Name="DpControl"
                 Margin="0,0,20,0"
                 VerticalAlignment="Bottom"
                 Visibility="Hidden">
@@ -133,10 +132,10 @@
                     DockPanel.Dock="Left"
                     Foreground="White"
                     Opacity="0.7"
-                    Text="{Binding Value, ElementName=TimeSlider, Converter={StaticResource SliderToTextBlock}}"
+                    Text="{Binding Value, ElementName=STime, Converter={StaticResource SliderToTextBlock}}"
                     TextAlignment="Right" />
                 <TextBlock
-                    x:Name="TotalTimeBlock"
+                    x:Name="TbTotalTime"
                     Width="45"
                     Height="18"
                     Background="#33000000"
@@ -145,7 +144,7 @@
                     Opacity="0.7"
                     TextAlignment="Left" />
                 <Slider
-                    x:Name="TimeSlider"
+                    x:Name="STime"
                     Height="30"
                     Minimum="0"
                     Opacity="0.8" />

@@ -20,7 +20,8 @@ public class DanmakuImage : SharpDx
                 (float)(color & 0xFF0000) / 0xFF0000,
                 (float)(color & 0xFF00) / 0xFF00,
                 (float)(color & 0xFF) / 0xFF,
-                GlobalSettings.Opacity));
+                AppContext.Opacity));
+
         return value;
     }
 
@@ -28,7 +29,7 @@ public class DanmakuImage : SharpDx
     {
         renderTarget.Clear(null);
 
-        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - GlobalSettings.Speed);
+        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - AppContext.Speed);
         if (firstIndex is -1)
             return;
         var lastIndex = Array.FindLastIndex(App.Pool, t => t.Time <= time);

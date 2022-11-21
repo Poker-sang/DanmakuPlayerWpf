@@ -6,10 +6,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="在线获取弹幕（biliplus.com）"
-    CloseButtonClick="BCancel_Click"
+    CloseButtonClick="BCancelClick"
     CloseButtonText="取消"
     DefaultButton="Close"
-    PrimaryButtonClick="BConfirm_Click"
+    PrimaryButtonClick="BConfirmClick"
     PrimaryButtonText="确认"
     mc:Ignorable="d">
     <DockPanel>

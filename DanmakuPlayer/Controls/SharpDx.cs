@@ -1,8 +1,8 @@
-﻿using SharpDX.Direct2D1;
+﻿using DanmakuPlayer.Services;
+using SharpDX.Direct2D1;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D9;
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -13,7 +13,7 @@ namespace DanmakuPlayer.Controls;
 /// <summary>
 /// <seealso href="https://blog.lindexi.com/post/WPF-使用-SharpDX-在-D3DImage-显示.html"/>
 /// </summary>
-public abstract partial class SharpDx : FrameworkElement
+public abstract partial class SharpDx : FrameworkElement,IDisposable
 {
     private readonly D3DImage _d3D = new();
     private SharpDX.Direct3D11.Device _device = null!;
@@ -75,7 +75,6 @@ public abstract partial class SharpDx : FrameworkElement
         InvalidateVisual();
     }
 
-    public void InvalidateVisual(float time) => Rendering(time);
 
     /// <inheritdoc />
     protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawImage(_d3D, new Rect(new Size(_d3D.PixelWidth, _d3D.PixelHeight)));
@@ -102,31 +101,26 @@ public abstract partial class SharpDx : FrameworkElement
         var format = TranslateFormat(target);
         var handle = GetSharedHandle(target);
 
-        var presentParams = GetPresentParameters();
-        const CreateFlags createFlags = CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve;
-
-        var d3DContext = new Direct3DEx();
-        var d3DDevice = new DeviceEx(d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, createFlags, presentParams);
+        var d3DDevice = new DeviceEx(new Direct3DEx(),
+            0,
+            DeviceType.Hardware,
+            IntPtr.Zero,
+            CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve,
+            new PresentParameters
+            {
+                Windowed = true,
+                SwapEffect = SwapEffect.Discard,
+                DeviceWindowHandle = PlatformInvoke.DesktopWindowHandle,
+                PresentationInterval = PresentInterval.Default
+            });
 
         var texture = new Texture(d3DDevice, target.Description.Width, target.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
 
         using var surface = texture.GetSurfaceLevel(0);
+
         _d3D.Lock();
         _d3D.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
         _d3D.Unlock();
-    }
-
-    private static PresentParameters GetPresentParameters()
-    {
-        var presentParams = new PresentParameters
-        {
-            Windowed = true,
-            SwapEffect = SwapEffect.Discard,
-            DeviceWindowHandle = GetDesktopWindow(),
-            PresentationInterval = PresentInterval.Default
-        };
-
-        return presentParams;
     }
 
     private static nint GetSharedHandle(SharpDX.Direct3D11.Texture2D texture)
@@ -144,6 +138,10 @@ public abstract partial class SharpDx : FrameworkElement
             _ => Format.Unknown
         };
 
-    [LibraryImport("user32.dll", SetLastError = false)]
-    private static partial nint GetDesktopWindow();
+    public void Dispose()
+    {
+        GC.SuppressFinalize(this);
+        _device.Dispose();
+        D2dContext.Dispose();
+    }
 }
