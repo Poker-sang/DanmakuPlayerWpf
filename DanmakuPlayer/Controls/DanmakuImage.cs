@@ -1,23 +1,22 @@
-﻿using SharpDX.Direct2D1;
-using SharpDX.DirectWrite;
-using SharpDX.Mathematics.Interop;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Vortice.Direct2D1;
+using Vortice.DirectWrite;
 
 namespace DanmakuPlayer.Controls;
 
-public class DanmakuImage : SharpDx
+public class DanmakuImage : DanmakuImageBase
 {
-    public static SharpDX.DirectWrite.Factory Factory { get; } = new();
+    public static IDWriteFactory Factory { get; } = DWrite.DWriteCreateFactory<IDWriteFactory>();
 
-    public static TextFormat Format { get; } = new(Factory, "微软雅黑", 20);
+    public static IDWriteTextFormat Format { get; } = Factory.CreateTextFormat("微软雅黑", 20);
 
-    public static Dictionary<int, SolidColorBrush> Brush { get; } = new();
+    public static Dictionary<int, ID2D1SolidColorBrush> Brush { get; } = new();
 
-    public static SolidColorBrush GetBrush(int color, RenderTarget renderTarget)
+    public static ID2D1SolidColorBrush GetBrush(int color, ID2D1RenderTarget renderTarget)
     {
         if (!Brush.TryGetValue(color, out var value))
-            Brush[color] = value = new(renderTarget, new RawColor4(
+            Brush[color] = value = renderTarget.CreateSolidColorBrush(new(
                 (float)(color & 0xFF0000) / 0xFF0000,
                 (float)(color & 0xFF00) / 0xFF00,
                 (float)(color & 0xFF) / 0xFF,
@@ -26,7 +25,7 @@ public class DanmakuImage : SharpDx
         return value;
     }
 
-    protected override void OnRender(RenderTarget renderTarget, float time)
+    protected override void OnRender(ID2D1RenderTarget renderTarget, float time)
     {
         renderTarget.Clear(null);
 

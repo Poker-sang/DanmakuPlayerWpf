@@ -8,7 +8,7 @@
 
 * UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
 
-* 弹幕渲染使用 [SharpDX](https://github.com/sharpdx/SharpDX) 的DirectX库
+* 弹幕渲染使用 [vortice](https://github.com/amerkoleci/vortice) 的Direct2D库
 
 * 龟速更新中
 
@@ -94,7 +94,7 @@
 
 项目地址：[GitHub](https://github.com/Poker-sang/DanmakuPlayer)
 
-版本：2.36
+版本：2.37
 
 ## 联系方式
 
@@ -104,4 +104,4 @@
 
 QQ：[2639914082](http://wpa.qq.com/msgrd?v=3&uin=2639914082&site=qq&menu=yes)
 
-2022.11.21
+2022.11.22

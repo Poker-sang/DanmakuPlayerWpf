@@ -1,10 +1,9 @@
 ﻿using DanmakuPlayer.Controls;
 using DanmakuPlayer.Services;
-using SharpDX.Direct2D1;
-using SharpDX.DirectWrite;
-using SharpDX.Mathematics.Interop;
+using Vortice.Direct2D1;
+using Vortice.DirectWrite;
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Windows;
 using System.Xml.Linq;
 using static System.Convert;
@@ -26,11 +25,11 @@ public record Danmaku(
     int Size,
     int Color,
     string Text,
-    TextLayout Layout) : IDisposable
+    IDWriteTextLayout Layout) : IDisposable
 {
     public static readonly WeakReference<FrameworkElement> ViewPort = new(null!);
 
-    private readonly WeakReference<SolidColorBrush> _brush = new(null!);
+    private readonly WeakReference<ID2D1SolidColorBrush> _brush = new(null!);
 
     public static double ViewWidth => ViewPort.Get().ActualWidth;
 
@@ -38,7 +37,7 @@ public record Danmaku(
 
     static Danmaku()
     {
-        using var layout = new TextLayout(DanmakuImage.Factory, "模板Template", DanmakuImage.Format, 1000, 50);
+        using var layout = DanmakuImage.Factory.CreateTextLayout("模板Template", DanmakuImage.Format, 1000, 50);
         LayoutHeight = layout.Metrics.Height;
     }
 
@@ -73,10 +72,10 @@ public record Danmaku(
          ToInt32(tempInfo[2]),
          ToInt32(tempInfo[3]),
          xElement.Value,
-         new(DanmakuImage.Factory, xElement.Value, DanmakuImage.Format, 1000, 32));
+         DanmakuImage.Factory.CreateTextLayout(xElement.Value, DanmakuImage.Format, 1000, 32));
     }
 
-    public bool RenderInit(RenderTarget renderTarget, DanmakuContext context)
+    public bool RenderInit(ID2D1RenderTarget renderTarget, DanmakuContext context)
     {
         _brush.SetTarget(DanmakuImage.GetBrush(Color, renderTarget));
 
@@ -109,7 +108,7 @@ public record Danmaku(
                     return false;
                 context.StaticRoom[roomIndex] = AppContext.Speed + Time;
                 _showPositionY = roomIndex * LayoutHeight;
-                _showPosition = new RawVector2((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
+                _showPosition = new((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
                 break;
             // 滚动
             default:
@@ -136,9 +135,9 @@ public record Danmaku(
         return true;
     }
 
-    private RawVector2 _showPosition;
+    private Vector2 _showPosition;
 
-    public void OnRender(RenderTarget renderTarget, float time)
+    public void OnRender(ID2D1RenderTarget renderTarget, float time)
     {
         // if (Time <= timeNow && timeNow - AppContext.Speed < Time)
         switch (Mode)
@@ -151,7 +150,7 @@ public record Danmaku(
                 break;
             // 滚动
             default:
-                renderTarget.DrawTextLayout(new RawVector2((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
+                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
                 break;
         }
     }

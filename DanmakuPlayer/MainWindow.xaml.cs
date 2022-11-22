@@ -82,9 +82,9 @@ public partial class MainWindow : Window
                 .ToArray();
 
             STime.Maximum = App.Pool[^1].Time + 10;
-            TbTotalTime.Text = '/' + STime.Maximum.ToTime();
+            TbTotalTime.Text = "/" + STime.Maximum.ToTime();
             STime.Value = 0;
-            FadeOut("打开文件", false);
+            FadeOut("打开文件", false, "(￣3￣)");
         }
         catch (Exception)
         {
