@@ -38,12 +38,12 @@ namespace DanmakuPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int FastForward {
+        public int PlayFastForward {
             get {
-                return ((int)(this["FastForward"]));
+                return ((int)(this["PlayFastForward"]));
             }
             set {
-                this["FastForward"] = value;
+                this["PlayFastForward"] = value;
             }
         }
         
@@ -62,24 +62,24 @@ namespace DanmakuPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("15")]
-        public int Speed {
+        public int DanmakuSpeed {
             get {
-                return ((int)(this["Speed"]));
+                return ((int)(this["DanmakuSpeed"]));
             }
             set {
-                this["Speed"] = value;
+                this["DanmakuSpeed"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0.7")]
-        public float Opacity {
+        public float DanmakuOpacity {
             get {
-                return ((float)(this["Opacity"]));
+                return ((float)(this["DanmakuOpacity"]));
             }
             set {
-                this["Opacity"] = value;
+                this["DanmakuOpacity"] = value;
             }
         }
         
@@ -134,12 +134,12 @@ namespace DanmakuPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AllowOverlap {
+        public bool DanmakuAllowOverlap {
             get {
-                return ((bool)(this["AllowOverlap"]));
+                return ((bool)(this["DanmakuAllowOverlap"]));
             }
             set {
-                this["AllowOverlap"] = value;
+                this["DanmakuAllowOverlap"] = value;
             }
         }
     }

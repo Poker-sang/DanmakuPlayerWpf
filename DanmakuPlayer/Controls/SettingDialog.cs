@@ -12,11 +12,11 @@ public partial class MainWindow
     public void SettingInit()
     {
         // CbTheme.SelectedIndex = Default.Theme;
-        SWindowOpacity.Value = AppContext.WindowOpacity;
-        SFastForward.Value = AppContext.FastForward;
-        SPlaySpeed.Value = AppContext.PlaySpeed;
-        SSpeed.Value = AppContext.Speed;
-        SOpacity.Value = AppContext.Opacity;
+        SWindowOpacity.Value = App.AppConfig.WindowOpacity;
+        SFastForward.Value = App.AppConfig.PlayFastForward;
+        SPlaySpeed.Value = App.AppConfig.PlaySpeed;
+        SSpeed.Value = App.AppConfig.DanmakuSpeed;
+        SOpacity.Value = App.AppConfig.DanmakuOpacity;
     }
 
     private void BDefaultClick(object sender, RoutedEventArgs e)
@@ -42,13 +42,13 @@ public partial class MainWindow
 
     private void BSaveClick(object sender, RoutedEventArgs e)
     {
-        AppContext.WindowOpacity = Default.WindowOpacity = SWindowOpacity.Value;
+        App.AppConfig.WindowOpacity = Default.WindowOpacity = SWindowOpacity.Value;
         // Default.Theme = CbTheme.SelectedIndex;
-        AppContext.FastForward = Default.FastForward = (int)SFastForward.Value;
-        AppContext.PlaySpeed = Default.PlaySpeed = SPlaySpeed.Value;
-        AppContext.Speed = Default.Speed = (int)SSpeed.Value;
-        AppContext.Opacity = Default.Opacity = (float)SOpacity.Value;
-        Default.Save();
+        App.AppConfig.PlayFastForward = Default.PlayFastForward = (int)SFastForward.Value;
+        App.AppConfig.PlaySpeed = Default.PlaySpeed = SPlaySpeed.Value;
+        App.AppConfig.DanmakuSpeed = Default.DanmakuSpeed = (int)SSpeed.Value;
+        App.AppConfig.DanmakuOpacity = Default.DanmakuOpacity = (float)SOpacity.Value;
+        App.AppConfig.Save();
         SettingResult = true;
         _ = ((Dialog)sender).Hide();
     }

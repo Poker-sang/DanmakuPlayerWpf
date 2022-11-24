@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Services;
+﻿using DanmakuPlayer.Services.ExtensionMethods;
 using System;
 using System.Globalization;
 using System.Windows.Data;

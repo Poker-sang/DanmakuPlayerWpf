@@ -7,6 +7,24 @@ namespace DanmakuPlayer;
 
 public partial class App : Application
 {
+    static App()
+    {
+        if (AppConfig is not { } appConfigurations
+#if FIRST_TIME
+        || true
+#endif
+           )
+            AppConfig = new();
+        else
+            AppConfig = appConfigurations;
+        Timer = new() { Interval = TimeSpan.FromSeconds(Interval / AppConfig.PlaySpeed) };
+    }
+
+    /// <summary>
+    /// 应用设置
+    /// </summary>
+    public static AppConfig AppConfig { get; }
+
     /// <summary>
     /// 是否正在播放（没有暂停）
     /// </summary>
@@ -17,7 +35,7 @@ public partial class App : Application
     /// <summary>
     /// 计时器
     /// </summary>
-    public static DispatcherTimer Timer { get; } = new() { Interval = TimeSpan.FromSeconds(Interval / AppContext.PlaySpeed) };
+    public static DispatcherTimer Timer { get; }
 
     /// <summary>
     /// 弹幕池

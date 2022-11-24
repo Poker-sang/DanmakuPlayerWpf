@@ -20,7 +20,7 @@ public class DanmakuImage : DanmakuImageBase
                 (float)(color & 0xFF0000) / 0xFF0000,
                 (float)(color & 0xFF00) / 0xFF00,
                 (float)(color & 0xFF) / 0xFF,
-                AppContext.Opacity));
+                App.AppConfig.DanmakuOpacity));
 
         return value;
     }
@@ -29,7 +29,7 @@ public class DanmakuImage : DanmakuImageBase
     {
         renderTarget.Clear(null);
 
-        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - AppContext.Speed);
+        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - App.AppConfig.DanmakuSpeed);
         if (firstIndex is -1)
             return;
         var lastIndex = Array.FindLastIndex(App.Pool, t => t.Time <= time);

@@ -1,5 +1,4 @@
 ﻿using DanmakuPlayer.Controls;
-using DanmakuPlayer.Services;
 using Vortice.Direct2D1;
 using Vortice.DirectWrite;
 using System;
@@ -7,6 +6,7 @@ using System.Numerics;
 using System.Windows;
 using System.Xml.Linq;
 using static System.Convert;
+using DanmakuPlayer.Services.ExtensionMethods;
 
 namespace DanmakuPlayer.Models;
 
@@ -104,9 +104,9 @@ public record Danmaku(
                     else if (context.StaticRoom[roomIndex] > context.StaticRoom[i])
                         roomIndex = i;
 
-                if (overlap && !AppContext.AllowOverlap)
+                if (overlap && !App.AppConfig.DanmakuAllowOverlap)
                     return false;
-                context.StaticRoom[roomIndex] = AppContext.Speed + Time;
+                context.StaticRoom[roomIndex] = App.AppConfig.DanmakuSpeed + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 _showPosition = new((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
                 break;
@@ -125,9 +125,9 @@ public record Danmaku(
                     else if (context.RollRoom[roomIndex] > context.RollRoom[i])
                         roomIndex = i;
 
-                if (overlap && !AppContext.AllowOverlap)
+                if (overlap && !App.AppConfig.DanmakuAllowOverlap)
                     return false;
-                context.RollRoom[roomIndex] = (LayoutWidth * AppContext.Speed / (ViewWidth + LayoutWidth)) + Space + Time;
+                context.RollRoom[roomIndex] = (LayoutWidth * App.AppConfig.DanmakuSpeed / (ViewWidth + LayoutWidth)) + Space + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 break;
         }
@@ -150,7 +150,7 @@ public record Danmaku(
                 break;
             // 滚动
             default:
-                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / AppContext.Speed)), _showPositionY), Layout, _brush.Get());
+                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / App.AppConfig.DanmakuSpeed)), _showPositionY), Layout, _brush.Get());
                 break;
         }
     }

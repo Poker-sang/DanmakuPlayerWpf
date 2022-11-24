@@ -39,10 +39,12 @@
             Grid.RowSpan="3"
             Background="Black"
             CornerRadius="5" />
-        <controls:DanmakuImage
-            x:Name="DanmakuImage"
+        <Grid
+            x:Name="DanmakuGrid"
             Grid.Row="0"
-            Grid.RowSpan="3" />
+            Grid.RowSpan="3">
+            <controls:DanmakuImage x:Name="DanmakuImage" />
+        </Grid>
         <TextBlock
             x:Name="TbBanner"
             Grid.Row="1"

@@ -5,16 +5,16 @@
     <Setting Name="WindowOpacity" Type="System.Double" Scope="User">
       <Value Profile="(Default)">0.2</Value>
     </Setting>
-    <Setting Name="FastForward" Type="System.Int32" Scope="User">
+    <Setting Name="PlayFastForward" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="PlaySpeed" Type="System.Double" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="Speed" Type="System.Int32" Scope="User">
+    <Setting Name="DanmakuSpeed" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
-    <Setting Name="Opacity" Type="System.Single" Scope="User">
+    <Setting Name="DanmakuOpacity" Type="System.Single" Scope="User">
       <Value Profile="(Default)">0.7</Value>
     </Setting>
     <Setting Name="Theme" Type="System.Int32" Scope="User">
@@ -29,7 +29,7 @@
     <Setting Name="RollLimit" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">30</Value>
     </Setting>
-    <Setting Name="AllowOverlap" Type="System.Boolean" Scope="User">
+    <Setting Name="DanmakuAllowOverlap" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

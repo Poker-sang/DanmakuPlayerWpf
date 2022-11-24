@@ -1,6 +1,9 @@
-﻿using DanmakuPlayer.Models;
-using DanmakuPlayer.Services;
+﻿using DanmakuPlayer.Controls;
+using DanmakuPlayer.Models;
+using DanmakuPlayer.Services.ExtensionMethods;
+using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -26,7 +29,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         SettingInit();
         Danmaku.ViewPort.SetTarget(BBackGround);
-        BBackGround.Opacity = AppContext.WindowOpacity;
+        BBackGround.Opacity = App.AppConfig.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
         STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
@@ -53,7 +56,7 @@ public partial class MainWindow : Window
         _ = await DSetting.ShowAndWaitAsync();
         if (!SettingResult)
             return;
-        BBackGround.Opacity = AppContext.WindowOpacity;
+        BBackGround.Opacity = App.AppConfig.WindowOpacity;
         FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     }
 
@@ -132,10 +135,26 @@ public partial class MainWindow : Window
 
     #region 事件
 
-    private void WDoubleClick(object sender, MouseButtonEventArgs e)
+
+    private async void WDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (e.ClickCount is 2)
-            WindowState = WindowState is WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        if (e.ClickCount is not 2)
+            return;
+        WindowState = WindowState is WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        return;
+        App.Timer.Stop();
+        DanmakuGrid.Children.Remove(DanmakuImage);
+        DanmakuImage.Dispose();
+
+        DanmakuImage = new DanmakuImage();
+        _ = DanmakuGrid.Children.Add(DanmakuImage);
+
+        App.Timer.Start();
+    }
+
+
+    private void WSizeChanged(object sender, SizeChangedEventArgs e)
+    {
     }
 
     private void WKeyDown(object sender, KeyEventArgs e)
@@ -144,18 +163,18 @@ public partial class MainWindow : Window
         {
             case Key.Left:
             {
-                if (STime.Value - AppContext.FastForward < 0)
+                if (STime.Value - App.AppConfig.PlayFastForward < 0)
                     STime.Value = 0;
                 else
-                    STime.Value -= AppContext.FastForward;
+                    STime.Value -= App.AppConfig.PlayFastForward;
                 break;
             }
             case Key.Right:
             {
-                if (STime.Value + AppContext.FastForward > STime.Maximum)
+                if (STime.Value + App.AppConfig.PlayFastForward > STime.Maximum)
                     STime.Value = 0;
                 else
-                    STime.Value += AppContext.FastForward;
+                    STime.Value += App.AppConfig.PlayFastForward;
                 break;
             }
             case Key.Space:
@@ -211,7 +230,7 @@ public partial class MainWindow : Window
 
     private void BFileClick(object sender, RoutedEventArgs e)
     {
-        var fileDialog = new Microsoft.Win32.OpenFileDialog
+        var fileDialog = new OpenFileDialog
         {
             Title = "选择弹幕文件",
             Filter = "弹幕文件|*.xml",

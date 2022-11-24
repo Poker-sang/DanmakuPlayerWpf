@@ -9,6 +9,9 @@ using System.Windows.Media;
 using Vortice.Direct3D11;
 using Vortice.Direct3D9;
 using Vortice.DXGI;
+using SharpGen.Runtime;
+using System.Windows.Media.Effects;
+using Windows.Graphics.DirectX.Direct3D11;
 
 namespace DanmakuPlayer.Controls;
 
@@ -36,11 +39,7 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
     };
 
     /// <inheritdoc />
-    protected DanmakuImageBase()
-    {
-        Loaded += (_, _) => CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
-        SizeChanged += (_, _) => _cancelRender = true;
-    }
+    protected DanmakuImageBase() => Loaded += (_, _) => CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
 
     private void CreateAndBindTargets(int actualWidth, int actualHeight)
     {
@@ -64,9 +63,9 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
         if (D3D11.D3D11CreateDevice(IntPtr.Zero, DriverType.Hardware, DeviceCreationFlags.BgraSupport, _featureLevels, out _device, out var immediateContext).Failure)
             throw new();
 
-        var renderTarget = _device.CreateTexture2D(renderDesc);
+        /*using*/ var texture2D = _device.CreateTexture2D(renderDesc);
 
-        var surface = renderTarget.QueryInterface<IDXGISurface>();
+        /*using*/ var surface = texture2D.QueryInterface<IDXGISurface>();
 
         // var d2DFactory = new Factory();
 
@@ -74,7 +73,7 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
 
         // _d2DRenderTarget = new RenderTarget(d2DFactory, surface, renderTargetProperties);
 
-        SetRenderTarget(renderTarget);
+        SetRenderTarget(texture2D);
 
         immediateContext.RSSetViewport(0, 0, width, height);
 
@@ -93,16 +92,23 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
     }
 
     /// <inheritdoc />
-    protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawImage(_d3D, new(new(_d3D.PixelWidth, _d3D.PixelHeight)));
+    protected override void OnRender(DrawingContext drawingContext)
+    {
+        if (!IsLoaded)
+            return;
+        drawingContext.DrawImage(_d3D, new(new(_d3D.PixelWidth, _d3D.PixelHeight)));
+    }
 
     protected abstract void OnRender(ID2D1RenderTarget renderTarget, float time);
 
     public async void Rendering(float time)
     {
+        if (!IsLoaded)
+            return;
         if (_cancelRender)
         {
             // CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
-            _cancelRender = false;
+            Dispose();
             return;
         }
 
@@ -125,8 +131,8 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
         var format = TranslateFormat(target);
         var handle = GetSharedHandle(target);
 
-        var d3d9Ex = D3D9.Direct3DCreate9Ex();
-        var d3DDevice = d3d9Ex.CreateDeviceEx(
+        /*using*/ var d3d9Ex = D3D9.Direct3DCreate9Ex();
+        /*using*/ var d3DDevice = d3d9Ex.CreateDeviceEx(
             0,
             DeviceType.Hardware,
             IntPtr.Zero,
@@ -139,14 +145,20 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
                 PresentationInterval = PresentInterval.Default
             });
 
-        var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
+        /*using*/ var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
             Vortice.Direct3D9.Usage.RenderTarget, format, Pool.Default, ref handle);
 
-        using var surface = texture.GetSurfaceLevel(0);
+        /*using*/ var surface = texture.GetSurfaceLevel(0);
 
-        _d3D.Lock();
-        _d3D.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
-        _d3D.Unlock();
+        try
+        {
+            _d3D.Lock();
+            _d3D.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
+        }
+        finally
+        {
+            _d3D.Unlock();
+        }
     }
 
     private static nint GetSharedHandle(ID3D11Texture2D texture)
@@ -167,7 +179,15 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
     public void Dispose()
     {
         GC.SuppressFinalize(this);
-        _device.Dispose();
-        D2dContext.Dispose();
+        _d3D.Freeze();
+        _d3D.Lock();
+        SafeRelease(D2dContext);
+        SafeRelease(_device);
+    }
+
+    private static void SafeRelease(CppObject? obj)
+    {
+        if (obj is { NativePointer: not (nint)0 })
+            obj.Dispose();
     }
 }

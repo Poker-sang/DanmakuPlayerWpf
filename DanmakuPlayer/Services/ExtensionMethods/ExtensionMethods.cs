@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DanmakuPlayer.Services;
+namespace DanmakuPlayer.Services.ExtensionMethods;
 
 public static class ExtensionMethods
 {
