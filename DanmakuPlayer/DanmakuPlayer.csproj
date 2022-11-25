@@ -5,12 +5,17 @@
         <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>Preview</LangVersion>
-        <ApplicationIcon>DanmakuPlayer.ico</ApplicationIcon>
+        <ApplicationIcon>Assets\DanmakuPlayer.ico</ApplicationIcon>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
+      <Content Include="Assets\DanmakuPlayer.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CompiledBindings.WPF" Version="1.0.13" />
         <PackageReference Include="Vortice.D3DCompiler" Version="2.1.41" />
         <PackageReference Include="Vortice.Direct2D1" Version="2.1.41" />
         <PackageReference Include="Vortice.Direct3D11" Version="2.1.41" />
@@ -36,6 +41,11 @@
             <Generator>SettingsSingleFileGenerator</Generator>
             <LastGenOutput>Settings.Designer.cs</LastGenOutput>
         </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Enums\" />
+      <Folder Include="Resources\" />
     </ItemGroup>
 
 </Project>

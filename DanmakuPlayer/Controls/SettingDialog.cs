@@ -56,7 +56,7 @@ public partial class MainWindow
     private void CbThemeSelectionChanged(object sender, RoutedEventArgs e)
     {
         return;
-        Theme.Apply(ToTheme(((ComboBox)sender).SelectedIndex));
+        // Theme.Apply(ToTheme(((ComboBox)sender).SelectedIndex));
     }
 
     private static ThemeType ToTheme(int theme) =>

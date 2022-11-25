@@ -10,33 +10,6 @@
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="MyButton" TargetType="Button">
-                <Setter Property="OverridesDefaultStyle" Value="True" />
-                <Setter Property="Cursor" Value="Hand" />
-                <Setter Property="Width" Value="40" />
-                <Setter Property="Height" Value="40" />
-                <Setter Property="Foreground" Value="LightGray" />
-                <Setter Property="FontSize" Value="25" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="Button">
-                            <Border
-                                Name="border"
-                                Background="#33000000"
-                                BorderBrush="Black"
-                                BorderThickness="0"
-                                CornerRadius="5">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <ControlTemplate.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Opacity" Value="0.8" />
-                                </Trigger>
-                            </ControlTemplate.Triggers>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
             <Style x:Key="DanmakuBlock" TargetType="TextBlock">
                 <Setter Property="OverridesDefaultStyle" Value="True" />
                 <Setter Property="TextAlignment" Value="Center" />

@@ -1,17 +1,13 @@
 ﻿using DanmakuPlayer.Services;
-using Vortice.Direct2D1;
-using Vortice.Direct3D;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
+using Vortice.Direct2D1;
 using Vortice.Direct3D11;
 using Vortice.Direct3D9;
 using Vortice.DXGI;
-using SharpGen.Runtime;
-using System.Windows.Media.Effects;
-using Windows.Graphics.DirectX.Direct3D11;
 
 namespace DanmakuPlayer.Controls;
 
@@ -26,20 +22,14 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
 
     public ID2D1DeviceContext D2dContext { get; set; } = null!;
 
-    private bool _cancelRender;
-
-    /// <summary>
-    /// <seealso href="https://github.com/amerkoleci/Vortice.Windows.Samples/blob/main/src/Vortice.Framework/D3D11Application.cs"/>
-    /// </summary>
-    private static readonly Vortice.Direct3D.FeatureLevel[] _featureLevels = {
-        Vortice.Direct3D.FeatureLevel.Level_11_1,
-        Vortice.Direct3D.FeatureLevel.Level_11_0,
-        Vortice.Direct3D.FeatureLevel.Level_10_1,
-        Vortice.Direct3D.FeatureLevel.Level_10_0
-    };
+    public bool CancelRender;
 
     /// <inheritdoc />
-    protected DanmakuImageBase() => Loaded += (_, _) => CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
+    protected DanmakuImageBase() => Loaded += (_, _) =>
+    {
+        DirectHelper.CreateDevice(out _device);
+        CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
+    };
 
     private void CreateAndBindTargets(int actualWidth, int actualHeight)
     {
@@ -60,22 +50,15 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
             ArraySize = 1
         };
 
-        if (D3D11.D3D11CreateDevice(IntPtr.Zero, DriverType.Hardware, DeviceCreationFlags.BgraSupport, _featureLevels, out _device, out var immediateContext).Failure)
-            throw new();
+        /*using*/
+        var texture = _device.CreateTexture2D(renderDesc);
 
-        /*using*/ var texture2D = _device.CreateTexture2D(renderDesc);
+        /*using*/
+        var surface = texture.QueryInterface<IDXGISurface>();
 
-        /*using*/ var surface = texture2D.QueryInterface<IDXGISurface>();
+        SetRenderTarget(texture);
 
-        // var d2DFactory = new Factory();
-
-        // var renderTargetProperties = new RenderTargetProperties(new SharpDX.Direct2D1.PixelFormat(SharpDX.DXGI.Format.Unknown, AlphaMode.Premultiplied));
-
-        // _d2DRenderTarget = new RenderTarget(d2DFactory, surface, renderTargetProperties);
-
-        SetRenderTarget(texture2D);
-
-        immediateContext.RSSetViewport(0, 0, width, height);
+        _device.ImmediateContext.RSSetViewport(0, 0, width, height);
 
         var creationProperties = new CreationProperties
         {
@@ -84,38 +67,28 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
             ThreadingMode = ThreadingMode.MultiThreaded,
         };
 
-        D2dContext = D2D1.D2D1CreateDeviceContext(surface, creationProperties);
-
-        // CompositionTarget.Rendering += (_, _) => Rendering();
-
-        // InvalidateVisual();
+        DirectHelper.RenderTarget = D2dContext = D2D1.D2D1CreateDeviceContext(surface, creationProperties);
     }
 
     /// <inheritdoc />
-    protected override void OnRender(DrawingContext drawingContext)
-    {
-        if (!IsLoaded)
-            return;
-        drawingContext.DrawImage(_d3D, new(new(_d3D.PixelWidth, _d3D.PixelHeight)));
-    }
+    protected override void OnRender(DrawingContext drawingContext) => drawingContext.DrawImage(_d3D, new(new(_d3D.PixelWidth, _d3D.PixelHeight)));
 
-    protected abstract void OnRender(ID2D1RenderTarget renderTarget, float time);
+    protected abstract void OnRender(ID2D1RenderTarget renderTarget, float time, AppConfig appConfig);
 
-    public async void Rendering(float time)
+    public async void Rendering(float time, AppConfig appConfig)
     {
-        if (!IsLoaded)
-            return;
-        if (_cancelRender)
+        if (CancelRender)
         {
-            // CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
-            Dispose();
-            return;
+            DirectHelper.Brush.Clear();
+            D2dContext.SafeRelease();
+            CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
+            CancelRender = false;
         }
 
         await Task.Run(() =>
         {
             D2dContext.BeginDraw();
-            OnRender(D2dContext, time);
+            OnRender(D2dContext, time, appConfig);
             _ = D2dContext.EndDraw();
             _device.ImmediateContext.Flush();
         });
@@ -128,11 +101,13 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
 
     private void SetRenderTarget(ID3D11Texture2D target)
     {
-        var format = TranslateFormat(target);
-        var handle = GetSharedHandle(target);
+        var format = DirectHelper.TranslateFormat(target);
+        var handle = DirectHelper.GetSharedHandle(target);
 
-        /*using*/ var d3d9Ex = D3D9.Direct3DCreate9Ex();
-        /*using*/ var d3DDevice = d3d9Ex.CreateDeviceEx(
+        /*using*/
+        var d3d9Ex = D3D9.Direct3DCreate9Ex();
+        /*using*/
+        var d3DDevice = d3d9Ex.CreateDeviceEx(
             0,
             DeviceType.Hardware,
             IntPtr.Zero,
@@ -145,10 +120,12 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
                 PresentationInterval = PresentInterval.Default
             });
 
-        /*using*/ var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
+        /*using*/
+        var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
             Vortice.Direct3D9.Usage.RenderTarget, format, Pool.Default, ref handle);
 
-        /*using*/ var surface = texture.GetSurfaceLevel(0);
+        /*using*/
+        var surface = texture.GetSurfaceLevel(0);
 
         try
         {
@@ -161,33 +138,12 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
         }
     }
 
-    private static nint GetSharedHandle(ID3D11Texture2D texture)
-    {
-        using var resource = texture.QueryInterface<IDXGIResource>();
-        return resource.SharedHandle;
-    }
-
-    private static Vortice.Direct3D9.Format TranslateFormat(ID3D11Texture2D texture) =>
-        texture.Description.Format switch
-        {
-            Vortice.DXGI.Format.R10G10B10A2_UNorm => Vortice.Direct3D9.Format.A2B10G10R10,
-            Vortice.DXGI.Format.R16G16B16A16_Float => Vortice.Direct3D9.Format.A16B16G16R16F,
-            Vortice.DXGI.Format.B8G8R8A8_UNorm => Vortice.Direct3D9.Format.A8R8G8B8,
-            _ => Vortice.Direct3D9.Format.Unknown
-        };
-
     public void Dispose()
     {
         GC.SuppressFinalize(this);
         _d3D.Freeze();
         _d3D.Lock();
-        SafeRelease(D2dContext);
-        SafeRelease(_device);
-    }
-
-    private static void SafeRelease(CppObject? obj)
-    {
-        if (obj is { NativePointer: not (nint)0 })
-            obj.Dispose();
+        D2dContext.SafeRelease();
+        _device.SafeRelease();
     }
 }

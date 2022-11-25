@@ -1,10 +1,7 @@
-﻿using DanmakuPlayer.Controls;
-using DanmakuPlayer.Models;
+﻿using DanmakuPlayer.Models;
 using DanmakuPlayer.Services.ExtensionMethods;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -13,11 +10,10 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
-using Button = System.Windows.Controls.Button;
 
 // TODO: 减少内存占用
-// TODO: 改变窗口大小
 // TODO: 设置同屏弹幕上限
+
 namespace DanmakuPlayer;
 
 public partial class MainWindow : Window
@@ -40,7 +36,7 @@ public partial class MainWindow : Window
             {
                 if (App.Playing)
                     STime.Value += App.Interval;
-                DanmakuImage.Rendering((float)STime.Value);
+                DanmakuImage.Rendering((float)STime.Value, App.AppConfig);
             }
             else
             {
@@ -60,6 +56,9 @@ public partial class MainWindow : Window
         FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     }
 
+    private string _lastXml = "";
+    private bool _lastMode;
+
     /// <summary>
     /// 加载xml文件
     /// </summary>
@@ -67,27 +66,20 @@ public partial class MainWindow : Window
     /// <param name="mode"><see langword="true"/>为路径，<see langword="false"/>为字符串</param>
     private void XmlOpen(string xml, bool mode)
     {
+        _lastXml = xml;
+        _lastMode = mode;
+
         try
         {
             Pause();
             STime.Maximum = 0;
             STime.Value = 0;
-            App.ClearPool();
-
-            var xDoc = mode ? XDocument.Load(xml) : XDocument.Parse(xml);
-            var tempPool = xDoc.Element("i")!.Elements("d");
-            var context = new DanmakuContext();
-            App.Pool = tempPool
-                .Select(Danmaku.CreateDanmaku)
-                .Where(t => t.Mode < 6)
-                .OrderBy(t => t.Time)
-                .Where(t => t.RenderInit(DanmakuImage.D2dContext, context))
-                .ToArray();
+            App.LoadPool(mode ? XDocument.Load(xml) : XDocument.Parse(xml));
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
             STime.Value = 0;
-            FadeOut("打开文件", false, "(￣3￣)");
+            FadeOut("弹幕已装载", false, "(/・ω・)/");
         }
         catch (Exception)
         {
@@ -99,16 +91,31 @@ public partial class MainWindow : Window
         BControl.IsHitTestVisible = true;
     }
 
+    private bool _needResume;
+
+    private void TryPause()
+    {
+        _needResume = App.Playing;
+        Pause();
+    }
+
+    private void TryResume()
+    {
+        if (_needResume)
+            Resume();
+        _needResume = false;
+    }
+
     private void Resume()
     {
         App.Playing = true;
-        BPauseResume.Content = new SymbolIcon { Symbol = SymbolRegular.Pause24 };
+        BPauseResume.Icon = SymbolRegular.Pause24;
     }
 
     private void Pause()
     {
         App.Playing = false;
-        BPauseResume.Content = new SymbolIcon { Symbol = SymbolRegular.Play24 };
+        BPauseResume.Icon = SymbolRegular.Play24;
     }
 
     private void FadeOut(string message, bool isError, string? hint = null, int mSec = 3000)
@@ -135,26 +142,28 @@ public partial class MainWindow : Window
 
     #region 事件
 
-
-    private async void WDoubleClick(object sender, MouseButtonEventArgs e)
+    private void WDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount is not 2)
             return;
         WindowState = WindowState is WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-        return;
-        App.Timer.Stop();
-        DanmakuGrid.Children.Remove(DanmakuImage);
-        DanmakuImage.Dispose();
-
-        DanmakuImage = new DanmakuImage();
-        _ = DanmakuGrid.Children.Add(DanmakuImage);
-
-        App.Timer.Start();
+        DanmakuImage.CancelRender = true;
     }
-
 
     private void WSizeChanged(object sender, SizeChangedEventArgs e)
     {
+        if (_lastXml is "")
+            return;
+
+        TryPause();
+        App.Timer.Stop();
+
+        App.LoadPool(_lastMode ? XDocument.Load(_lastXml) : XDocument.Parse(_lastXml));
+        STime.Maximum = App.Pool[^1].Time + 10;
+        TbTotalTime.Text = "/" + STime.Maximum.ToTime();
+
+        App.Timer.Start();
+        TryResume();
     }
 
     private void WKeyDown(object sender, KeyEventArgs e)
@@ -249,13 +258,13 @@ public partial class MainWindow : Window
         if (Topmost)
         {
             Topmost = false;
-            ((Button)sender).Content = new SymbolIcon { Symbol = SymbolRegular.Pin24 };
+            ((Button)sender).Icon = SymbolRegular.Pin24;
             FadeOut("固定上层：关闭", false, "(°∀°)ﾉ");
         }
         else
         {
             Topmost = true;
-            ((Button)sender).Content = new SymbolIcon { Symbol = SymbolRegular.PinOff24 };
+            ((Button)sender).Icon = SymbolRegular.PinOff24;
             FadeOut("固定上层：开启", false, "(・ω< )★");
         }
     }
@@ -272,19 +281,9 @@ public partial class MainWindow : Window
             Resume();
     }
 
-    private bool _needResume;
+    private void STimeMouseButtonDown(object sender, MouseButtonEventArgs e) => TryPause();
 
-    private void STimeMouseButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        _needResume = App.Playing;
-        Pause();
-    }
-
-    private void STimeMouseButtonUp(object sender, MouseButtonEventArgs e)
-    {
-        if (_needResume)
-            Resume();
-    }
+    private void STimeMouseButtonUp(object sender, MouseButtonEventArgs e) => TryResume();
 
     private void BFileMouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
 

@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DanmakuPlayer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rs="clr-namespace:DanmakuPlayer.Resources"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Width="800"
     Height="450"
@@ -19,6 +20,7 @@
     Drop="WDrop"
     KeyDown="WKeyDown"
     ResizeMode="CanResizeWithGrip"
+    SizeChanged="WSizeChanged"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
@@ -66,15 +68,27 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Visibility="Hidden">
-                <Button Click="BFrontClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Pin24" />
-                </Button>
-                <Button Click="BSettingClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Settings24" />
-                </Button>
-                <Button Click="BCloseClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Dismiss24" />
-                </Button>
+                <ui:Button
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
+                    Click="BFrontClick"
+                    FontSize="18"
+                    Icon="Pin24" />
+                <ui:Button
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
+                    Click="BSettingClick"
+                    FontSize="18"
+                    Icon="Settings24" />
+                <ui:Button
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
+                    Click="BCloseClick"
+                    FontSize="18"
+                    Icon="Dismiss24" />
             </StackPanel>
         </Border>
         <Border
@@ -91,12 +105,20 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal"
                 Visibility="Hidden">
-                <Button Click="BImportClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="ArrowDownload24" />
-                </Button>
-                <Button Click="BFileClick" Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="OpenFolder24" />
-                </Button>
+                <ui:Button
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
+                    Click="BImportClick"
+                    FontSize="18"
+                    Icon="ArrowDownload24" />
+                <ui:Button
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
+                    Click="BFileClick"
+                    FontSize="18"
+                    Icon="OpenFolder24" />
             </StackPanel>
         </Border>
         <Border
@@ -111,13 +133,15 @@
                 Margin="0,0,20,0"
                 VerticalAlignment="Bottom"
                 Visibility="Hidden">
-                <Button
+                <ui:Button
                     x:Name="BPauseResume"
+                    Width="40"
+                    Height="40"
+                    Appearance="Transparent"
                     Click="PauseResumeClick"
                     DockPanel.Dock="Left"
-                    Style="{StaticResource MyButton}">
-                    <ui:SymbolIcon Symbol="Play12" />
-                </Button>
+                    FontSize="18"
+                    Icon="Play12" />
                 <TextBlock
                     Width="44"
                     Height="18"
@@ -125,7 +149,7 @@
                     DockPanel.Dock="Left"
                     Foreground="White"
                     Opacity="0.7"
-                    Text="{Binding Value, ElementName=STime, Converter={StaticResource SliderToTextBlock}}"
+                    Text="{x:Bind STime.Value, Converter={StaticResource SliderToTextBlock}}"
                     TextAlignment="Right" />
                 <TextBlock
                     x:Name="TbTotalTime"
@@ -232,15 +256,17 @@
                         TickFrequency="0.1"
                         TickPlacement="Both" />
                 </ui:CardControl>
-                <TextBlock>
-                    <Run Text="DanmakuPlayer" /><LineBreak />
-                    <Run Text="版本：v2.15" /><LineBreak />
-                    <Run Text="2022.4.9" /><LineBreak />
-                    <ui:Hyperlink Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" /><LineBreak />
-                    <Run Text="邮箱：poker_sang@outlook.com" /><LineBreak />
-                    <Run Text=" QQ：2639914082" /><LineBreak />
-                    <ui:Hyperlink Content="GitHub: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" /><LineBreak />
-                </TextBlock>
+                <ui:CardExpander Header="关于 DanmakuPlayer v2.41" Icon="Info24">
+                    <StackPanel Orientation="Vertical">
+                        <ui:Hyperlink Content="邮箱：poker_sang@outlook.com" NavigateUri="mailto:poker_sang@outlook.com" />
+                        <ui:Hyperlink Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" />
+                        <ui:Hyperlink Content="QQ：2639914082" NavigateUri="http://wpa.qq.com/msgrd?v=3&amp;uin=2639914082site=qq&amp;menu=yes" />
+                        <ui:Hyperlink Content="GitHub: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" />
+                    </StackPanel>
+                </ui:CardExpander>
+                <ui:CardExpander Header="License" Icon="Important24">
+                    <TextBlock Text="{x:Set rs:ConstantStrings.License}" TextWrapping="Wrap" />
+                </ui:CardExpander>
             </StackPanel>
         </ui:Dialog>
         <ui:Dialog

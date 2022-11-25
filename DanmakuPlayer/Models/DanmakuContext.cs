@@ -2,6 +2,9 @@
 
 namespace DanmakuPlayer.Models;
 
+/// <summary>
+/// 用来统一各弹幕的上下文
+/// </summary>
 public class DanmakuContext
 {
     public DanmakuContext()
