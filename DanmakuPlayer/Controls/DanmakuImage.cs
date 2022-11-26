@@ -9,7 +9,7 @@ public class DanmakuImage : DanmakuImageBase
     {
         renderTarget.Clear(null);
 
-        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - App.AppConfig.DanmakuSpeed);
+        var firstIndex = Array.FindIndex(App.Pool, t => t.Time > time - App.AppConfig.DanmakuDuration);
         if (firstIndex is -1)
             return;
         var lastIndex = Array.FindLastIndex(App.Pool, t => t.Time <= time);

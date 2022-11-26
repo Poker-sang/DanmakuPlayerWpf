@@ -23,47 +23,40 @@ public static class DirectHelper
         set
         {
             _renderTarget = value;
-            SetDanmakuOpacity();
+            ClearBrushes();
         }
     }
 
     /// <summary>
-    /// 字号和对应字体
-    /// </summary>
-    public static Dictionary<float, IDWriteTextFormat> TextFormats { get; } = new();
-
-    /// <summary>
     /// 颜色和对应笔刷
     /// </summary>
+    /// <remarks>依赖于<see cref="RenderTarget"/>、<see cref="AppConfig.DanmakuOpacity"/></remarks>
     public static Dictionary<int, ID2D1SolidColorBrush> Brushes { get; } = new();
 
     /// <summary>
-    /// 字号和对应文本框高度
+    /// 字号和对应字体
     /// </summary>
-    public static Dictionary<int, float> LayoutHeights { get; } = new();
+    /// <remarks>依赖于<see cref="AppConfig.DanmakuFont"/>、<see cref="AppConfig.DanmakuScale"/></remarks>
+    public static Dictionary<float, IDWriteTextFormat> TextFormats { get; } = new();
 
     /// <summary>
     /// 内容和对应渲染布局
     /// </summary>
+    /// <remarks>依赖于<see cref="RenderTarget"/>、<see cref="TextFormats"/></remarks>
     public static Dictionary<string, IDWriteTextLayout> Layouts { get; } = new();
+
+    /// <summary>
+    /// 字号和对应文本框高度
+    /// </summary>
+    /// <remarks>依赖于<see cref="Layouts"/></remarks>
+    public static Dictionary<int, float> LayoutHeights { get; } = new();
 
     #region Set类方法
 
     /// <summary>
-    /// 重新加载<see cref="Layouts"/>、<see cref="LayoutHeights"/>
+    /// 重新加载<see cref="Brushes"/>
     /// </summary>
-    public static void ClearLayouts()
-    {
-        foreach (var layout in Layouts)
-            layout.Value.Dispose();
-        Layouts.Clear();
-        ClearLayoutHeights();
-    }
-
-    /// <summary>
-    /// 重新加载<see cref="Brushes"/>、<see cref="LayoutHeights"/>
-    /// </summary>
-    public static void SetDanmakuOpacity()
+    public static void ClearBrushes()
     {
         foreach (var brush in Brushes)
             brush.Value.Dispose();
@@ -89,16 +82,7 @@ public static class DirectHelper
     }
 
     /// <summary>
-    /// 重新加载<see cref="TextFormats"/>、<see cref="LayoutHeights"/>
-    /// </summary>
-    public static void SetDanmakuScale()
-    {
-        SetDanmakuFont();
-        ClearLayoutHeights();
-    }
-
-    /// <summary>
-    /// 重新加载<see cref="LayoutHeights"/>
+    /// 依次重新加载<see cref="LayoutHeights"/>
     /// </summary>
     public static void ClearLayoutHeights()
     {
@@ -110,9 +94,20 @@ public static class DirectHelper
     }
 
     /// <summary>
-    /// 重新加载<see cref="TextFormats"/>
+    /// 依次重新加载<see cref="Layouts"/>、<see cref="LayoutHeights"/>
     /// </summary>
-    public static void SetDanmakuFont()
+    public static void ClearLayouts()
+    {
+        foreach (var layout in Layouts)
+            layout.Value.Dispose();
+        Layouts.Clear();
+        ClearLayoutHeights();
+    }
+
+    /// <summary>
+    /// 依次重新加载<see cref="TextFormats"/>、<see cref="Layouts"/>、<see cref="LayoutHeights"/>
+    /// </summary>
+    public static void ClearTextFormats()
     {
         foreach (var textFormat in TextFormats)
             textFormat.Value.Dispose();
@@ -120,6 +115,7 @@ public static class DirectHelper
 
         TextFormats[25] = Factory.CreateTextFormat(App.AppConfig.DanmakuFont, 25 * App.AppConfig.DanmakuScale);
         TextFormats[18] = Factory.CreateTextFormat(App.AppConfig.DanmakuFont, 18 * App.AppConfig.DanmakuScale);
+        ClearLayouts();
     }
 
     #endregion

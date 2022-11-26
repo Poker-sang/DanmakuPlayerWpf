@@ -21,8 +21,9 @@ public partial class App : Application
         else
             AppConfig = appConfigurations;
 
-        DirectHelper.SetDanmakuScale();
-        DirectHelper.SetDanmakuOpacity();
+        HttpClientHelper.Initialize();
+        DirectHelper.ClearBrushes();
+        DirectHelper.ClearTextFormats();
         ResetTimerInterval();
     }
 

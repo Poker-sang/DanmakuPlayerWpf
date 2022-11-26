@@ -4,7 +4,7 @@
 
 * 目前只支持 [BiliPlus](biliplus.com) xml格式弹幕文件的透明弹幕播放器
 
-* 第三个版本，利用DirectX解决了弹幕多时卡顿的问题
+* 第三个版本，利用Direct2D解决了弹幕多时卡顿的问题
 
 * UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
 
@@ -50,9 +50,9 @@
 
 * [x] 播放时允许调整窗口大小
 
-* [ ] 输入进度条
+* [x] 播放时调整设置
 
-* [ ] 播放时调整设置
+* [ ] 输入进度条
 
 * [ ] ⚠️ 和背后播放器同步
 
@@ -98,7 +98,7 @@
 
 项目地址：[GitHub](https://github.com/Poker-sang/DanmakuPlayer)
 
-版本：2.42
+版本：2.43
 
 ## 联系方式
 

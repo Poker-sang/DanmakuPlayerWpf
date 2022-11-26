@@ -4,17 +4,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Appearance;
-using Wpf.Ui.Controls;
 
 namespace DanmakuPlayer;
 
 public partial class MainWindow
 {
-    public void SettingInit()
-    {
-        // CbTheme.SelectedIndex = Default.Theme;
-    }
-
     private void BDefaultClick(object sender, RoutedEventArgs e)
     {
         //switch (Control.SelectedIndex)
@@ -34,15 +28,6 @@ public partial class MainWindow
         //e.Cancel = true;
     }
 
-    private bool SettingResult { get; set; }
-
-    private void BSaveClick(object sender, RoutedEventArgs e)
-    {
-        App.AppConfig.Save();
-        SettingResult = true;
-        _ = ((Dialog)sender).Hide();
-    }
-
     private void CbThemeSelectionChanged(object sender, RoutedEventArgs e)
     {
         return;
@@ -52,7 +37,7 @@ public partial class MainWindow
     private static ThemeType ToTheme(int theme) =>
         theme switch
         {
-            0 => (Theme.GetSystemTheme() is SystemThemeType.Dark ? ThemeType.Dark : ThemeType.Light),
+            0 => Theme.GetSystemTheme() is SystemThemeType.Dark ? ThemeType.Dark : ThemeType.Light,
             1 => ThemeType.Light,
             2 => ThemeType.Dark,
             3 => ThemeType.HighContrast,
@@ -60,6 +45,10 @@ public partial class MainWindow
         };
 
     private void SliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => App.AppConfig.Save();
+
+    private void ComboBoxOnSelectionChanged(object sender, SelectionChangedEventArgs e) => App.AppConfig.Save();
+
+    private void ButtonOnClick(object sender, RoutedEventArgs e) => App.AppConfig.Save();
 
     private static string[] FontFamilies
     {
@@ -69,7 +58,4 @@ public partial class MainWindow
             return collection.Families.Select(t => t.Name).ToArray();
         }
     }
-
-    // var myFont = ;
-    // myFont.Families.First().Name;
 }

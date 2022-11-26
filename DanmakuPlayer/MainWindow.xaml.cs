@@ -2,24 +2,24 @@
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
-using System.Net;
-using System.Net.Http;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
+using Button = Wpf.Ui.Controls.Button;
 
 namespace DanmakuPlayer;
 
-public partial class MainWindow : Window
+public partial class MainWindow : Window, INotifyPropertyChanged
 {
     public MainWindow()
     {
         App.Window = this;
         InitializeComponent();
-        SettingInit();
         Danmaku.ViewPort.SetTarget(BBackGround);
         BBackGround.Opacity = App.AppConfig.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
@@ -28,16 +28,16 @@ public partial class MainWindow : Window
         STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
         App.Timer.Tick += (_, _) =>
         {
-            if (STime.Value < STime.Maximum)
+            if (Time < STime.Maximum)
             {
                 if (App.Playing)
-                    STime.Value += App.AppConfig.Interval;
-                DanmakuImage.Rendering((float)STime.Value, App.AppConfig);
+                    Time += App.AppConfig.Interval;
+                DanmakuImage.Rendering((float)Time, App.AppConfig);
             }
             else
             {
                 Pause();
-                STime.Value = 0;
+                Time = 0;
             }
         };
         App.Timer.Start();
@@ -45,15 +45,25 @@ public partial class MainWindow : Window
 
     #region 操作
 
+    private double Time
+    {
+        get => STime.Value;
+        set
+        {
+            STime.Value = value;
+            OnPropertyChanged(nameof(TimeText));
+        }
+    }
+
+    private string TimeText => Time.ToTime();
+
     private async void SettingOpen()
     {
         _ = await DSetting.ShowAndWaitAsync();
-        if (!SettingResult)
-            return;
-        BBackGround.Opacity = App.AppConfig.WindowOpacity;
-        FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
+        // BBackGround.Opacity = App.AppConfig.WindowOpacity;
+        // FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     }
-    
+
     /// <summary>
     /// 加载xml文件
     /// </summary>
@@ -65,13 +75,12 @@ public partial class MainWindow : Window
         {
             Pause();
             STime.Maximum = 0;
-            STime.Value = 0;
+            Time = 0;
             App.LoadPool(mode ? XDocument.Load(xml) : XDocument.Parse(xml));
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
-            STime.Value = 0;
-            FadeOut("弹幕已装载", false, "(/・ω・)/");
+            FadeOut($"{App.Pool.Length}条弹幕已装载", false, "(/・ω・)/");
         }
         catch (Exception)
         {
@@ -108,6 +117,18 @@ public partial class MainWindow : Window
         }
 
         _ = RootSnackBar.Show();
+    }
+
+    public void DanmakuReload(Action? action = null)
+    {
+        TryPause();
+        App.Timer.Stop();
+
+        action?.Invoke();
+        App.RenderPool();
+
+        App.Timer.Start();
+        TryResume();
     }
 
     #region 播放及暂停
@@ -155,36 +176,30 @@ public partial class MainWindow : Window
 
     private void WSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if(App.Pool.Length is 0)
+        if (App.Pool.Length is 0)
             return;
 
-        TryPause();
-        App.Timer.Stop();
-
-        App.RenderPool();
-
-        App.Timer.Start();
-        TryResume();
+        DanmakuReload();
     }
 
-    private void WKeyDown(object sender, KeyEventArgs e)
+    public void WKeyUp(object sender, KeyEventArgs e)
     {
         switch (e.Key)
         {
             case Key.Left:
             {
-                if (STime.Value - App.AppConfig.PlayFastForward < 0)
-                    STime.Value = 0;
+                if (Time - App.AppConfig.PlayFastForward < 0)
+                    Time = 0;
                 else
-                    STime.Value -= App.AppConfig.PlayFastForward;
+                    Time -= App.AppConfig.PlayFastForward;
                 break;
             }
             case Key.Right:
             {
-                if (STime.Value + App.AppConfig.PlayFastForward > STime.Maximum)
-                    STime.Value = 0;
+                if (Time + App.AppConfig.PlayFastForward > STime.Maximum)
+                    Time = 0;
                 else
-                    STime.Value += App.AppConfig.PlayFastForward;
+                    Time += App.AppConfig.PlayFastForward;
                 break;
             }
             case Key.Space:
@@ -206,7 +221,7 @@ public partial class MainWindow : Window
     private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop)!).GetValue(0)!.ToString()!, true);
 
     [GeneratedRegex("\"cid\":([0-9]+),")]
-    private static partial Regex MyRegex();
+    private static partial Regex CidRegex();
 
     private async void BImportClick(object sender, RoutedEventArgs e)
     {
@@ -218,9 +233,9 @@ public partial class MainWindow : Window
         var xmlString = "";
         try
         {
-            var http = await new HttpClient().GetStringAsync("https://www.biliplus.com/video/" + InputResult);
+            var http = await ("https://www.biliplus.com/video/" + InputResult).DownloadStringAsync();
             var xmlUri = @"http://comment.bilibili.com/";
-            if (MyRegex().Match(http) is { Success: true } match)
+            if (CidRegex().Match(http) is { Success: true } match)
                 xmlUri += match.Groups[1].Value + ".xml";
             else
             {
@@ -228,7 +243,7 @@ public partial class MainWindow : Window
                 return;
             }
 
-            xmlString = await new HttpClient(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.Deflate }).GetStringAsync(xmlUri);
+            xmlString = await xmlUri.DownloadStringAsync();
         }
         catch (Exception exception)
         {
@@ -300,10 +315,17 @@ public partial class MainWindow : Window
 
     private void BCancelDialogClick(object sender, RoutedEventArgs e)
     {
-        SettingResult = false;
         InputResult = null;
         _ = ((Dialog)sender).Hide();
     }
+
+    #endregion
+
+    #region INotifyPropertyChanged
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     #endregion
 }

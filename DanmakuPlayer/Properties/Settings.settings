@@ -11,7 +11,7 @@
     <Setting Name="PlaySpeed" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
-    <Setting Name="DanmakuSpeed" Type="System.Int32" Scope="User">
+    <Setting Name="DanmakuDanmakuDuration" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">15</Value>
     </Setting>
     <Setting Name="DanmakuOpacity" Type="System.Single" Scope="User">
@@ -36,7 +36,7 @@
       <Value Profile="(Default)">25</Value>
     </Setting>
     <Setting Name="DanmakuFont" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">微软雅黑</Value>
     </Setting>
     <Setting Name="DanmakuScale" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>

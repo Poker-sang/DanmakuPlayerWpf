@@ -62,12 +62,12 @@ namespace DanmakuPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("15")]
-        public int DanmakuSpeed {
+        public int DanmakuDanmakuDuration {
             get {
-                return ((int)(this["DanmakuSpeed"]));
+                return ((int)(this["DanmakuDanmakuDuration"]));
             }
             set {
-                this["DanmakuSpeed"] = value;
+                this["DanmakuDanmakuDuration"] = value;
             }
         }
         
@@ -157,7 +157,7 @@ namespace DanmakuPlayer.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("微软雅黑")]
         public string DanmakuFont {
             get {
                 return ((string)(this["DanmakuFont"]));

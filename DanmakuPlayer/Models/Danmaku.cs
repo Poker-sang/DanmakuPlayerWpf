@@ -113,7 +113,7 @@ public record Danmaku(
                     NeedRender = false;
                     return;
                 }
-                context.RollRoom[roomIndex] = (layoutWidth * appConfig.DanmakuSpeed / (ViewWidth + layoutWidth)) + Space + Time;
+                context.RollRoom[roomIndex] = (layoutWidth * appConfig.DanmakuDuration / (ViewWidth + layoutWidth)) + Space + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 break;
             case DanmakuMode.Bottom:
@@ -140,7 +140,7 @@ public record Danmaku(
                     NeedRender = false;
                     return;
                 }
-                context.StaticRoom[roomIndex] = appConfig.DanmakuSpeed + Time;
+                context.StaticRoom[roomIndex] = appConfig.DanmakuDuration + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 _staticPosition = new((float)(ViewWidth - layoutWidth) / 2, _showPositionY);
                 break;
@@ -173,7 +173,7 @@ public record Danmaku(
         switch (Mode)
         {
             case DanmakuMode.Roll:
-                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + layout.Metrics.Width) * (time - Time) / appConfig.DanmakuSpeed)), _showPositionY), layout, Color.GetBrush());
+                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + layout.Metrics.Width) * (time - Time) / appConfig.DanmakuDuration)), _showPositionY), layout, Color.GetBrush());
                 break;
             case DanmakuMode.Bottom:
             case DanmakuMode.Top:

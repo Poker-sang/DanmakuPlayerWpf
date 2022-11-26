@@ -10,21 +10,6 @@
                 <ui:ThemesDictionary Theme="Dark" />
                 <ui:ControlsDictionary />
             </ResourceDictionary.MergedDictionaries>
-            <Style x:Key="DanmakuBlock" TargetType="TextBlock">
-                <Setter Property="OverridesDefaultStyle" Value="True" />
-                <Setter Property="TextAlignment" Value="Center" />
-                <Setter Property="Foreground" Value="White" />
-                <Setter Property="FontSize" Value="25" />
-                <Setter Property="Effect">
-                    <Setter.Value>
-                        <DropShadowEffect
-                            BlurRadius="2"
-                            Opacity="1"
-                            ShadowDepth="2"
-                            Color="#464646" />
-                    </Setter.Value>
-                </Setter>
-            </Style>
             <!--  Other app resources here  -->
         </ResourceDictionary>
     </Application.Resources>

@@ -1,4 +1,5 @@
 ﻿using DanmakuPlayer.Properties;
+using DanmakuPlayer.Services;
 
 namespace DanmakuPlayer;
 
@@ -13,11 +14,11 @@ public record AppConfig
         PlayFastForward = Settings.Default.PlayFastForward;
         _playFramePerSecond = Settings.Default.PlayFramePerSecond;
 
-        DanmakuSpeed = Settings.Default.DanmakuSpeed;
-        DanmakuOpacity = Settings.Default.DanmakuOpacity;
-        DanmakuAllowOverlap = Settings.Default.DanmakuAllowOverlap;
-        DanmakuFont = Settings.Default.DanmakuFont;
-        DanmakuScale = Settings.Default.DanmakuScale;
+        DanmakuDuration = Settings.Default.DanmakuDanmakuDuration;
+        _danmakuOpacity = Settings.Default.DanmakuOpacity;
+        _danmakuAllowOverlap = Settings.Default.DanmakuAllowOverlap;
+        _danmakuFont = Settings.Default.DanmakuFont;
+        _danmakuScale = Settings.Default.DanmakuScale;
     }
 
     public void Save()
@@ -29,11 +30,11 @@ public record AppConfig
         Settings.Default.PlayFastForward = PlayFastForward;
         Settings.Default.PlayFramePerSecond = _playFramePerSecond;
 
-        Settings.Default.DanmakuSpeed = (int)DanmakuSpeed;
-        Settings.Default.DanmakuOpacity = DanmakuOpacity;
-        Settings.Default.DanmakuAllowOverlap = DanmakuAllowOverlap;
-        Settings.Default.DanmakuFont = DanmakuFont;
-        Settings.Default.DanmakuScale = DanmakuScale;
+        Settings.Default.DanmakuDanmakuDuration = (int)DanmakuDuration;
+        Settings.Default.DanmakuOpacity = _danmakuOpacity;
+        Settings.Default.DanmakuAllowOverlap = _danmakuAllowOverlap;
+        Settings.Default.DanmakuFont = _danmakuFont;
+        Settings.Default.DanmakuScale = _danmakuScale;
         Settings.Default.Save();
     }
 
@@ -54,7 +55,12 @@ public record AppConfig
     public double WindowOpacity
     {
         get => _windowOpacity;
-        set => App.Window.BBackGround.Opacity = _windowOpacity = value;
+        set
+        {
+            if (Equals(_windowOpacity, value))
+                return;
+            App.Window.BBackGround.Opacity = _windowOpacity = value;
+        }
     }
 
     #endregion
@@ -63,7 +69,6 @@ public record AppConfig
 
     private double _playSpeed = 1;
     private int _playFramePerSecond = 25;
-    private double _interval = 0.04;
 
     /// <summary>
     /// 倍速(times)
@@ -76,8 +81,8 @@ public record AppConfig
         {
             if (Equals(_playSpeed, value))
                 return;
-            App.ResetTimerInterval();
             _playSpeed = value;
+            App.ResetTimerInterval();
         }
     }
 
@@ -96,56 +101,97 @@ public record AppConfig
         get => _playFramePerSecond;
         set
         {
+            if (Equals(_playFramePerSecond, value))
+                return;
             _playFramePerSecond = value;
             Interval = 1d / _playFramePerSecond;
+            App.ResetTimerInterval();
         }
     }
 
     /// <summary>
     /// Timer时间间隔
     /// </summary>
-    public double Interval
-    {
-        get => _interval;
-        set
-        {
-            App.ResetTimerInterval();
-            _interval = value;
-        }
-    }
+    public double Interval { get; private set; } = 0.04;
 
     #endregion
 
     #region 弹幕设置
 
+    private float _danmakuOpacity = 0.7f;
+    private bool _danmakuAllowOverlap = true;
+    private string _danmakuFont = "微软雅黑";
+    private float _danmakuScale = 1;
+
     /// <summary>
     /// 弹幕显示速度（过屏时间(second)）
     /// </summary>
-    /// <remarks>default: 15</remarks>
-    public double DanmakuSpeed { get; set; } = 15;
+    /// <remarks>DanmakuDuration ∈ [5, 20], default: 15</remarks>
+    public double DanmakuDuration { get; set; } = 15;
 
     /// <summary>
     /// 弹幕透明度
     /// </summary>
-    /// <remarks>Opacity ∈ [0, 1], default: 0.7</remarks>
-    public float DanmakuOpacity { get; set; } = 0.7f;
+    /// <remarks>Opacity ∈ [0.1, 1], default: 0.7</remarks>
+    public float DanmakuOpacity
+    {
+        get => _danmakuOpacity;
+        set
+        {
+            if (Equals(_danmakuOpacity, value))
+                return;
+            _danmakuOpacity = value;
+            App.Window.DanmakuReload(DirectHelper.ClearBrushes);
+        }
+    }
 
     /// <summary>
     /// 弹幕是否允许重叠
     /// </summary>
     /// <remarks>default: <see langword="true"/></remarks>
-    public bool DanmakuAllowOverlap { get; set; } = true;
+    public bool DanmakuAllowOverlap
+    {
+        get => _danmakuAllowOverlap;
+        set
+        {
+            if (Equals(_danmakuAllowOverlap, value))
+                return;
+            _danmakuAllowOverlap = value;
+            App.Window.DanmakuReload();
+        }
+    }
 
     /// <summary>
     /// 弹幕字体
     /// </summary>
-    public string DanmakuFont { get; set; } = "";
+    /// <remarks>default: "微软雅黑"</remarks>
+    public string DanmakuFont
+    {
+        get => _danmakuFont;
+        set
+        {
+            if (Equals(_danmakuFont, value))
+                return;
+            _danmakuFont = value;
+            App.Window.DanmakuReload(DirectHelper.ClearTextFormats);
+        }
+    }
 
     /// <summary>
     /// 弹幕大小缩放
     /// </summary>
     /// <remarks>DanmakuScale ∈ [0.5, 2], default: 1</remarks>
-    public float DanmakuScale { get; set; } = 1;
+    public float DanmakuScale
+    {
+        get => _danmakuScale;
+        set
+        {
+            if (Equals(_danmakuScale, value))
+                return;
+            _danmakuScale = value;
+            App.Window.DanmakuReload(DirectHelper.ClearTextFormats);
+        }
+    }
 
     #endregion
 }
