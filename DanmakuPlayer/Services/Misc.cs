@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DanmakuPlayer.Services.ExtensionMethods;
+namespace DanmakuPlayer.Services;
 
-public static class ExtensionMethods
+public static class Misc
 {
     public static string ToTime(this double sec) =>
         ((int)sec / 60).ToString().PadLeft(2, '0') + ":" +
@@ -14,4 +14,6 @@ public static class ExtensionMethods
             return t;
         throw new NullReferenceException();
     }
+
+    public static T CastThrow<T>(this object? obj) where T : notnull => (T)(obj ?? throw new InvalidCastException());
 }

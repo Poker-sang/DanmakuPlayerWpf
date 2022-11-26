@@ -50,9 +50,9 @@ namespace DanmakuPlayer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public double PlaySpeed {
+        public float PlaySpeed {
             get {
-                return ((double)(this["PlaySpeed"]));
+                return ((float)(this["PlaySpeed"]));
             }
             set {
                 this["PlaySpeed"] = value;
@@ -140,6 +140,42 @@ namespace DanmakuPlayer.Properties {
             }
             set {
                 this["DanmakuAllowOverlap"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("25")]
+        public int PlayFramePerSecond {
+            get {
+                return ((int)(this["PlayFramePerSecond"]));
+            }
+            set {
+                this["PlayFramePerSecond"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DanmakuFont {
+            get {
+                return ((string)(this["DanmakuFont"]));
+            }
+            set {
+                this["DanmakuFont"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public float DanmakuScale {
+            get {
+                return ((float)(this["DanmakuScale"]));
+            }
+            set {
+                this["DanmakuScale"] = value;
             }
         }
     }

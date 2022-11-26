@@ -8,7 +8,7 @@
     <Setting Name="PlayFastForward" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
-    <Setting Name="PlaySpeed" Type="System.Double" Scope="User">
+    <Setting Name="PlaySpeed" Type="System.Single" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="DanmakuSpeed" Type="System.Int32" Scope="User">
@@ -31,6 +31,15 @@
     </Setting>
     <Setting Name="DanmakuAllowOverlap" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="PlayFramePerSecond" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">25</Value>
+    </Setting>
+    <Setting Name="DanmakuFont" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="DanmakuScale" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace DanmakuPlayer.SourceGenerator;
 
-[Generator]
+// [Generator]
 public class TypeWithAttributeGenerator : IIncrementalGenerator
 {
     /// <summary>
@@ -20,9 +20,9 @@ public class TypeWithAttributeGenerator : IIncrementalGenerator
     /// </summary>
     private static readonly Dictionary<string, TypeWithAttribute> Attributes = new()
     {
-        { "DanmakuPlayer.Attributes.GenerateConstructorAttribute", TypeWithAttributeDelegates.GenerateConstructor },
-        { "DanmakuPlayer.Attributes.LoadSaveConfigurationAttribute`1", TypeWithAttributeDelegates.LoadSaveConfiguration },
-        { "DanmakuPlayer.Attributes.DependencyPropertyAttribute`1", TypeWithAttributeDelegates.DependencyProperty }
+        // { "DanmakuPlayer.Attributes.GenerateConstructorAttribute", TypeWithAttributeDelegates.GenerateConstructor },
+        // { "DanmakuPlayer.Attributes.LoadSaveConfigurationAttribute`1", TypeWithAttributeDelegates.LoadSaveConfiguration },
+        // { "DanmakuPlayer.Attributes.DependencyPropertyAttribute`1", TypeWithAttributeDelegates.DependencyProperty }
     };
 
     public void Initialize(IncrementalGeneratorInitializationContext context)

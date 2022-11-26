@@ -1,4 +1,5 @@
 ﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Services;
 using System;
 using System.Linq;
 using System.Windows;
@@ -19,8 +20,13 @@ public partial class App : Application
             AppConfig = new();
         else
             AppConfig = appConfigurations;
-        Timer = new() { Interval = TimeSpan.FromSeconds(Interval / AppConfig.PlaySpeed) };
+
+        DirectHelper.SetDanmakuScale();
+        DirectHelper.SetDanmakuOpacity();
+        ResetTimerInterval();
     }
+
+    public static MainWindow Window { get; set; } = null!;
 
     /// <summary>
     /// 应用设置
@@ -32,12 +38,12 @@ public partial class App : Application
     /// </summary>
     public static bool Playing { get; set; }
 
-    public static double Interval => 0.04;
-
     /// <summary>
     /// 计时器
     /// </summary>
-    public static DispatcherTimer Timer { get; }
+    public static DispatcherTimer Timer { get; } = new();
+
+    public static void ResetTimerInterval() => Timer.Interval = TimeSpan.FromSeconds(AppConfig.Interval / AppConfig.PlaySpeed);
 
     /// <summary>
     /// 弹幕池
@@ -46,9 +52,15 @@ public partial class App : Application
 
     public static void ClearPool()
     {
-        foreach (var danmaku in Pool)
-            danmaku.Dispose();
         Pool = Array.Empty<Danmaku>();
+        DirectHelper.ClearLayouts();
+    }
+
+    public static void RenderPool()
+    {
+        var context = new DanmakuContext();
+        foreach (var danmaku in Pool)
+            danmaku.RenderInit(context, AppConfig);
     }
 
     public static void LoadPool(XDocument xDocument)
@@ -56,10 +68,9 @@ public partial class App : Application
         ClearPool();
 
         var tempPool = xDocument.Element("i")!.Elements("d");
-        var context = new DanmakuContext();
         Pool = tempPool.Select(Danmaku.CreateDanmaku)
             .OrderBy(t => t.Time)
-            .Where(t => t.RenderInit(context, AppConfig))
             .ToArray();
+        RenderPool();
     }
 }

@@ -79,7 +79,6 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
     {
         if (CancelRender)
         {
-            DirectHelper.Brush.Clear();
             D2dContext.SafeRelease();
             CreateAndBindTargets((int)ActualWidth, (int)ActualHeight);
             CancelRender = false;

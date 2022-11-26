@@ -1,37 +1,37 @@
-﻿using DanmakuPlayer.Controls;
-using DanmakuPlayer.Enums;
+﻿using DanmakuPlayer.Enums;
 using DanmakuPlayer.Services;
-using Vortice.Direct2D1;
-using Vortice.DirectWrite;
 using System;
 using System.Numerics;
 using System.Windows;
 using System.Xml.Linq;
 using static System.Convert;
-using DanmakuPlayer.Services.ExtensionMethods;
 
 namespace DanmakuPlayer.Models;
 
 /// <summary>
 /// 弹幕
 /// </summary>
-/// <param name="Time"> 出现时间</param>
-/// <param name="Mode">模式（4：底端，5：顶端，其他：滚动）</param>
+/// <param name="Text">内容</param>
+/// <param name="Time">出现时间</param>
+/// <param name="Mode">模式</param>
 /// <param name="Size">大小</param>
 /// <param name="Color">颜色</param>
-/// <param name="Text">内容</param>
-/// <param name="Layout">拥有的文本框</param>
+/// <param name="UnixTimeStamp">发送时间戳</param>
+/// <param name="Pool">所属弹幕池</param>
+/// <param name="UserHash">用户ID</param>
+/// <param name="DatabaseRow">所在数据库行数</param>
 public record Danmaku(
+    string Text,
     float Time,
     DanmakuMode Mode,
     int Size,
     int Color,
-    string Text,
-    IDWriteTextLayout Layout) : IDisposable
+    ulong UnixTimeStamp,
+    DanmakuPool Pool,
+    string UserHash,
+    ulong DatabaseRow)
 {
     public static readonly WeakReference<FrameworkElement> ViewPort = new(null!);
-
-    // private readonly WeakReference<ID2D1SolidColorBrush> _brush = new(null!);
 
     public static double ViewWidth => ViewPort.Get().ActualWidth;
 
@@ -43,19 +43,19 @@ public record Danmaku(
     private const int Space = 5;
 
     /// <summary>
-    /// 文本框宽度
+    /// 字号为25的文本框高度
     /// </summary>
-    private float LayoutWidth => Layout.Metrics.Width;
-
-    /// <summary>
-    /// 文本框高度
-    /// </summary>
-    private static float LayoutHeight => DirectHelper.TemplateLayout.Metrics.Height;
+    private static float LayoutHeight => DirectHelper.LayoutHeights[25];
 
     /// <summary>
     /// 视觉区域最多能出现多少弹幕
     /// </summary>
     public static int Count => (int)(ViewHeight / LayoutHeight);
+
+    /// <summary>
+    /// 是否需要渲染（取决于是否允许重叠）
+    /// </summary>
+    public bool NeedRender { get; private set; } = true;
 
     private float _showPositionY;
 
@@ -65,21 +65,27 @@ public record Danmaku(
     public static Danmaku CreateDanmaku(XElement xElement)
     {
         var tempInfo = xElement.Attribute("p")!.Value.Split(',');
+        var size = ToInt32(tempInfo[2]);
         return new(
+            xElement.Value,
             ToSingle(tempInfo[0]),
             Enum.Parse<DanmakuMode>(tempInfo[1]),
-            ToInt32(tempInfo[2]),
+            size,
             ToInt32(tempInfo[3]),
-            xElement.Value,
-            DirectHelper.Factory.CreateTextLayout(xElement.Value, DirectHelper.TextFormat, 1000, 32));
+            ToUInt64(tempInfo[4]),
+            Enum.Parse<DanmakuPool>(tempInfo[5]),
+            tempInfo[6],
+            ToUInt64(tempInfo[7]));
     }
 
     /// <summary>
     /// 初始化渲染
     /// </summary>
-    /// <returns>是否要显示（取决于<paramref name="appConfig"/>是否允许重叠）</returns>
-    public bool RenderInit(DanmakuContext context, AppConfig appConfig)
+    public void RenderInit(DanmakuContext context, AppConfig appConfig)
     {
+        var layoutExists = DirectHelper.Layouts.ContainsKey(ToString());
+        var layout = layoutExists ? DirectHelper.Layouts[ToString()] : this.GetNewLayout();
+        var layoutWidth = layout.Metrics.Width;
         // 将要占用空间的索引
         var roomIndex = 0;
         // 是否会覆盖到其他弹幕
@@ -101,8 +107,13 @@ public record Danmaku(
                         roomIndex = i;
 
                 if (overlap && !appConfig.DanmakuAllowOverlap)
-                    return false;
-                context.RollRoom[roomIndex] = (LayoutWidth * appConfig.DanmakuSpeed / (ViewWidth + LayoutWidth)) + Space + Time;
+                {
+                    if (!layoutExists)
+                        layout.Dispose();
+                    NeedRender = false;
+                    return;
+                }
+                context.RollRoom[roomIndex] = (layoutWidth * appConfig.DanmakuSpeed / (ViewWidth + layoutWidth)) + Space + Time;
                 _showPositionY = roomIndex * LayoutHeight;
                 break;
             case DanmakuMode.Bottom:
@@ -123,10 +134,15 @@ public record Danmaku(
                         roomIndex = i;
 
                 if (overlap && !appConfig.DanmakuAllowOverlap)
-                    return false;
+                {
+                    if (!layoutExists)
+                        layout.Dispose();
+                    NeedRender = false;
+                    return;
+                }
                 context.StaticRoom[roomIndex] = appConfig.DanmakuSpeed + Time;
                 _showPositionY = roomIndex * LayoutHeight;
-                _staticPosition = new((float)(ViewWidth - LayoutWidth) / 2, _showPositionY);
+                _staticPosition = new((float)(ViewWidth - layoutWidth) / 2, _showPositionY);
                 break;
             case DanmakuMode.Inverse:
             case DanmakuMode.Advanced:
@@ -138,7 +154,9 @@ public record Danmaku(
                 break;
         }
 
-        return true;
+        if (!layoutExists)
+            DirectHelper.Layouts.Add(ToString(), layout);
+        NeedRender = true;
     }
 
     /// <summary>
@@ -146,17 +164,20 @@ public record Danmaku(
     /// </summary>
     private Vector2 _staticPosition;
 
-    public void OnRender(ID2D1RenderTarget renderTarget, float time, AppConfig appConfig)
+    public void OnRender(Vortice.Direct2D1.ID2D1RenderTarget renderTarget, float time, AppConfig appConfig)
     {
         // if (Time <= time && time - appConfig.Speed < Time)
+        if (!NeedRender)
+            return;
+        var layout = DirectHelper.Layouts[ToString()];
         switch (Mode)
         {
             case DanmakuMode.Roll:
-                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + LayoutWidth) * (time - Time) / appConfig.DanmakuSpeed)), _showPositionY), Layout, Color.GetBrush());
+                renderTarget.DrawTextLayout(new((float)(ViewWidth - ((ViewWidth + layout.Metrics.Width) * (time - Time) / appConfig.DanmakuSpeed)), _showPositionY), layout, Color.GetBrush());
                 break;
             case DanmakuMode.Bottom:
             case DanmakuMode.Top:
-                renderTarget.DrawTextLayout(_staticPosition, Layout, Color.GetBrush());
+                renderTarget.DrawTextLayout(_staticPosition, layout, Color.GetBrush());
                 break;
             case DanmakuMode.Inverse:
             case DanmakuMode.Advanced:
@@ -169,9 +190,5 @@ public record Danmaku(
         }
     }
 
-    public void Dispose()
-    {
-        GC.SuppressFinalize(this);
-        Layout.Dispose();
-    }
+    public override string ToString() => $"{Text},{Color},{Size}";
 }

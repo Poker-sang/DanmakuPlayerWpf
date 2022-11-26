@@ -1,5 +1,5 @@
 ﻿using DanmakuPlayer.Models;
-using DanmakuPlayer.Services.ExtensionMethods;
+using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
 using System.Net;
@@ -11,17 +11,13 @@ using System.Xml.Linq;
 using Wpf.Ui.Common;
 using Wpf.Ui.Controls;
 
-// TODO: 减少内存占用
-// TODO: 设置同屏弹幕上限
-
 namespace DanmakuPlayer;
 
 public partial class MainWindow : Window
 {
-    #region 操作
-
     public MainWindow()
     {
+        App.Window = this;
         InitializeComponent();
         SettingInit();
         Danmaku.ViewPort.SetTarget(BBackGround);
@@ -35,7 +31,7 @@ public partial class MainWindow : Window
             if (STime.Value < STime.Maximum)
             {
                 if (App.Playing)
-                    STime.Value += App.Interval;
+                    STime.Value += App.AppConfig.Interval;
                 DanmakuImage.Rendering((float)STime.Value, App.AppConfig);
             }
             else
@@ -47,6 +43,8 @@ public partial class MainWindow : Window
         App.Timer.Start();
     }
 
+    #region 操作
+
     private async void SettingOpen()
     {
         _ = await DSetting.ShowAndWaitAsync();
@@ -55,10 +53,7 @@ public partial class MainWindow : Window
         BBackGround.Opacity = App.AppConfig.WindowOpacity;
         FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     }
-
-    private string _lastXml = "";
-    private bool _lastMode;
-
+    
     /// <summary>
     /// 加载xml文件
     /// </summary>
@@ -66,9 +61,6 @@ public partial class MainWindow : Window
     /// <param name="mode"><see langword="true"/>为路径，<see langword="false"/>为字符串</param>
     private void XmlOpen(string xml, bool mode)
     {
-        _lastXml = xml;
-        _lastMode = mode;
-
         try
         {
             Pause();
@@ -90,6 +82,35 @@ public partial class MainWindow : Window
             Grid.Children.Remove(TbBanner);
         BControl.IsHitTestVisible = true;
     }
+
+    /// <summary>
+    /// 出现信息并消失
+    /// </summary>
+    /// <param name="message">提示信息</param>
+    /// <param name="isError"><see langword="true"/>为错误信息，<see langword="false"/>为提示信息</param>
+    /// <param name="hint">信息附加内容</param>
+    /// <param name="mSec">信息持续时间</param>
+    private void FadeOut(string message, bool isError, string? hint = null, int mSec = 3000)
+    {
+        RootSnackBar.Title = message;
+        RootSnackBar.Timeout = mSec;
+        if (isError)
+        {
+            RootSnackBar.Message = hint ?? "错误";
+            RootSnackBar.Icon = SymbolRegular.Important24;
+            RootSnackBar.Appearance = ControlAppearance.Danger;
+        }
+        else
+        {
+            RootSnackBar.Message = hint ?? "提示";
+            RootSnackBar.Icon = SymbolRegular.Info24;
+            RootSnackBar.Appearance = ControlAppearance.Transparent;
+        }
+
+        _ = RootSnackBar.Show();
+    }
+
+    #region 播放及暂停
 
     private bool _needResume;
 
@@ -118,25 +139,7 @@ public partial class MainWindow : Window
         BPauseResume.Icon = SymbolRegular.Play24;
     }
 
-    private void FadeOut(string message, bool isError, string? hint = null, int mSec = 3000)
-    {
-        RootSnackBar.Title = message;
-        RootSnackBar.Timeout = mSec;
-        if (isError)
-        {
-            RootSnackBar.Message = hint ?? "错误";
-            RootSnackBar.Icon = SymbolRegular.Important24;
-            RootSnackBar.Appearance = ControlAppearance.Danger;
-        }
-        else
-        {
-            RootSnackBar.Message = hint ?? "提示";
-            RootSnackBar.Icon = SymbolRegular.Info24;
-            RootSnackBar.Appearance = ControlAppearance.Transparent;
-        }
-
-        _ = RootSnackBar.Show();
-    }
+    #endregion
 
     #endregion
 
@@ -152,15 +155,13 @@ public partial class MainWindow : Window
 
     private void WSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (_lastXml is "")
+        if(App.Pool.Length is 0)
             return;
 
         TryPause();
         App.Timer.Stop();
 
-        App.LoadPool(_lastMode ? XDocument.Load(_lastXml) : XDocument.Parse(_lastXml));
-        STime.Maximum = App.Pool[^1].Time + 10;
-        TbTotalTime.Text = "/" + STime.Maximum.ToTime();
+        App.RenderPool();
 
         App.Timer.Start();
         TryResume();
