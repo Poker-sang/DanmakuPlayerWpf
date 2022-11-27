@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using DanmakuPlayer.Services;
+using System;
+using System.Text.RegularExpressions;
 using System.Windows;
 using Wpf.Ui.Controls;
 
@@ -10,10 +12,10 @@ public partial class MainWindow
 
     private void BConfirmClick(object sender, RoutedEventArgs e)
     {
-        if (AvRegex().Match(TbInput.Text) is { Success: true } match1)
-            InputResult = match1.Value;
-        else if (BvRegex().Match(TbInput.Text) is { Success: true } match2)
-            InputResult = match2.Value;
+        if (AvRegex().Match(TbInput.Text) is { Success: true } avMatch)
+            InputResult = "BV" + Convert.ToInt32(avMatch.Value[2..]).Av2Bv();
+        else if (BvRegex().Match(TbInput.Text) is { Success: true } bvMatch)
+            InputResult = bvMatch.Value;
         else
         {
             IbMessage.IsOpen = true;

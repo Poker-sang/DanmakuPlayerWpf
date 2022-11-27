@@ -50,11 +50,9 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
             ArraySize = 1
         };
 
-        /*using*/
-        var texture = _device.CreateTexture2D(renderDesc);
+        using var texture = _device.CreateTexture2D(renderDesc);
 
-        /*using*/
-        var surface = texture.QueryInterface<IDXGISurface>();
+        using var surface = texture.QueryInterface<IDXGISurface>();
 
         SetRenderTarget(texture);
 
@@ -103,10 +101,8 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
         var format = DirectHelper.TranslateFormat(target);
         var handle = DirectHelper.GetSharedHandle(target);
 
-        /*using*/
-        var d3d9Ex = D3D9.Direct3DCreate9Ex();
-        /*using*/
-        var d3DDevice = d3d9Ex.CreateDeviceEx(
+        using var d3d9Ex = D3D9.Direct3DCreate9Ex();
+        using var d3DDevice = d3d9Ex.CreateDeviceEx(
             0,
             DeviceType.Hardware,
             IntPtr.Zero,
@@ -119,12 +115,10 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
                 PresentationInterval = PresentInterval.Default
             });
 
-        /*using*/
-        var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
+        using var texture = d3DDevice.CreateTexture(target.Description.Width, target.Description.Height, 1,
             Vortice.Direct3D9.Usage.RenderTarget, format, Pool.Default, ref handle);
 
-        /*using*/
-        var surface = texture.GetSurfaceLevel(0);
+        using var surface = texture.GetSurfaceLevel(0);
 
         try
         {

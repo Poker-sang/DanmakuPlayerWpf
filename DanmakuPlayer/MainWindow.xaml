@@ -315,7 +315,7 @@
             ButtonRightName="取消"
             DialogHeight="250"
             DialogWidth="400"
-            Message="在线获取弹幕（biliplus.com）">
+            Message="在线获取弹幕">
             <StackPanel>
                 <ui:TextBox
                     x:Name="TbInput"

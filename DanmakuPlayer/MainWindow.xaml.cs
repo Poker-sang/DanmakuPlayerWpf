@@ -2,9 +2,9 @@
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -84,7 +84,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (Exception)
         {
-            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･･)ﾉ(._.`) 你可以在 biliplus.com 获取");
+            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･･)ﾉ(._.`) 你可以手动在 biliplus.com 获取");
         }
 
         if (TbBanner is not null)
@@ -220,9 +220,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop)!).GetValue(0)!.ToString()!, true);
 
-    [GeneratedRegex("\"cid\":([0-9]+),")]
-    private static partial Regex CidRegex();
-
     private async void BImportClick(object sender, RoutedEventArgs e)
     {
         _ = await DInput.ShowAndWaitAsync();
@@ -230,27 +227,27 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             return;
         FadeOut("弹幕装填中...", false, "(｀・ω・´)");
 
-        var xmlString = "";
         try
         {
-            var http = await ("https://www.biliplus.com/video/" + InputResult).DownloadStringAsync();
-            var xmlUri = @"http://comment.bilibili.com/";
-            if (CidRegex().Match(http) is { Success: true } match)
-                xmlUri += match.Groups[1].Value + ".xml";
-            else
+            var cidList = new List<string>();
+            var http = await ("https://api.bilibili.com/x/player/pagelist?bvid=" + InputResult).DownloadJsonAsync();
+            if (http.RootElement.TryGetProperty("data", out var ja))
             {
-                FadeOut("视频不存在！", true, "〒_〒");
+                foreach (var je in ja.EnumerateArray())
+                    if (je.TryGetProperty("cid", out var cid))
+                        cidList.Add(cid.GetRawText());
+                // TODO: 分P
+                // if (cidList.Count > 1)
+                XmlOpen(await ($"http://comment.bilibili.com/{cidList[0]}.xml").DownloadStringAsync(), false);
                 return;
             }
-
-            xmlString = await xmlUri.DownloadStringAsync();
+            FadeOut("视频不存在！", true, "〒_〒");
         }
         catch (Exception exception)
         {
-            FadeOut(exception.Message, true);
+            FadeOut(exception.Message, true, "未处理的异常");
         }
 
-        XmlOpen(xmlString, false);
     }
 
     private void BFileClick(object sender, RoutedEventArgs e)
