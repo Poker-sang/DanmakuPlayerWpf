@@ -24,8 +24,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         BBackGround.Opacity = App.AppConfig.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
-        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
-        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
+        // STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
+        // STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
+        STime.MouseLeftButtonDown += STimeMouseButtonDown;
         App.Timer.Tick += (_, _) =>
         {
             if (Time < STime.Maximum)
@@ -179,6 +180,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         if (App.Pool.Length is 0)
             return;
 
+        DanmakuImage.CancelRender = true;
         DanmakuReload();
     }
 
@@ -218,7 +220,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void WDragEnter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
 
-    private void WDrop(object sender, DragEventArgs e) => XmlOpen(((Array)e.Data.GetData(DataFormats.FileDrop)!).GetValue(0)!.ToString()!, true);
+    private void WDrop(object sender, DragEventArgs e)
+    {
+        if (e.Data.GetData(DataFormats.FileDrop) is string[] data)
+            XmlOpen(data[0], true);
+    }
 
     private async void BImportClick(object sender, RoutedEventArgs e)
     {

@@ -1,6 +1,6 @@
 ﻿namespace DanmakuPlayer.Resources;
 
-public class ConstantStrings
+public static class ConstantStrings
 {
     public const string License = @"MIT License
 

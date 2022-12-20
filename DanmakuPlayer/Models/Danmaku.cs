@@ -1,8 +1,11 @@
 ﻿using DanmakuPlayer.Enums;
 using DanmakuPlayer.Services;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Windows;
+using System.Windows.Documents;
 using System.Xml.Linq;
 using static System.Convert;
 
@@ -90,31 +93,39 @@ public record Danmaku(
         var roomIndex = 0;
         // 是否会覆盖到其他弹幕
         var overlap = true;
+
+        bool DynamicDanmaku(IList<double> list)
+        {
+            // 在窗口大小内从上往下遍历
+            for (var i = 0; i < list.Count; ++i)
+                // 如果下一空间已经过了被占用时间
+                if (Time >= list[i])
+                {
+                    roomIndex = i;
+                    overlap = false;
+                    break;
+                }
+                // 找出距离结束占用最快的空间
+                else if (list[roomIndex] > list[i])
+                    roomIndex = i;
+
+            if (overlap && !appConfig.DanmakuAllowOverlap)
+            {
+                if (!layoutExists)
+                    layout.Dispose();
+                NeedRender = false;
+                return false;
+            }
+            list[roomIndex] = (layoutWidth * appConfig.DanmakuDuration / (ViewWidth + layoutWidth)) + Space + Time;
+            _showPositionY = roomIndex * LayoutHeight;
+            return true;
+        }
+
         switch (Mode)
         {
             case DanmakuMode.Roll:
-                // 在窗口大小内从上往下遍历
-                for (var i = 0; i < context.RollRoom.Count; ++i)
-                    // 如果下一空间已经过了被占用时间
-                    if (Time >= context.RollRoom[i])
-                    {
-                        roomIndex = i;
-                        overlap = false;
-                        break;
-                    }
-                    // 找出距离结束占用最快的空间
-                    else if (context.RollRoom[roomIndex] > context.RollRoom[i])
-                        roomIndex = i;
-
-                if (overlap && !appConfig.DanmakuAllowOverlap)
-                {
-                    if (!layoutExists)
-                        layout.Dispose();
-                    NeedRender = false;
+                if (!DynamicDanmaku(context.RollRoom))
                     return;
-                }
-                context.RollRoom[roomIndex] = (layoutWidth * appConfig.DanmakuDuration / (ViewWidth + layoutWidth)) + Space + Time;
-                _showPositionY = roomIndex * LayoutHeight;
                 break;
             case DanmakuMode.Bottom:
             case DanmakuMode.Top:
@@ -145,6 +156,9 @@ public record Danmaku(
                 _staticPosition = new((float)(ViewWidth - layoutWidth) / 2, _showPositionY);
                 break;
             case DanmakuMode.Inverse:
+                if (!DynamicDanmaku(context.InverseRoom))
+                    return;
+                break;
             case DanmakuMode.Advanced:
             case DanmakuMode.Code:
             case DanmakuMode.Bas:
@@ -180,6 +194,8 @@ public record Danmaku(
                 renderTarget.DrawTextLayout(_staticPosition, layout, Color.GetBrush());
                 break;
             case DanmakuMode.Inverse:
+                renderTarget.DrawTextLayout(new((float)(((ViewWidth + layout.Metrics.Width) * (time - Time) / appConfig.DanmakuDuration) - layout.Metrics.Width), _showPositionY), layout, Color.GetBrush());
+                break;
             case DanmakuMode.Advanced:
             case DanmakuMode.Code:
             case DanmakuMode.Bas:

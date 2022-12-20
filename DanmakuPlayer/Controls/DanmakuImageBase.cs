@@ -22,7 +22,7 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
 
     public ID2D1DeviceContext D2dContext { get; set; } = null!;
 
-    public bool CancelRender;
+    public bool CancelRender { get; set; }
 
     /// <inheritdoc />
     protected DanmakuImageBase() => Loaded += (_, _) =>
@@ -105,7 +105,7 @@ public abstract class DanmakuImageBase : FrameworkElement, IDisposable
         using var d3DDevice = d3d9Ex.CreateDeviceEx(
             0,
             DeviceType.Hardware,
-            IntPtr.Zero,
+            0,
             CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve,
             new Vortice.Direct3D9.PresentParameters
             {

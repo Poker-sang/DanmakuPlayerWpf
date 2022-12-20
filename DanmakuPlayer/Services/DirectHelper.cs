@@ -155,7 +155,7 @@ public static class DirectHelper
 
     public static void SafeRelease(this CppObject? obj)
     {
-        if (obj is { NativePointer: not (nint)0 })
+        if (obj is { NativePointer: not 0 })
             obj.Dispose();
     }
 
@@ -187,7 +187,7 @@ public static class DirectHelper
 
     public static void CreateDevice(out ID3D11Device device)
     {
-        if (D3D11.D3D11CreateDevice(IntPtr.Zero, DriverType.Hardware, DeviceCreationFlags.BgraSupport, _featureLevels, out device, out _).Failure)
+        if (D3D11.D3D11CreateDevice(0, DriverType.Hardware, DeviceCreationFlags.BgraSupport, _featureLevels, out device, out _).Failure)
             throw new();
     }
 

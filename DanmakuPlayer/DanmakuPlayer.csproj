@@ -2,20 +2,17 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0-windows10.0.19041.0</TargetFramework>
+        <TargetFramework>net7.0-windows10.0.22621.0</TargetFramework>
         <UseWPF>true</UseWPF>
         <LangVersion>Preview</LangVersion>
         <ApplicationIcon>Assets\DanmakuPlayer.ico</ApplicationIcon>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Nullable>enable</Nullable>
+        <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="Assets\DanmakuPlayer.ico" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="CompiledBindings.WPF" Version="1.0.13" />
+        <PackageReference Include="CompiledBindings.WPF" Version="1.0.14" />
         <PackageReference Include="Vortice.D3DCompiler" Version="2.1.41" />
         <PackageReference Include="Vortice.Direct2D1" Version="2.1.41" />
         <PackageReference Include="Vortice.Direct3D11" Version="2.1.41" />
@@ -25,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DanmakuPlayer.SourceGenerator\DanmakuPlayer.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\DanmakuPlayer.SourceGenerator\DanmakuPlayer.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>
@@ -34,18 +31,10 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Settings.settings</DependentUpon>
         </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Update="Properties\Settings.settings">
             <Generator>SettingsSingleFileGenerator</Generator>
             <LastGenOutput>Settings.Designer.cs</LastGenOutput>
         </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Enums\" />
-      <Folder Include="Resources\" />
     </ItemGroup>
 
 </Project>

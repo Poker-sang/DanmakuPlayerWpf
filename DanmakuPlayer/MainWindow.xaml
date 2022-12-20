@@ -294,8 +294,8 @@
                     <StackPanel Orientation="Vertical">
                         <ui:Hyperlink Content="邮箱：poker_sang@outlook.com" NavigateUri="mailto:poker_sang@outlook.com" />
                         <ui:Hyperlink Content="作者：扑克" NavigateUri="https://github.com/Poker-sang" />
-                        <ui:Hyperlink Content="QQ：2639914082" NavigateUri="http://wpa.qq.com/msgrd?v=3&amp;uin=2639914082site=qq&amp;menu=yes" />
-                        <ui:Hyperlink Content="GitHub: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" />
+                        <ui:Hyperlink Content="QQ：2639914082" NavigateUri="https://qm.qq.com/cgi-bin/qm/qr?k=qTmjHzMXcjAJ_0wl0P1BZilGpAw6WXwX&amp;noverify=0&amp;personal_qrcode_source=4" />
+                        <ui:Hyperlink Content="仓库: DanmakuPlayer" NavigateUri="https://github.com/Poker-sang/DanmakuPlayer" />
                     </StackPanel>
                 </ui:CardExpander>
                 <ui:CardExpander Header="License" Icon="Important24">

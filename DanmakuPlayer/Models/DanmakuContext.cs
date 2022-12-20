@@ -13,6 +13,7 @@ public class DanmakuContext
         {
             StaticRoom.Add(-1);
             RollRoom.Add(-1);
+            InverseRoom.Add(-1);
         }
     }
 
@@ -20,13 +21,19 @@ public class DanmakuContext
     /// 静止弹幕空间
     /// </summary>
     /// <remarks>StaticRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    public List<double> StaticRoom { get; } = new(Danmaku.Count);
+    public List<double> StaticRoom { get; } = new(Danmaku.Count / 2);
 
     /// <summary>
     /// 滚动弹幕空间
     /// </summary>
     /// <remarks>RollRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
     public List<double> RollRoom { get; } = new(Danmaku.Count);
+
+    /// <summary>
+    /// 滚动弹幕空间
+    /// </summary>
+    /// <remarks>InverseRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
+    public List<double> InverseRoom { get; } = new();
 
     /// <summary>
     /// 正在顶部弹幕数
