@@ -1,4 +1,5 @@
 ﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Resources;
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
@@ -9,7 +10,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using Wpf.Ui.Common;
-using Wpf.Ui.Controls;
 using Button = Wpf.Ui.Controls.Button;
 
 namespace DanmakuPlayer;
@@ -24,9 +24,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         BBackGround.Opacity = App.AppConfig.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
-        // STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
-        // STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
-        STime.MouseLeftButtonDown += STimeMouseButtonDown;
+        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
+        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
         App.Timer.Tick += (_, _) =>
         {
             if (Time < STime.Maximum)
@@ -58,12 +57,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private string TimeText => Time.ToTime();
 
-    private async void SettingOpen()
-    {
-        _ = await DSetting.ShowAndWaitAsync();
-        // BBackGround.Opacity = App.AppConfig.WindowOpacity;
-        // FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
-    }
+    private async void SettingOpen() => await DSetting.ShowAsync();
+    // FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
+    // BBackGround.Opacity = App.AppConfig.WindowOpacity;
 
     /// <summary>
     /// 加载xml文件
@@ -85,7 +81,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
         catch (Exception)
         {
-            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･･)ﾉ(._.`) 你可以手动在 biliplus.com 获取");
+            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･_･)ﾉ(._.`) 你可以手动在 biliplus.com 获取");
         }
 
         if (TbBanner is not null)
@@ -226,34 +222,20 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             XmlOpen(data[0], true);
     }
 
-    private async void BImportClick(object sender, RoutedEventArgs e)
+    private void BImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
+
+    private async void Import(int cId)
     {
-        _ = await DInput.ShowAndWaitAsync();
-        if (InputResult is null)
-            return;
         FadeOut("弹幕装填中...", false, "(｀・ω・´)");
 
         try
         {
-            var cidList = new List<string>();
-            var http = await ("https://api.bilibili.com/x/player/pagelist?bvid=" + InputResult).DownloadJsonAsync();
-            if (http.RootElement.TryGetProperty("data", out var ja))
-            {
-                foreach (var je in ja.EnumerateArray())
-                    if (je.TryGetProperty("cid", out var cid))
-                        cidList.Add(cid.GetRawText());
-                // TODO: 分P
-                // if (cidList.Count > 1)
-                XmlOpen(await ($"http://comment.bilibili.com/{cidList[0]}.xml").DownloadStringAsync(), false);
-                return;
-            }
-            FadeOut("视频不存在！", true, "〒_〒");
+            XmlOpen(await BiliApis.GetDanmaku(cId), false);
         }
         catch (Exception exception)
         {
-            FadeOut(exception.Message, true, "未处理的异常");
+            FadeOut(exception.Message, true, "未知的异常〒_〒");
         }
-
     }
 
     private void BFileClick(object sender, RoutedEventArgs e)
@@ -315,12 +297,6 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void BControlMouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
 
     private void BControlMouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
-
-    private void BCancelDialogClick(object sender, RoutedEventArgs e)
-    {
-        InputResult = null;
-        _ = ((Dialog)sender).Hide();
-    }
 
     #endregion
 

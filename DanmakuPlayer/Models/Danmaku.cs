@@ -2,12 +2,9 @@
 using DanmakuPlayer.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Windows;
-using System.Windows.Documents;
 using System.Xml.Linq;
-using static System.Convert;
 
 namespace DanmakuPlayer.Models;
 
@@ -68,17 +65,17 @@ public record Danmaku(
     public static Danmaku CreateDanmaku(XElement xElement)
     {
         var tempInfo = xElement.Attribute("p")!.Value.Split(',');
-        var size = ToInt32(tempInfo[2]);
+        var size = int.Parse(tempInfo[2]);
         return new(
             xElement.Value,
-            ToSingle(tempInfo[0]),
+            float.Parse(tempInfo[0]),
             Enum.Parse<DanmakuMode>(tempInfo[1]),
             size,
-            ToInt32(tempInfo[3]),
-            ToUInt64(tempInfo[4]),
+            int.Parse(tempInfo[3]),
+            ulong.Parse(tempInfo[4]),
             Enum.Parse<DanmakuPool>(tempInfo[5]),
             tempInfo[6],
-            ToUInt64(tempInfo[7]));
+            ulong.Parse(tempInfo[7]));
     }
 
     /// <summary>

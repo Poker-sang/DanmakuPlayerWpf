@@ -32,15 +32,11 @@
 
 * [x] 从本地打开
 
-* [x] 通过av、BV用bilibili API下载
+* [x] 用bilibili API通过av、BV、cid、md、ss、ep等下载
+
+* [x] 分P获取弹幕
 
 * [x] .xml 类型
-
-* [ ] .ass 类型
-
-* [ ] 通过番剧号从网络上下载
-
-* [ ] 分P获取弹幕
 
 * [ ] 获取全弹幕
 

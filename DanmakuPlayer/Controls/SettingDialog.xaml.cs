@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Drawing.Text;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using Wpf.Ui.Appearance;
+using Wpf.Ui.Controls;
 
-namespace DanmakuPlayer;
+namespace DanmakuPlayer.Controls;
 
-public partial class MainWindow
+public partial class SettingDialog : UserControl
 {
+    public SettingDialog() => InitializeComponent();
+
+    public Task ShowAsync() => Dialog.ShowAndWaitAsync();
+
+    private void BCancelDialogClick(object sender, RoutedEventArgs e) => ((Dialog)sender).Hide();
+
     private void BDefaultClick(object sender, RoutedEventArgs e)
     {
         //switch (Control.SelectedIndex)

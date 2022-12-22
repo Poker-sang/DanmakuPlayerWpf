@@ -1,9 +1,16 @@
-﻿using System;
+﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Resources;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace DanmakuPlayer.Services;
 
-public static class BiliHelper
+public static partial class BiliHelper
 {
     private const int Xor = 177451812;
 
@@ -34,4 +41,96 @@ public static class BiliHelper
             Table.IndexOf((byte)bv[6]) * 58 * 58 * 58 +
             Table.IndexOf((byte)bv[2]) * 58 * 58 * 58 * 58 +
             Table.IndexOf((byte)bv[4]) * 58 * 58 * 58 * 58 * 58 - Add) ^ Xor);
+
+    private static bool CheckSuccess(JsonDocument jd) => jd.RootElement.GetProperty("code").GetInt32() is 0;
+
+    private static async Task<IEnumerable<VideoPage>> GetCIds(Task<JsonDocument> jd)
+    {
+        var response = await jd;
+        if (CheckSuccess(response))
+            return response.RootElement.GetProperty("data")
+                .EnumerateArray()
+                .Select(ep => new VideoPage(
+                    ep.GetProperty("cid").GetInt32(),
+                    ep.GetProperty("page").GetInt32().ToString(),
+                    ep.GetProperty("part").GetString()!));
+
+        return Array.Empty<VideoPage>();
+    }
+
+    public static Task<IEnumerable<VideoPage>> Av2CIds(int av) => GetCIds(BiliApis.GetVideoPageList(av));
+
+    public static Task<IEnumerable<VideoPage>> Bv2CIds(string bv) => GetCIds(BiliApis.GetVideoPageList(bv));
+
+    public static async Task<int> Ep2CId(int episodeId)
+    {
+        var response = await BiliApis.GetBangumiEpisodeInfo(episodeId);
+        if (CheckSuccess(response))
+            // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+            // Linq会多循环几遍
+            foreach (var ep in response.RootElement.GetProperty("result").GetProperty("episodes").EnumerateArray())
+                if (ep.GetProperty("id").GetInt32() == episodeId)
+                    return ep.GetProperty("cid").GetInt32();
+        return -1;
+    }
+
+    public static async Task<IEnumerable<VideoPage>> Ss2CIds(int seasonId)
+    {
+        var response = await BiliApis.GetBangumiEpisode(seasonId);
+        if (CheckSuccess(response))
+            return (response.RootElement.GetProperty("result")
+                .GetProperty("main_section")
+                .GetProperty("episodes")
+                .EnumerateArray()
+                .Select(ep => new VideoPage(
+                    ep.GetProperty("cid").GetInt32(),
+                    ep.GetProperty("title").GetString()!,
+                    ep.GetProperty("long_title").GetString()!)));
+        return Array.Empty<VideoPage>();
+    }
+
+    public static async Task<int> Md2Ss(int mediaId)
+    {
+        var response = await BiliApis.GetBangumiInfo(mediaId);
+        if (CheckSuccess(response))
+            return response.RootElement.GetProperty("result").GetProperty("media").GetProperty("season_id").GetInt32();
+        return -1;
+    }
+
+    [GeneratedRegex(@"(av|md|ss|ep)[0-9]+")]
+    private static partial Regex DigitalRegex();
+
+    [GeneratedRegex(@"(?:BV)1\w\w4\w1\w7\w\w")]
+    private static partial Regex BvRegex();
+
+    public enum CodeType
+    {
+        Error, AvId, BvId, CId, MediaId, SeasonId, EpisodeId
+    }
+
+
+    public static CodeType Match(this string url, out string result)
+    {
+        if (DigitalRegex().Match(url) is { Success: true } match)
+        {
+            result = match.Value[2..];
+            return match.Value[..2] switch
+            {
+                "av" => CodeType.AvId,
+                "md" => CodeType.MediaId,
+                "ss" => CodeType.SeasonId,
+                "ep" => CodeType.EpisodeId,
+                _ => CodeType.Error
+            };
+        }
+
+        if (BvRegex().Match(url) is { Success: true } bvMatch)
+        {
+            result = bvMatch.Value;
+            return CodeType.BvId;
+        }
+
+        result = "";
+        return CodeType.Error;
+    }
 }
