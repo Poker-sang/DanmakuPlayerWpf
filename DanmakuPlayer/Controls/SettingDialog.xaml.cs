@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing.Text;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,9 +15,9 @@ public partial class SettingDialog : UserControl
 
     public Task ShowAsync() => Dialog.ShowAndWaitAsync();
 
-    private void BCancelDialogClick(object sender, RoutedEventArgs e) => ((Dialog)sender).Hide();
+    private void CancelDialogClick(object sender, RoutedEventArgs e) => ((Dialog)sender).Hide();
 
-    private void BDefaultClick(object sender, RoutedEventArgs e)
+    private void DefaultClick(object sender, RoutedEventArgs e)
     {
         //switch (Control.SelectedIndex)
         //{
@@ -52,7 +52,7 @@ public partial class SettingDialog : UserControl
             _ => throw new ArgumentOutOfRangeException(nameof(ComboBox.SelectedIndex)),
         };
 
-    private void SliderOnValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => App.AppConfig.Save();
+    private void SliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) => App.AppConfig.Save();
 
     private void ComboBoxOnSelectionChanged(object sender, SelectionChangedEventArgs e) => App.AppConfig.Save();
 

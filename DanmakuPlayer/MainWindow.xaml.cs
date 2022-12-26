@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Models;
 using DanmakuPlayer.Resources;
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
@@ -24,8 +24,8 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         BBackGround.Opacity = App.AppConfig.WindowOpacity;
         MouseLeftButtonDown += (_, _) => DragMove();
         // handledEventsToo is true 事件才会被处理
-        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(STimeMouseButtonDown), true);
-        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(STimeMouseButtonUp), true);
+        STime.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(TimeMouseButtonDown), true);
+        STime.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(TimeMouseButtonUp), true);
         App.Timer.Tick += (_, _) =>
         {
             if (Time < STime.Maximum)
@@ -163,7 +163,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     #region 事件
 
-    private void WDoubleClick(object sender, MouseButtonEventArgs e)
+    private void WindowDoubleClick(object sender, MouseButtonEventArgs e)
     {
         if (e.ClickCount is not 2)
             return;
@@ -171,7 +171,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         DanmakuImage.CancelRender = true;
     }
 
-    private void WSizeChanged(object sender, SizeChangedEventArgs e)
+    private void WindowSizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (App.Pool.Length is 0)
             return;
@@ -180,7 +180,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         DanmakuReload();
     }
 
-    public void WKeyUp(object sender, KeyEventArgs e)
+    public void WindowKeyUp(object sender, KeyEventArgs e)
     {
         switch (e.Key)
         {
@@ -214,15 +214,15 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
-    private void WDragEnter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
+    private void WindowDragEnter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
 
-    private void WDrop(object sender, DragEventArgs e)
+    private void WindowDrop(object sender, DragEventArgs e)
     {
         if (e.Data.GetData(DataFormats.FileDrop) is string[] data)
             XmlOpen(data[0], true);
     }
 
-    private void BImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
+    private void ImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
 
     private async void Import(int cId)
     {
@@ -238,7 +238,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
-    private void BFileClick(object sender, RoutedEventArgs e)
+    private void FileClick(object sender, RoutedEventArgs e)
     {
         var fileDialog = new OpenFileDialog
         {
@@ -254,7 +254,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             XmlOpen(fileDialog.FileName, true);
     }
 
-    private void BFrontClick(object sender, RoutedEventArgs e)
+    private void FrontClick(object sender, RoutedEventArgs e)
     {
         if (Topmost)
         {
@@ -270,9 +270,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
-    private void BSettingClick(object sender, RoutedEventArgs e) => SettingOpen();
+    private void SettingClick(object sender, RoutedEventArgs e) => SettingOpen();
 
-    private void BCloseClick(object sender, RoutedEventArgs e) => Close();
+    private void CloseClick(object sender, RoutedEventArgs e) => Close();
 
     private void PauseResumeClick(object sender, RoutedEventArgs e)
     {
@@ -282,21 +282,21 @@ public partial class MainWindow : Window, INotifyPropertyChanged
             Resume();
     }
 
-    private void STimeMouseButtonDown(object sender, MouseButtonEventArgs e) => TryPause();
+    private void TimeMouseButtonDown(object sender, MouseButtonEventArgs e) => TryPause();
 
-    private void STimeMouseButtonUp(object sender, MouseButtonEventArgs e) => TryResume();
+    private void TimeMouseButtonUp(object sender, MouseButtonEventArgs e) => TryResume();
 
-    private void BFileMouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
+    private void FileMouseEnter(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Visible;
 
-    private void BFileMouseLeave(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Hidden;
+    private void FileMouseLeave(object sender, MouseEventArgs e) => SpImportButtons.Visibility = Visibility.Hidden;
 
-    private void BButtonsMouseEnter(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Visible;
+    private void ButtonsMouseEnter(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Visible;
 
-    private void BButtonsMouseLeave(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Hidden;
+    private void ButtonsMouseLeave(object sender, MouseEventArgs e) => SpButtons.Visibility = Visibility.Hidden;
 
-    private void BControlMouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
+    private void ControlMouseEnter(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Visible;
 
-    private void BControlMouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
+    private void ControlMouseLeave(object sender, MouseEventArgs e) => DpControl.Visibility = Visibility.Hidden;
 
     #endregion
 

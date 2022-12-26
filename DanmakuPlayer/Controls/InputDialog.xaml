@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="DanmakuPlayer.Controls.InputDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,10 +13,10 @@
     <ui:Dialog
         x:Name="Dialog"
         ButtonLeftAppearance="Secondary"
-        ButtonLeftClick="BConfirmClick"
+        ButtonLeftClick="ConfirmClick"
         ButtonLeftName="确认"
         ButtonRightAppearance="Primary"
-        ButtonRightClick="BCancelDialogClick"
+        ButtonRightClick="CancelDialogClick"
         ButtonRightName="取消"
         DialogHeight="250"
         DialogWidth="400"
@@ -29,7 +29,7 @@
             <ui:InfoBar x:Name="IbMessage" />
             <ListBox
                 x:Name="DgPage"
-                MouseDoubleClick="DgPageOnMouseDoubleClick"
+                MouseDoubleClick="PageMouseDoubleClick"
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:VideoPage}">

@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="DanmakuPlayer.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -14,17 +14,17 @@
     AllowDrop="True"
     AllowsTransparency="True"
     Background="Transparent"
-    DragEnter="WDragEnter"
-    Drop="WDrop"
-    KeyUp="WKeyUp"
+    DragEnter="WindowDragEnter"
+    Drop="WindowDrop"
+    KeyUp="WindowKeyUp"
     ResizeMode="CanResizeWithGrip"
-    SizeChanged="WSizeChanged"
+    SizeChanged="WindowSizeChanged"
     WindowStyle="None"
     mc:Ignorable="d">
     <Grid
         x:Name="Grid"
         Background="Transparent"
-        MouseDown="WDoubleClick">
+        MouseDown="WindowDoubleClick">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
@@ -63,8 +63,8 @@
             Width="180"
             HorizontalAlignment="Right"
             Background="Transparent"
-            Mouse.MouseLeave="BButtonsMouseLeave"
-            MouseEnter="BButtonsMouseEnter">
+            Mouse.MouseLeave="ButtonsMouseLeave"
+            MouseEnter="ButtonsMouseEnter">
             <StackPanel
                 x:Name="SpButtons"
                 Height="40"
@@ -76,21 +76,21 @@
                     Width="40"
                     Height="40"
                     Appearance="Transparent"
-                    Click="BFrontClick"
+                    Click="FrontClick"
                     FontSize="18"
                     Icon="Pin24" />
                 <ui:Button
                     Width="40"
                     Height="40"
                     Appearance="Transparent"
-                    Click="BSettingClick"
+                    Click="SettingClick"
                     FontSize="18"
                     Icon="Settings24" />
                 <ui:Button
                     Width="40"
                     Height="40"
                     Appearance="Transparent"
-                    Click="BCloseClick"
+                    Click="CloseClick"
                     FontSize="18"
                     Icon="Dismiss24" />
             </StackPanel>
@@ -100,8 +100,8 @@
             Width="180"
             HorizontalAlignment="Left"
             Background="Transparent"
-            Mouse.MouseLeave="BFileMouseLeave"
-            MouseEnter="BFileMouseEnter">
+            Mouse.MouseLeave="FileMouseLeave"
+            MouseEnter="FileMouseEnter">
             <StackPanel
                 x:Name="SpImportButtons"
                 Height="40"
@@ -113,14 +113,14 @@
                     Width="40"
                     Height="40"
                     Appearance="Transparent"
-                    Click="BImportClick"
+                    Click="ImportClick"
                     FontSize="18"
                     Icon="ArrowDownload24" />
                 <ui:Button
                     Width="40"
                     Height="40"
                     Appearance="Transparent"
-                    Click="BFileClick"
+                    Click="FileClick"
                     FontSize="18"
                     Icon="OpenFolder24" />
             </StackPanel>
@@ -130,8 +130,8 @@
             Grid.Row="2"
             Background="Transparent"
             IsHitTestVisible="False"
-            MouseEnter="BControlMouseEnter"
-            MouseLeave="BControlMouseLeave">
+            MouseEnter="ControlMouseEnter"
+            MouseLeave="ControlMouseLeave">
             <DockPanel
                 x:Name="DpControl"
                 Margin="0,0,20,0"

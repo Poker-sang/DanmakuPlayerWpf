@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Models;
 using DanmakuPlayer.Resources;
 using System;
 using System.Collections.Generic;

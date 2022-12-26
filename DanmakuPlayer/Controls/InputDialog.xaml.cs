@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Models;
 using DanmakuPlayer.Services;
 using System;
 using System.Linq;
@@ -23,9 +23,9 @@ public partial class InputDialog : UserControl
         _ = await Dialog.ShowAndWaitAsync();
     }
 
-    private void BCancelDialogClick(object sender, RoutedEventArgs e) => ((Dialog)sender).Hide();
+    private void CancelDialogClick(object sender, RoutedEventArgs e) => ((Dialog)sender).Hide();
 
-    private async void BConfirmClick(object sender, RoutedEventArgs e)
+    private async void ConfirmClick(object sender, RoutedEventArgs e)
     {
         _result = TbInput.Text.Match(out var match);
         var code = 0;
@@ -96,7 +96,7 @@ public partial class InputDialog : UserControl
         }
     }
 
-    private void DgPageOnMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    private void PageMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         var index = ((ListBox)sender).SelectedIndex;
         _cId = ItemsSource[index].CId;

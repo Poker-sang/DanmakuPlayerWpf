@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
     x:Class="DanmakuPlayer.Controls.SettingDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,7 +15,7 @@
         x:Name="Dialog"
         ButtonLeftVisibility="Hidden"
         ButtonRightAppearance="Primary"
-        ButtonRightClick="BCancelDialogClick"
+        ButtonRightClick="CancelDialogClick"
         ButtonRightName="关闭"
         DialogHeight="700"
         DialogWidth="800"
@@ -30,7 +30,7 @@
                     Minimum="0.1"
                     TickFrequency="0.1"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.WindowOpacity, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl
@@ -56,7 +56,7 @@
                     Minimum="1"
                     TickFrequency="1"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.PlayFastForward, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl Header="播放倍速" Icon="Play24">
@@ -68,7 +68,7 @@
                     Minimum="0.5"
                     TickFrequency="0.25"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.PlaySpeed, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl Header="播放帧数" Icon="Timer24">
@@ -79,7 +79,7 @@
                     Minimum="5"
                     TickFrequency="5"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.PlayFramePerSecond, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl Header="弹幕允许重叠" Icon="Stack24">
@@ -94,7 +94,7 @@
                     Minimum="5"
                     TickFrequency="1"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.DanmakuDuration, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl Header="弹幕透明度" Icon="TextEffects24">
@@ -106,7 +106,7 @@
                     Minimum="0.1"
                     TickFrequency="0.1"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.DanmakuOpacity, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardControl Header="弹幕字体" Icon="TextFont24">
@@ -124,7 +124,7 @@
                     Minimum="0.5"
                     TickFrequency="0.1"
                     TickPlacement="Both"
-                    ValueChanged="SliderOnValueChanged"
+                    ValueChanged="SliderValueChanged"
                     Value="{x:Bind danmakuPlayer:App.AppConfig.DanmakuScale, Mode=TwoWay}" />
             </ui:CardControl>
             <ui:CardExpander Header="关于 DanmakuPlayer v2.43" Icon="Info24">
