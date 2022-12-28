@@ -50,10 +50,10 @@ public static partial class BiliHelper
         if (CheckSuccess(response))
             return response.RootElement.GetProperty("data")
                 .EnumerateArray()
-                .Select(ep => new VideoPage(
-                    ep.GetProperty("cid").GetInt32(),
-                    ep.GetProperty("page").GetInt32().ToString(),
-                    ep.GetProperty("part").GetString()!));
+                .Select(episode => new VideoPage(
+                    episode.GetProperty("cid").GetInt32(),
+                    episode.GetProperty("page").GetInt32().ToString(),
+                    episode.GetProperty("part").GetString()!));
 
         return Array.Empty<VideoPage>();
     }
@@ -68,9 +68,13 @@ public static partial class BiliHelper
         if (CheckSuccess(response))
             // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
             // Linq会多循环几遍
-            foreach (var ep in response.RootElement.GetProperty("result").GetProperty("episodes").EnumerateArray())
-                if (ep.GetProperty("id").GetInt32() == episodeId)
-                    return ep.GetProperty("cid").GetInt32();
+            foreach (var episode in response.RootElement
+                         .GetProperty("result")
+                         .GetProperty("episodes")
+                         .EnumerateArray())
+                if (episode.GetProperty("id").GetInt32() == episodeId)
+                    return episode.GetProperty("cid").GetInt32();
+
         return -1;
     }
 
@@ -78,14 +82,15 @@ public static partial class BiliHelper
     {
         var response = await BiliApis.GetBangumiEpisode(seasonId);
         if (CheckSuccess(response))
-            return (response.RootElement.GetProperty("result")
+            return (response.RootElement
+                .GetProperty("result")
                 .GetProperty("main_section")
                 .GetProperty("episodes")
                 .EnumerateArray()
-                .Select(ep => new VideoPage(
-                    ep.GetProperty("cid").GetInt32(),
-                    ep.GetProperty("title").GetString()!,
-                    ep.GetProperty("long_title").GetString()!)));
+                .Select(episode => new VideoPage(
+                    episode.GetProperty("cid").GetInt32(),
+                    episode.GetProperty("title").GetString()!,
+                    episode.GetProperty("long_title").GetString()!)));
         return Array.Empty<VideoPage>();
     }
 
@@ -93,7 +98,10 @@ public static partial class BiliHelper
     {
         var response = await BiliApis.GetBangumiInfo(mediaId);
         if (CheckSuccess(response))
-            return response.RootElement.GetProperty("result").GetProperty("media").GetProperty("season_id").GetInt32();
+            return response.RootElement
+                .GetProperty("result")
+                .GetProperty("media")
+                .GetProperty("season_id").GetInt32();
         return -1;
     }
 

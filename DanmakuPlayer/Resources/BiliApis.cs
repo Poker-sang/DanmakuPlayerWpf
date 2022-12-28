@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Services;
+using DanmakuPlayer.Services;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -26,7 +26,7 @@ public static class BiliApis
 
     public static Task<JsonDocument> GetBangumiEpisode(int seasonId) => $"{BangumiEpisode}season_id={seasonId}".DownloadJsonAsync();
 
-    public const string BangumiEpisodeInfo = "https://api.bilibili.com/pgc/season/episode/web/info?";
+    public const string BangumiEpisodeInfo = "https://api.bilibili.com/pgc/view/web/season?";
 
     public static Task<JsonDocument> GetBangumiEpisodeInfo(int episodeId) => $"{BangumiEpisodeInfo}ep_id={episodeId}".DownloadJsonAsync();
 }
