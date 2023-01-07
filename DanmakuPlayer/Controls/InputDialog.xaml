@@ -22,13 +22,11 @@
         DialogWidth="400"
         Message="在线获取弹幕">
         <StackPanel>
-            <ui:TextBox
-                x:Name="TbInput"
-                DockPanel.Dock="Top"
-                PlaceholderText="输入视频的网址" />
+            <ui:TextBox x:Name="TbInput" PlaceholderText="输入视频的网址" />
             <ui:InfoBar x:Name="IbMessage" />
             <ListBox
                 x:Name="DgPage"
+                PreviewMouseWheel="DgPagePreviewMouseWheel"
                 MouseDoubleClick="PageMouseDoubleClick"
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>

@@ -82,7 +82,7 @@ public static partial class BiliHelper
     {
         var response = await BiliApis.GetBangumiEpisode(seasonId);
         if (CheckSuccess(response))
-            return (response.RootElement
+            return response.RootElement
                 .GetProperty("result")
                 .GetProperty("main_section")
                 .GetProperty("episodes")
@@ -90,7 +90,7 @@ public static partial class BiliHelper
                 .Select(episode => new VideoPage(
                     episode.GetProperty("cid").GetInt32(),
                     episode.GetProperty("title").GetString()!,
-                    episode.GetProperty("long_title").GetString()!)));
+                    episode.GetProperty("long_title").GetString()!));
         return Array.Empty<VideoPage>();
     }
 

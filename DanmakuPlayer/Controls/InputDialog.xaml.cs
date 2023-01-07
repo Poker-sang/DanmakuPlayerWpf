@@ -103,4 +103,14 @@ public partial class InputDialog : UserControl
         _ = Dialog.Hide();
         _callback(_cId);
     }
+
+    private void DgPagePreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        var args = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta)
+        {
+            RoutedEvent = MouseWheelEvent,
+            Source = sender
+        };
+        DgPage.RaiseEvent(args);
+    }
 }
