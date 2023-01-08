@@ -8,6 +8,8 @@
 
 * UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
 
+* 获取弹幕依赖 [protobuf-net](https://github.com/protobuf-net/protobuf-net) 库
+
 * 弹幕渲染使用 [vortice](https://github.com/amerkoleci/vortice) 的Direct2D库
 
 * 龟速更新中
@@ -38,7 +40,7 @@
 
 * [x] .xml 类型
 
-* [ ] 获取全弹幕
+* [x] 获取全弹幕
 
 ### 播放
 
@@ -80,7 +82,7 @@
 
 * [ ] 正则屏蔽弹幕
 
-* [ ] ⚠️ 合并类似弹幕（目标：[pakku](https://github.com/xmcp/pakku.js)）
+* [ ] ⚠️ 合并类似弹幕
 
 * [ ] ⚠️ 高级弹幕
 

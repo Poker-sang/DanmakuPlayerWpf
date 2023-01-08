@@ -3,12 +3,12 @@ using DanmakuPlayer.Resources;
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
+using ProtoBuf;
 using Wpf.Ui.Common;
 using Button = Wpf.Ui.Controls.Button;
 
@@ -61,19 +61,19 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     // FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     // BBackGround.Opacity = App.AppConfig.WindowOpacity;
 
+
     /// <summary>
-    /// 加载xml文件
+    /// 加载弹幕操作
     /// </summary>
-    /// <param name="xml">xml文件路径或字符串</param>
-    /// <param name="mode"><see langword="true"/>为路径，<see langword="false"/>为字符串</param>
-    private void XmlOpen(string xml, bool mode)
+    /// <param name="action"></param>
+    private void LoadDanmaku(Action action)
     {
         try
         {
             Pause();
             STime.Maximum = 0;
             Time = 0;
-            App.LoadPool(mode ? XDocument.Load(xml) : XDocument.Parse(xml));
+            action();
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
@@ -219,7 +219,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void WindowDrop(object sender, DragEventArgs e)
     {
         if (e.Data.GetData(DataFormats.FileDrop) is string[] data)
-            XmlOpen(data[0], true);
+            LoadDanmaku(() => App.LoadPool(XDocument.Load(data[0])));
     }
 
     private void ImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
@@ -230,7 +230,9 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         try
         {
-            XmlOpen(await BiliApis.GetDanmaku(cId), false);
+            await using var danmaku = await BiliApis.GetDanmaku(cId);
+            var reply = Serializer.Deserialize<DmSegMobileReply>(danmaku);
+            LoadDanmaku(() => App.LoadPool(reply.Elems));
         }
         catch (Exception exception)
         {
@@ -251,7 +253,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         };
         _ = fileDialog.ShowDialog();
         if (fileDialog.FileName is not "")
-            XmlOpen(fileDialog.FileName, true);
+            LoadDanmaku(() => App.LoadPool(XDocument.Load(fileDialog.FileName)));
     }
 
     private void FrontClick(object sender, RoutedEventArgs e)

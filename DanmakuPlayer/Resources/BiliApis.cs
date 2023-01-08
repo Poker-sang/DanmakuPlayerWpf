@@ -1,3 +1,4 @@
+using System.IO;
 using DanmakuPlayer.Services;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -12,11 +13,12 @@ public static class BiliApis
     public static Task<JsonDocument> GetVideoPageList(int av) => $"{VideoPageList}aid={av}".DownloadJsonAsync();
 
     /// <remarks>
-    /// https://api.bilibili.com/x/v1/dm/list.so?oid=
+    /// old .xml api:
+    /// http://comment.bilibili.com/
     /// </remarks>
-    public const string DanmakuFromCid = "http://comment.bilibili.com/";
+    public const string DanmakuFromCid = "https://api.bilibili.com/x/v2/dm/web/seg.so?type=1&segment_index=1&";
 
-    public static Task<string> GetDanmaku(int cid) => $"{DanmakuFromCid}{cid}.xml".DownloadStringAsync();
+    public static Task<Stream> GetDanmaku(int cid) => $"{DanmakuFromCid}oid={cid}".DownloadStreamAsync();
 
     public const string BangumiInfo = "https://api.bilibili.com/pgc/review/user?";
 

@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Models;
+using DanmakuPlayer.Models;
 using SharpGen.Runtime;
 using System;
 using System.Collections.Generic;
@@ -130,14 +130,14 @@ public static class DirectHelper
         return value;
     }
 
-    public static unsafe ID2D1SolidColorBrush GetBrush(this in int color)
+    public static unsafe ID2D1SolidColorBrush GetBrush(this in uint color)
     {
         ArgumentNullException.ThrowIfNull(RenderTarget);
-        fixed (int* ptr = &color)
+        fixed (uint* ptr = &color)
         {
             var c = (byte*)ptr;
-            if (!Brushes.TryGetValue(color, out var value))
-                Brushes[color] = value = RenderTarget.CreateSolidColorBrush(new(
+            if (!Brushes.TryGetValue((int)color, out var value))
+                Brushes[(int)color] = value = RenderTarget.CreateSolidColorBrush(new(
                     (float)c[2] / 0xFF,
                     (float)c[1] / 0xFF,
                     (float)c[0] / 0xFF,

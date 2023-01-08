@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Enums;
+using DanmakuPlayer.Enums;
 using DanmakuPlayer.Services;
 using System;
 using System.Collections.Generic;
@@ -19,17 +19,15 @@ namespace DanmakuPlayer.Models;
 /// <param name="UnixTimeStamp">发送时间戳</param>
 /// <param name="Pool">所属弹幕池</param>
 /// <param name="UserHash">用户ID</param>
-/// <param name="DatabaseRow">所在数据库行数</param>
 public record Danmaku(
     string Text,
     float Time,
     DanmakuMode Mode,
     int Size,
-    int Color,
+    uint Color,
     ulong UnixTimeStamp,
     DanmakuPool Pool,
-    string UserHash,
-    ulong DatabaseRow)
+    string UserHash)
 {
     public static readonly WeakReference<FrameworkElement> ViewPort = new(null!);
 
@@ -58,25 +56,6 @@ public record Danmaku(
     public bool NeedRender { get; private set; } = true;
 
     private float _showPositionY;
-
-    /// <summary>
-    /// 从<paramref name="xElement"/>获取弹幕
-    /// </summary>
-    public static Danmaku CreateDanmaku(XElement xElement)
-    {
-        var tempInfo = xElement.Attribute("p")!.Value.Split(',');
-        var size = int.Parse(tempInfo[2]);
-        return new(
-            xElement.Value,
-            float.Parse(tempInfo[0]),
-            Enum.Parse<DanmakuMode>(tempInfo[1]),
-            size,
-            int.Parse(tempInfo[3]),
-            ulong.Parse(tempInfo[4]),
-            Enum.Parse<DanmakuPool>(tempInfo[5]),
-            tempInfo[6],
-            ulong.Parse(tempInfo[7]));
-    }
 
     /// <summary>
     /// 初始化渲染
