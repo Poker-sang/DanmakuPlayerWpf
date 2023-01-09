@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -54,6 +54,14 @@ public static class HttpClientHelper
 
     public static Task<Stream> DownloadStreamAsync(this string uri, Dictionary<string, string>? header = null)
         => Client.InitializeHeader(header).GetStreamAsync(uri);
+
+    public static async Task<Stream?> TryDownloadStreamAsync(this string uri, Dictionary<string, string>? header = null)
+    {
+        var response = await Client.InitializeHeader(header).GetAsync(uri);
+        if (response.IsSuccessStatusCode)
+            return await Client.InitializeHeader(header).GetStreamAsync(uri);
+        return null;
+    }
 
     public static Task<byte[]> DownloadBytesAsync(this string uri, Dictionary<string, string>? header = null)
         => Client.InitializeHeader(header).GetByteArrayAsync(uri);

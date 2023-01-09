@@ -2,7 +2,6 @@ using DanmakuPlayer.Models;
 using DanmakuPlayer.Services;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
@@ -66,49 +65,5 @@ public partial class App : Application
         var context = new DanmakuContext();
         foreach (var danmaku in Pool)
             danmaku.RenderInit(context, AppConfig);
-    }
-
-    public static void LoadPool(XDocument xDocument)
-    {
-        ClearPool();
-
-        var tempPool = xDocument.Element("i")!.Elements("d");
-        Pool = tempPool.Select(xElement =>
-            {
-                var tempInfo = xElement.Attribute("p")!.Value.Split(',');
-                var size = int.Parse(tempInfo[2]);
-                return new Danmaku(
-                    xElement.Value,
-                    float.Parse(tempInfo[0]),
-                    Enum.Parse<DanmakuMode>(tempInfo[1]),
-                    size,
-                    uint.Parse(tempInfo[3]),
-                    ulong.Parse(tempInfo[4]),
-                    Enum.Parse<DanmakuPool>(tempInfo[5]),
-                    tempInfo[6]);
-            })
-            .OrderBy(t => t.Time)
-            .ToArray();
-
-        RenderPool();
-    }
-
-    public static void LoadPool(List<DanmakuElem> elems)
-    {
-        ClearPool();
-
-        Pool = elems.Select(elem => new Danmaku(
-                elem.Content,
-                elem.Progress / 1000f,
-                (DanmakuMode)elem.Mode,
-                elem.Fontsize,
-                elem.Color,
-                (ulong)elem.Ctime,
-                (DanmakuPool)elem.Pool,
-                elem.midHash))
-            .OrderBy(t => t.Time)
-            .ToArray();
-
-        RenderPool();
     }
 }

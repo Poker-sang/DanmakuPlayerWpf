@@ -3,8 +3,11 @@ using DanmakuPlayer.Resources;
 using DanmakuPlayer.Services;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
@@ -66,14 +69,14 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     /// 加载弹幕操作
     /// </summary>
     /// <param name="action"></param>
-    private void LoadDanmaku(Action action)
+    private async void LoadDanmaku(Func<Task> action)
     {
         try
         {
             Pause();
             STime.Maximum = 0;
             Time = 0;
-            action();
+            await action();
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
@@ -219,7 +222,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     private void WindowDrop(object sender, DragEventArgs e)
     {
         if (e.Data.GetData(DataFormats.FileDrop) is string[] data)
-            LoadDanmaku(() => App.LoadPool(XDocument.Load(data[0])));
+            LoadDanmaku(() =>
+            {
+                App.ClearPool();
+                App.Pool = BiliHelper.ToDanmaku(XDocument.Load(data[0])).ToArray();
+                App.RenderPool();
+                return Task.CompletedTask;
+            });
     }
 
     private void ImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
@@ -230,9 +239,23 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
         try
         {
-            await using var danmaku = await BiliApis.GetDanmaku(cId);
-            var reply = Serializer.Deserialize<DmSegMobileReply>(danmaku);
-            LoadDanmaku(() => App.LoadPool(reply.Elems));
+            LoadDanmaku(async () =>
+            {
+                App.ClearPool();
+                var tempPool = new List<Danmaku>();
+                for (var i = 0; ; ++i)
+                {
+                    await using var danmaku = await BiliApis.GetDanmaku(cId, i + 1);
+                    if (danmaku is null)
+                        break;
+                    var reply = Serializer.Deserialize<DmSegMobileReply>(danmaku);
+                    tempPool.AddRange(BiliHelper.ToDanmaku(reply.Elems));
+                }
+
+                App.Pool = tempPool.ToArray();
+
+                App.RenderPool();
+            });
         }
         catch (Exception exception)
         {
@@ -253,7 +276,13 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         };
         _ = fileDialog.ShowDialog();
         if (fileDialog.FileName is not "")
-            LoadDanmaku(() => App.LoadPool(XDocument.Load(fileDialog.FileName)));
+            LoadDanmaku(() =>
+            {
+                App.ClearPool();
+                App.Pool = BiliHelper.ToDanmaku(XDocument.Load(fileDialog.FileName)).ToArray();
+                App.RenderPool();
+                return Task.CompletedTask;
+            });
     }
 
     private void FrontClick(object sender, RoutedEventArgs e)

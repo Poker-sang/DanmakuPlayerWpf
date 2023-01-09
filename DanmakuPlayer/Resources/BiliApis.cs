@@ -16,9 +16,9 @@ public static class BiliApis
     /// old .xml api:
     /// http://comment.bilibili.com/
     /// </remarks>
-    public const string DanmakuFromCid = "https://api.bilibili.com/x/v2/dm/web/seg.so?type=1&segment_index=1&";
+    public const string DanmakuFromCid = "https://api.bilibili.com/x/v2/dm/web/seg.so?type=1&";
 
-    public static Task<Stream> GetDanmaku(int cid) => $"{DanmakuFromCid}oid={cid}".DownloadStreamAsync();
+    public static Task<Stream?> GetDanmaku(int cid, int segment) => $"{DanmakuFromCid}oid={cid}&segment_index={segment}".TryDownloadStreamAsync();
 
     public const string BangumiInfo = "https://api.bilibili.com/pgc/review/user?";
 

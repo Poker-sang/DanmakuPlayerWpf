@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using DanmakuPlayer.Enums;
 
 namespace DanmakuPlayer.Services;
 
@@ -141,4 +143,34 @@ public static partial class BiliHelper
         result = "";
         return CodeType.Error;
     }
+
+    public static IEnumerable<Danmaku> ToDanmaku(List<DanmakuElem> elems) =>
+        elems.Select(elem => new Danmaku(
+                elem.Content,
+                elem.Progress / 1000f,
+                (DanmakuMode)elem.Mode,
+                elem.Fontsize,
+                elem.Color,
+                (ulong)elem.Ctime,
+                (DanmakuPool)elem.Pool,
+                elem.midHash))
+            .OrderBy(t => t.Time);
+
+    public static IEnumerable<Danmaku> ToDanmaku(XDocument xDocument) =>
+        xDocument.Element("i")!.Elements("d")
+            .Select(xElement =>
+            {
+                var tempInfo = xElement.Attribute("p")!.Value.Split(',');
+                var size = int.Parse(tempInfo[2]);
+                return new Danmaku(
+                    xElement.Value,
+                    float.Parse(tempInfo[0]),
+                    Enum.Parse<DanmakuMode>(tempInfo[1]),
+                    size,
+                    uint.Parse(tempInfo[3]),
+                    ulong.Parse(tempInfo[4]),
+                    Enum.Parse<DanmakuPool>(tempInfo[5]),
+                    tempInfo[6]);
+            })
+            .OrderBy(t => t.Time);
 }
