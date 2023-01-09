@@ -217,6 +217,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         }
     }
 
+    /*
     private void WindowDragEnter(object sender, DragEventArgs e) => e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Link : DragDropEffects.None;
 
     private void WindowDrop(object sender, DragEventArgs e)
@@ -230,10 +231,11 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                 return Task.CompletedTask;
             });
     }
+    */
 
     private void ImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
 
-    private async void Import(int cId)
+    private void Import(int cId)
     {
         FadeOut("弹幕装填中...", false, "(｀・ω・´)");
 
@@ -252,7 +254,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
                     tempPool.AddRange(BiliHelper.ToDanmaku(reply.Elems));
                 }
 
-                App.Pool = tempPool.ToArray();
+                App.Pool = DanmakuCombiner.Combine(tempPool).ToArray();
 
                 App.RenderPool();
             });

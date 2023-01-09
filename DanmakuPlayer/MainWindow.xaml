@@ -11,16 +11,18 @@
     Height="450"
     MinWidth="640"
     MinHeight="360"
-    AllowDrop="True"
     AllowsTransparency="True"
     Background="Transparent"
-    DragEnter="WindowDragEnter"
-    Drop="WindowDrop"
     KeyUp="WindowKeyUp"
     ResizeMode="CanResizeWithGrip"
     SizeChanged="WindowSizeChanged"
     WindowStyle="None"
     mc:Ignorable="d">
+    <!--
+        AllowDrop="True"
+        DragEnter="WindowDragEnter"
+        Drop="WindowDrop"
+    -->
     <Grid
         x:Name="Grid"
         Background="Transparent"

@@ -1,15 +1,46 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using DanmakuPlayer.Enums;
 using DanmakuPlayer.Models;
 using Microsoft.International.Converters.PinYinConverter;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DanmakuPlayer.Services;
 
 public static class DanmakuCombiner
 {
+    public const int MaxCosine = 60;
+    public const int MinDanmakuSize = 10;
+    public const int MaxDist = 5;
+    public const int Threshold = 20;
+    public const bool CrossMode = false;
+    public const int RepresentativePercent = 50;
+
+    /// <summary>
+    /// 全角字符和部分英文标点
+    /// </summary>
+    private const string FullAngleChars = "　１２３４５６７８９０!＠＃＄％＾＆＊（）－＝＿＋［］｛｝;＇:＂,．／＜＞?＼｜｀～ｑｗｅｒｔｙｕｉｏｐａｓｄｆｇｈｊｋｌｚｘｃｖｂｎｍＱＷＥＲＴＹＵＩＯＰＡＳＤＦＧＨＪＫＬＺＸＣＶＢＮＭ";
+
+    /// <summary>
+    /// 半角字符和部分中文标点
+    /// </summary>
+    private const string HalfAngleChars = @" 1234567890！@#$%^&*()-=_+[]{}；\'：""，./<>？\\|`~qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBN";
+
+    private static int Hash(char a, char b) => ((a << 10) ^ b) & 0xFFFFF;
+
+    private static List<int> Gen2GramArray(string p)
+    {
+        p += p[0];
+        var res = new List<int>();
+        for (var i = 0; i < p.Length - 1; ++i)
+            res.Add(Hash(p[i], p[i + 1]));
+        return res;
+    }
+
+    private static string ToSubscript(uint x) => x is 0 ? "" : ToSubscript(x / 10) + (char)(0x2080 + x % 10);
+
+    /// <remarks>abnormal edit distance</remarks>>
     private static int EditDistance(string p, string q)
     {
         var edCounts = new Dictionary<char, int>();
@@ -22,21 +53,6 @@ public static class DanmakuCombiner
 
         return edCounts.Values.Sum(Math.Abs);
     }
-
-    private static List<int> Gen2GramArray(string p)
-    {
-        p += p[0];
-        var res = new List<int>();
-        for (var i = 0; i < p.Length - 1; ++i)
-            res.Add(Hash(p[i], p[i + 1]));
-        return res;
-    }
-
-    private static int Hash(char a, char b) => ((a << 10) ^ b) & 0xFFFFF;
-
-    public const int MaxCosine = 60;
-    public const int MinDanmakuSize = 10;
-    public const int MaxDist = 5;
 
     private static double CosineDistance(List<int> p, List<int> q)
     {
@@ -72,97 +88,83 @@ public static class DanmakuCombiner
 
         return (double)x * x / (y * z);
     }
-    private static string? Similarity(string p, string q, Status s)
+
+    private static bool Similarity(DanmakuString p, DanmakuString q)
     {
-        if (p == q)
-        {
-            ++s.Identical;
-            return "==";
-        }
+        if (p.Original == q.Original)
+            return true;
 
-        var pGram = Gen2GramArray(p);
-        var qGram = Gen2GramArray(q);
-        var pPinYin = "";
-        var qPinYin = "";
-        foreach (var c in p)
-        {
-            if (ChineseChar.IsValidChar(c))
-                pPinYin += new ChineseChar(c).Pinyins[0];
-            else
-                pPinYin += c;
-        }
-        foreach (var c in q)
-        {
-            if (ChineseChar.IsValidChar(c))
-                qPinYin += new ChineseChar(c).Pinyins[0];
-            else
-                qPinYin += c;
-        }
-
-        var dis = EditDistance(p, q);
+        var dis = EditDistance(p.Original, q.Original);
         if ((p.Length + q.Length < MinDanmakuSize) ? dis < (p.Length + q.Length) / MinDanmakuSize * MaxDist - 1 : dis <= MaxDist)
-        {
-            s.EditDistance++;
-            return "<=" + dis;
-        }
+            return true;
 
-        var pyDis = EditDistance(pPinYin, qPinYin);
+        var pyDis = EditDistance(p.Pinyin, q.Pinyin);
         if ((p.Length + q.Length < MinDanmakuSize) ? pyDis < (p.Length + q.Length) / MinDanmakuSize * MaxDist - 1 : pyDis <= MaxDist)
-        {
-            s.PinyinDistance++;
-            return "P<=" + pyDis;
-        }
+            return true;
 
-        if (dis >= p.Length + q.Length) // they have nothing similar. cosine_distance test can be bypassed
-            return null;
-        var cos = CosineDistance(pGram, qGram) * 100;
+        // they have nothing similar. CosineDistance test can be bypassed
+        if (dis >= p.Length + q.Length)
+            return false;
+
+        var cos = CosineDistance(p.Gram, q.Gram) * 100;
         if (cos >= MaxCosine)
-        {
-            s.CosineDistance++;
-            return cos + "%";
-        }
-        return null;
+            return true;
+
+        return false;
     }
 
-    public const int Threshold = 20;
-    public const bool CrossMode = false;
-    public const int RepresentativePercent = 50;
+    private record DanmakuString(string Original, int Length, string Pinyin, List<int> Gram);
 
-    public static void Combine(List<Danmaku> pool)
+    public static List<Danmaku> Combine(IEnumerable<Danmaku> pool)
     {
-        var s = new Status();
-        var danmakuChunk = new List<List<Danmaku>>();
+        var danmakuChunk = new List<(DanmakuString Str, List<Danmaku> Peers)>();
         var outDanmaku = new List<List<Danmaku>>();
-        var ret = new List<(Danmaku Represent, List<Danmaku> Peers)>();
 
+        // var i = 0;
         foreach (var danmaku in pool.Where(danmaku => danmaku.Mode is DanmakuMode.Roll or DanmakuMode.Top or DanmakuMode.Bottom))
         {
-            while (danmakuChunk.Count > 0 && danmaku.Time - danmakuChunk[0][0].Time > Threshold)
+            // ++i;
+            // Debug.WriteLine(i);
+            var pinyin = "";
+            foreach (var c in danmaku.Text)
+                if (ChineseChar.IsValidChar(c))
+                    pinyin += new ChineseChar(c).Pinyins[0];
+                else
+                    pinyin += c;
+
+            var str = new DanmakuString(danmaku.Text, danmaku.Text.Length, pinyin, Gen2GramArray(danmaku.Text));
+            while (danmakuChunk.Count > 0 && danmaku.Time - danmakuChunk[0].Peers[0].Time > Threshold)
             {
-                outDanmaku.Add(danmakuChunk[0]);
+                outDanmaku.Add(danmakuChunk[0].Peers);
                 danmakuChunk.RemoveAt(0);
             }
 
-            foreach (var another in danmakuChunk)
+            var addNew = true;
+            foreach (var (_, peers) in danmakuChunk
+                         .Where(chunk => CrossMode || danmaku.Mode == chunk.Peers[0].Mode)
+                         .Where(chunk => Similarity(str, chunk.Str)))
             {
-                var first = another[0];
-                if (CrossMode && danmaku.Mode != first.Mode)
-                    continue;
-                var sim = Similarity(danmaku.Text, first.Text, s);
-                if (sim is not null)
-                    another.Add(danmaku);
+                peers.Add(danmaku);
+                addNew = false;
+                break;
             }
-            danmakuChunk.Add(new List<Danmaku> { danmaku });
+            if (addNew)
+                danmakuChunk.Add((str, new List<Danmaku> { danmaku }));
         }
         while (danmakuChunk.Count > 0)
         {
-            outDanmaku.Add(danmakuChunk[0]);
+            outDanmaku.Add(danmakuChunk[0].Peers);
             danmakuChunk.RemoveAt(0);
         }
 
-        // apply representative if is not the first one
+        var ret = new List<Danmaku>();
         foreach (var peers in outDanmaku)
         {
+            if (peers.Count is 1)
+            {
+                ret.Add(peers[0]);
+                continue;
+            }
             var mode = DanmakuMode.Bottom;
             foreach (var danmaku in peers)
             {
@@ -175,34 +177,20 @@ public static class DanmakuCombiner
                     default: break;
                 }
             }
-            var represent = peers[0] with
-            {
-                Mode = mode,
-                Time = peers[Math.Min((int)Math.Floor(peers.Count * RepresentativePercent / 100f), peers.Count - 1)].Time
-            };
+
+            var represent = new Danmaku(
+                (peers.Count > 5 ? $"₍{ToSubscript((uint)peers.Count)}₎" : "") + peers[0].Text,
+                peers[Math.Min(peers.Count * RepresentativePercent / 100, peers.Count - 1)].Time,
+                mode,
+                25 * (peers.Count <= 5 ? 1 : (int)Math.Log(peers.Count, 5)),
+                (uint)peers.Average(t => t.Color),
+                0,
+                DanmakuPool.Normal,
+                ""
+            );
+            ret.Add(represent);
         }
+
+        return ret;
     }
-}
-
-public class Status
-{
-    public int Identical { get; set; }// combined
-    public int EditDistance { get; set; }
-    public int PinyinDistance { get; set; }
-    public int CosineDistance { get; set; }
-    public int Blacklist { get; set; } // deleted
-    public int CountHide { get; set; }
-    public int Whitelist { get; set; }// ignored
-    public int BatchIgnore { get; set; }
-    public int Script { get; set; }
-    public int Enlarge { get; set; }// modified
-    public int Shrink { get; set; }
-    public int Scroll { get; set; }
-    public int Taolu { get; set; }// other
-    public int Total { get; set; }
-    public int Onscreen { get; set; }
-    public int Maxcombo { get; set; }
-    public int Maxdispval { get; set; }
-    public int ParseTimeMs { get; set; }
-
 }
