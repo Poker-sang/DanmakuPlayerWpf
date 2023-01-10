@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -64,27 +65,37 @@ public partial class MainWindow : Window, INotifyPropertyChanged
     // FadeOut("设置已更新", false, "✧(≖ ◡ ≖✿)");
     // BBackGround.Opacity = App.AppConfig.WindowOpacity;
 
-
     /// <summary>
     /// 加载弹幕操作
     /// </summary>
     /// <param name="action"></param>
-    private async void LoadDanmaku(Func<Task> action)
+    private async Task LoadDanmaku(Func<Task<List<Danmaku>>> action)
     {
         try
         {
             Pause();
             STime.Maximum = 0;
             Time = 0;
-            await action();
+            App.ClearPool();
+            var tempPool = await action();
+
+            FadeOut($"已获取{tempPool.Count}条弹幕，正在合并", false, "✧(≖ ◡ ≖✿)");
+
+            App.Pool = (await DanmakuCombiner.Combine(tempPool)).ToArray();
+
+            FadeOut($"已合并为{App.Pool.Length}条弹幕，正在渲染", false, "('ヮ')");
+
+            App.RenderPool();
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
-            FadeOut($"{App.Pool.Length}条弹幕已装载", false, "(/・ω・)/");
+
+            FadeOut($"{App.Pool.Length}条弹幕已装载，合并率{App.Pool.Length * 100 / tempPool.Count}%", false, "(/・ω・)/");
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            FadeOut("━━Σ(ﾟДﾟ川)━ 不是标准弹幕文件", true, "​( ´･_･)ﾉ(._.`) 你可以手动在 biliplus.com 获取");
+            Debug.WriteLine(e);
+            FadeOut(e.Message, true, "​( ´･_･)ﾉ(._.`) 发生异常了");
         }
 
         if (TbBanner is not null)
@@ -131,6 +142,33 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         TryResume();
     }
 
+    private async void Import(int cId)
+    {
+        FadeOut("弹幕装填中...", false, "(｀・ω・´)");
+        try
+        {
+            await LoadDanmaku(async () =>
+            {
+                var tempPool = new List<Danmaku>();
+                for (var i = 0; ; ++i)
+                {
+                    await using var danmaku = await BiliApis.GetDanmaku(cId, i + 1);
+                    if (danmaku is null)
+                        break;
+                    var reply = Serializer.Deserialize<DmSegMobileReply>(danmaku);
+                    tempPool.AddRange(BiliHelper.ToDanmaku(reply.Elems));
+                }
+
+                return tempPool;
+            });
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e);
+            FadeOut(e.Message, true, "━━Σ(ﾟДﾟ川)━ 未知的异常");
+        }
+    }
+
     #region 播放及暂停
 
     private bool _needResume;
@@ -164,7 +202,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     #endregion
 
-    #region 事件
+    #region 事件处理
 
     private void WindowDoubleClick(object sender, MouseButtonEventArgs e)
     {
@@ -235,37 +273,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
     private void ImportClick(object sender, RoutedEventArgs e) => DInput.ShowAsync(Import);
 
-    private void Import(int cId)
-    {
-        FadeOut("弹幕装填中...", false, "(｀・ω・´)");
-
-        try
-        {
-            LoadDanmaku(async () =>
-            {
-                App.ClearPool();
-                var tempPool = new List<Danmaku>();
-                for (var i = 0; ; ++i)
-                {
-                    await using var danmaku = await BiliApis.GetDanmaku(cId, i + 1);
-                    if (danmaku is null)
-                        break;
-                    var reply = Serializer.Deserialize<DmSegMobileReply>(danmaku);
-                    tempPool.AddRange(BiliHelper.ToDanmaku(reply.Elems));
-                }
-
-                App.Pool = DanmakuCombiner.Combine(tempPool).ToArray();
-
-                App.RenderPool();
-            });
-        }
-        catch (Exception exception)
-        {
-            FadeOut(exception.Message, true, "未知的异常〒_〒");
-        }
-    }
-
-    private void FileClick(object sender, RoutedEventArgs e)
+    private async void FileClick(object sender, RoutedEventArgs e)
     {
         var fileDialog = new OpenFileDialog
         {
@@ -278,13 +286,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         };
         _ = fileDialog.ShowDialog();
         if (fileDialog.FileName is not "")
-            LoadDanmaku(() =>
-            {
-                App.ClearPool();
-                App.Pool = BiliHelper.ToDanmaku(XDocument.Load(fileDialog.FileName)).ToArray();
-                App.RenderPool();
-                return Task.CompletedTask;
-            });
+            await LoadDanmaku(() => Task.FromResult(BiliHelper.ToDanmaku(XDocument.Load(fileDialog.FileName)).ToList()));
     }
 
     private void FrontClick(object sender, RoutedEventArgs e)

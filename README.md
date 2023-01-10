@@ -104,7 +104,7 @@
 
 项目地址：[GitHub](https://github.com/Poker-sang/DanmakuPlayer)
 
-版本：2.43
+版本：2.50
 
 ## 联系方式
 
