@@ -26,8 +26,8 @@
             <ui:InfoBar x:Name="IbMessage" />
             <ListBox
                 x:Name="DgPage"
-                PreviewMouseWheel="DgPagePreviewMouseWheel"
                 MouseDoubleClick="PageMouseDoubleClick"
+                PreviewMouseWheel="DgPagePreviewMouseWheel"
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>
                     <DataTemplate DataType="{x:Type models:VideoPage}">
@@ -35,8 +35,8 @@
                             <TextBlock
                                 Width="20"
                                 Margin="10,0"
-                                Text="{x:Bind Index, Mode=OneTime}" />
-                            <TextBlock Text="{x:Bind Title, Mode=OneTime}" />
+                                Text="{x:Bind Index}" />
+                            <TextBlock Text="{x:Bind Title}" />
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>

@@ -1,13 +1,9 @@
 using DanmakuPlayer.Models;
 using DanmakuPlayer.Services;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
-using System.Xml.Linq;
-using DanmakuPlayer.Enums;
-using DanmakuPlayer.Resources;
 
 namespace DanmakuPlayer;
 
@@ -60,10 +56,9 @@ public partial class App : Application
         DirectHelper.ClearLayouts();
     }
 
-    public static void RenderPool()
+    public static int RenderPool()
     {
         var context = new DanmakuContext();
-        foreach (var danmaku in Pool)
-            danmaku.RenderInit(context, AppConfig);
+        return Pool.Count(danmaku => danmaku.RenderInit(context, AppConfig));
     }
 }

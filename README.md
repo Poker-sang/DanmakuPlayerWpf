@@ -2,21 +2,27 @@
 
 ## 介绍
 
-* 目前只支持 [bilibili](bilibili.com) xml格式弹幕文件的透明弹幕播放器
-
-* 第三个版本，利用Direct2D解决了弹幕多时卡顿的问题
+* 支持 [bilibili](bilibili.com) xml格式和protobuf直接下载的弹幕文件的透明弹幕播放器
 
 * UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
 
 * 获取弹幕依赖 [protobuf-net](https://github.com/protobuf-net/protobuf-net) 库
 
-* 弹幕渲染使用 [vortice](https://github.com/amerkoleci/vortice) 的Direct2D库
+* 弹幕渲染使用 [vortice](https://github.com/amerkoleci/vortice) 的DirectX库
 
 * 龟速更新中
 
-## 安装教程
+## 预览
 
-下载即用
+B站视频[【炮姐/AMV】我永远都会守护在你的身边！](https://www.bilibili.com/video/BV1Js411o76u)
+
+### 完整弹幕
+
+![full](https://github.com/Poker-sang/DanmakuPlayer/blob/main/readme/full.png)
+
+### 合并类似弹幕、同屏不重叠
+
+![conbined](https://github.com/Poker-sang/DanmakuPlayer/blob/main/readme/conbined.png)
 
 ## 使用说明
 
@@ -28,17 +34,15 @@
 
 * [x] 固定最上层
 
-* [ ] ⚠️ 改变主题色
+* [ ] ⚠️ 改变主题色（wpfui问题）
 
 ### 弹幕文件
 
-* [x] 从本地打开
+* [x] 从本地打开（.xml 类型）
 
 * [x] 用bilibili API通过av、BV、cid、md、ss、ep等下载
 
 * [x] 分P获取弹幕
-
-* [x] .xml 类型
 
 * [x] 获取全弹幕
 
@@ -76,11 +80,11 @@
 
 * [x] 合并类似弹幕
 
+* [x] 大小弹幕出现位置优化
+
 * [ ] 同屏最多（顶端、底端、滚动）弹幕限制
 
 * [ ] 弹幕阴影、描边等效果
-
-* [ ] ⚠️ 大小弹幕出现位置优化
 
 * [ ] 正则屏蔽弹幕
 
@@ -92,7 +96,9 @@
 
 * [x] 优化项目结构
 
-* [ ] 分段加载弹幕以降低占用
+* [ ] ⚠️ 再次优化弹幕出现算法
+
+* [ ] ⚠️ 分段加载弹幕以降低占用
 
 * [ ] ⚠️ 降低内存占用
 

@@ -1,4 +1,4 @@
-﻿using DanmakuPlayer.Properties;
+using DanmakuPlayer.Properties;
 using DanmakuPlayer.Services;
 
 namespace DanmakuPlayer;
@@ -127,7 +127,7 @@ public record AppConfig
     /// 弹幕显示速度（过屏时间(second)）
     /// </summary>
     /// <remarks>DanmakuDuration ∈ [5, 20], default: 15</remarks>
-    public double DanmakuDuration { get; set; } = 15;
+    public float DanmakuDuration { get; set; } = 15;
 
     /// <summary>
     /// 弹幕透明度
@@ -141,7 +141,7 @@ public record AppConfig
             if (Equals(_danmakuOpacity, value))
                 return;
             _danmakuOpacity = value;
-            App.Window.DanmakuReload(DirectHelper.ClearBrushes);
+            App.Window.DanmakuImage.Opacity = _danmakuOpacity;
         }
     }
 

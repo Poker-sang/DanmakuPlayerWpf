@@ -30,14 +30,14 @@ public static class DirectHelper
     /// <summary>
     /// 颜色和对应笔刷
     /// </summary>
-    /// <remarks>依赖于<see cref="RenderTarget"/>、<see cref="AppConfig.DanmakuOpacity"/></remarks>
+    /// <remarks>依赖于<see cref="RenderTarget"/></remarks>
     public static Dictionary<int, ID2D1SolidColorBrush> Brushes { get; } = new();
 
     /// <summary>
     /// 字号和对应字体
     /// </summary>
     /// <remarks>依赖于<see cref="AppConfig.DanmakuFont"/>、<see cref="AppConfig.DanmakuScale"/></remarks>
-    public static Dictionary<float, IDWriteTextFormat> TextFormats { get; } = new();
+    public static Dictionary<int, IDWriteTextFormat> TextFormats { get; } = new();
 
     /// <summary>
     /// 内容和对应渲染布局
@@ -66,19 +66,19 @@ public static class DirectHelper
             return;
 
         // 白色
-        Brushes[0xFFFFFF] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0xFF, 0xFF, App.AppConfig.DanmakuOpacity));
+        Brushes[0xFFFFFF] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0xFF, 0xFF));
         // 黄色
-        Brushes[0xFFFF00] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0xFF, 0x00, App.AppConfig.DanmakuOpacity));
+        Brushes[0xFFFF00] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0xFF, 0x00));
         // 红色
-        Brushes[0xFE0302] = RenderTarget.CreateSolidColorBrush(new Color(0xFE, 0x03, 0x02, App.AppConfig.DanmakuOpacity));
+        Brushes[0xFE0302] = RenderTarget.CreateSolidColorBrush(new Color(0xFE, 0x03, 0x02));
         // 蓝色
-        Brushes[0x4266BE] = RenderTarget.CreateSolidColorBrush(new Color(0x42, 0x66, 0xBE, App.AppConfig.DanmakuOpacity));
+        Brushes[0x4266BE] = RenderTarget.CreateSolidColorBrush(new Color(0x42, 0x66, 0xBE));
         // 绿色
-        Brushes[0x00CD00] = RenderTarget.CreateSolidColorBrush(new Color(0x00, 0xCD, 0x00, App.AppConfig.DanmakuOpacity));
+        Brushes[0x00CD00] = RenderTarget.CreateSolidColorBrush(new Color(0x00, 0xCD, 0x00));
         // 橘色
-        Brushes[0xFF7204] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0x72, 0x04, App.AppConfig.DanmakuOpacity));
+        Brushes[0xFF7204] = RenderTarget.CreateSolidColorBrush(new Color(0xFF, 0x72, 0x04));
         // 紫色
-        Brushes[0xCC0273] = RenderTarget.CreateSolidColorBrush(new Color(0xCC, 0x02, 0x72, App.AppConfig.DanmakuOpacity));
+        Brushes[0xCC0273] = RenderTarget.CreateSolidColorBrush(new Color(0xCC, 0x02, 0x72));
     }
 
     /// <summary>
@@ -87,10 +87,10 @@ public static class DirectHelper
     public static void ClearLayoutHeights()
     {
         LayoutHeights.Clear();
-        using var layout = Factory.CreateTextLayout("模板Template", TextFormats[25], 1000, 100);
-        using var layout2 = Factory.CreateTextLayout("模板Template", TextFormats[18], 1000, 100);
-        LayoutHeights.Add(25, layout.Metrics.Height);
-        LayoutHeights.Add(18, layout2.Metrics.Height);
+        using var layout = Factory.CreateTextLayout("模板Template", TextFormats[25], int.MaxValue, int.MaxValue);
+        using var layout2 = Factory.CreateTextLayout("模板Template", TextFormats[18], int.MaxValue, int.MaxValue);
+        LayoutHeights[25] = layout.Metrics.Height;
+        LayoutHeights[18] = layout2.Metrics.Height;
     }
 
     /// <summary>
@@ -122,6 +122,16 @@ public static class DirectHelper
 
     #region Get类方法
 
+    public static float GetLayoutHeights(this int fontSize)
+    {
+        if (LayoutHeights.ContainsKey(fontSize))
+            return LayoutHeights[fontSize];
+        
+        using var layout = Factory.CreateTextLayout("模板Template", TextFormats[fontSize], int.MaxValue, int.MaxValue);
+        LayoutHeights[fontSize] = layout.Metrics.Height;
+        return layout.Metrics.Height;
+    }
+
     public static IDWriteTextFormat GetTextFormat(this int size)
     {
         ArgumentNullException.ThrowIfNull(RenderTarget);
@@ -147,7 +157,7 @@ public static class DirectHelper
     }
 
     public static IDWriteTextLayout GetNewLayout(this Danmaku danmaku)
-        => Factory.CreateTextLayout(danmaku.Text, danmaku.Size.GetTextFormat(), 1000, 100);
+        => Factory.CreateTextLayout(danmaku.Text, danmaku.Size.GetTextFormat(), int.MaxValue, int.MaxValue);
 
     #endregion
 

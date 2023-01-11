@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using DanmakuRoomList = System.Collections.Generic.LinkedList<(float BottomPos, double Time)>;
 
 namespace DanmakuPlayer.Models;
 
@@ -9,31 +9,46 @@ public class DanmakuContext
 {
     public DanmakuContext()
     {
-        for (var i = 0; i < Danmaku.Count; ++i)
-        {
-            StaticRoom.Add(-1);
-            RollRoom.Add(-1);
-            InverseRoom.Add(-1);
-        }
+        var viewHeight = (float)Danmaku.ViewHeight;
+        _ = StaticRoom.AddFirst((viewHeight, -Danmaku.Space));
+        _ = RollRoom.AddFirst((viewHeight, -Danmaku.Space));
+        _ = InverseRoom.AddFirst((viewHeight, -Danmaku.Space));
     }
 
     /// <summary>
+    /// <list type="bullet">
+    /// <item>
+    /// <term>BottomPos</term>
+    /// <description>从前一个结点的BottomPos（表头前一个算作0）到本结点的BottomPos的区间，算作一个空间（连续的）</description>
+    /// </item>
+    /// <item>
+    /// <term>Time</term>
+    /// <description>等该空间空余时，进度条的时间</description>
+    /// </item>
+    /// </list>
+    /// </summary>
+    /// ReSharper disable once UnusedMember.Local
+#pragma warning disable IDE0052 // 删除未读的私有成员
+    private const bool DocProvider = false;
+#pragma warning restore IDE0052 // 删除未读的私有成员
+
+    /// <summary>
     /// 静止弹幕空间
+    /// <inheritdoc cref="DocProvider"/>
     /// </summary>
-    /// <remarks>StaticRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    public List<double> StaticRoom { get; } = new(Danmaku.Count / 2);
+    public DanmakuRoomList StaticRoom { get; } = new();
 
     /// <summary>
     /// 滚动弹幕空间
+    /// <inheritdoc cref="DocProvider"/>
     /// </summary>
-    /// <remarks>RollRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    public List<double> RollRoom { get; } = new(Danmaku.Count);
+    public DanmakuRoomList RollRoom { get; } = new();
 
     /// <summary>
     /// 滚动弹幕空间
+    /// <inheritdoc cref="DocProvider"/>
     /// </summary>
-    /// <remarks>InverseRoom[i]：等到第i条空间空余时，进度条的时间</remarks>
-    public List<double> InverseRoom { get; } = new();
+    public DanmakuRoomList InverseRoom { get; } = new();
 
     /// <summary>
     /// 正在顶部弹幕数

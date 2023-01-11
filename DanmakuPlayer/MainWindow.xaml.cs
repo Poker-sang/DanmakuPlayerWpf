@@ -81,16 +81,22 @@ public partial class MainWindow : Window, INotifyPropertyChanged
 
             FadeOut($"已获取{tempPool.Count}条弹幕，正在合并", false, "✧(≖ ◡ ≖✿)");
 
-            App.Pool = (await DanmakuCombiner.Combine(tempPool)).ToArray();
+            App.Pool = (await DanmakuCombiner.Combine(tempPool)).OrderBy(t => t.Time).ToArray();
 
-            FadeOut($"已合并为{App.Pool.Length}条弹幕，正在渲染", false, "('ヮ')");
+            var combineRate = App.Pool.Length * 100 / tempPool.Count;
 
-            App.RenderPool();
+            FadeOut($"已合并为{App.Pool.Length}条弹幕，合并率{combineRate}%，正在渲染", false, "('ヮ')");
+
+            var renderedCount = App.RenderPool();
+
+            var renderRate = renderedCount * 100 / App.Pool.Length;
+
+            var totalRate = renderedCount * 100 / tempPool.Count;
 
             STime.Maximum = App.Pool[^1].Time + 10;
             TbTotalTime.Text = "/" + STime.Maximum.ToTime();
 
-            FadeOut($"{App.Pool.Length}条弹幕已装载，合并率{App.Pool.Length * 100 / tempPool.Count}%", false, "(/・ω・)/");
+            FadeOut($"{App.Pool.Length}条弹幕已装载，渲染率{combineRate}%*{renderRate}%={totalRate}%", false, "(/・ω・)/");
         }
         catch (Exception e)
         {
@@ -136,7 +142,7 @@ public partial class MainWindow : Window, INotifyPropertyChanged
         App.Timer.Stop();
 
         action?.Invoke();
-        App.RenderPool();
+        _ = App.RenderPool();
 
         App.Timer.Start();
         TryResume();
