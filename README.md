@@ -4,7 +4,7 @@
 
 * 支持 [bilibili](bilibili.com) xml格式和protobuf直接下载的弹幕文件的透明弹幕播放器
 
-* UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库
+* UI使用WPF框架和 [wpfui](https://github.com/lepoco/wpfui) 控件库（新版使用WinUI3框架 [链接](https://github.com/Poker-sang/DanmakuPlayer)）
 
 * 获取弹幕依赖 [protobuf-net](https://github.com/protobuf-net/protobuf-net) 库
 
@@ -18,11 +18,11 @@ B站视频[【炮姐/AMV】我永远都会守护在你的身边！](https://www.
 
 ### 完整弹幕
 
-![full](https://github.com/Poker-sang/DanmakuPlayer/blob/main/readme/full.png)
+![full](https://github.com/Poker-sang/DanmakuPlayerWpf/blob/main/readme/full.png)
 
 ### 合并类似弹幕、同屏不重叠
 
-![conbined](https://github.com/Poker-sang/DanmakuPlayer/blob/main/readme/conbined.png)
+![conbined](https://github.com/Poker-sang/DanmakuPlayerWpf/blob/main/readme/conbined.png)
 
 ## 使用说明
 
